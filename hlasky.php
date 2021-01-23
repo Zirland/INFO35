@@ -630,6 +630,14 @@ if ($stmt = mysqli_prepare($link, $sql)) {
                 $silnice = "I/" . $silnice;
             }
 
+            $query633 = "SELECT popis FROM enum_ssud WHERE id = $ssud;";
+            if ($result633 = mysqli_query($link, $query633)) {
+                while ($row633 = mysqli_fetch_row($result633)) {
+                    $ssud_nazev = $row633[0];
+            
+                }
+            }
+
             echo "<tr style=\"";
             if ($i % 2 == 0) {
                 echo "background-color:#ddd;";
@@ -639,7 +647,7 @@ if ($stmt = mysqli_prepare($link, $sql)) {
             if ($platnost == 0) {
                 echo "\" class=\"strikeout";
             }
-            echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud</td>";
+            echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
             echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
             $i = $i + 1;
         }

@@ -226,6 +226,14 @@ require_once 'config.php';
                 }
                 $kilometr = str_replace(".", ",", $kilometr);
 
+                $query633 = "SELECT popis FROM enum_ssud WHERE id = $ssud;";
+                if ($result633 = mysqli_query($link, $query633)) {
+                    while ($row633 = mysqli_fetch_row($result633)) {
+                        $ssud_nazev = $row633[0];
+                
+                    }
+                }
+        
                 echo "<tr class=\"";
                 if ($i % 2 == 0) {
                     echo "dark";
@@ -235,7 +243,7 @@ require_once 'config.php';
                 if ($platnost == 0) {
                     echo "-strikeout";
                 }
-                echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud</td>";
+                echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
 
                 if ($export == "0") {
                     echo "<td>Připraveno k exportu</td>";
