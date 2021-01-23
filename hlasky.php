@@ -316,6 +316,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 20px;
         }
 
+        tr.dark {
+            background-color: #ddd;
+            color: black;
+        }
+
+        tr.light {
+            background-color: #fff;
+            color: black;
+        }
+
+        tr.dark-strikeout {
+            background-color: #ddd;
+            color: red;
+        }
+
+        tr.light-strikeout {
+            background-color: #fff;
+            color: red;
+        }
+
         tr.strikeout td:before {
             content: " ";
             position: absolute;
@@ -326,6 +346,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             width: 100%;
         }
     </style>
+
 </head>
 
 <body>
@@ -465,15 +486,15 @@ $i = 0;
 $query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud FROM hlasky WHERE export = 0 ORDER BY tel_cislo";
 if ($result60 = mysqli_query($link, $query60)) {
     while ($row60 = mysqli_fetch_row($result60)) {
-        $id        = $row60[0];
-        $tel_cislo = $row60[1];
-        $silnice   = $row60[2];
-        $kilometr  = $row60[3];
-        $smer      = $row60[4];
-        $longitude = $row60[5];
-        $latitude  = $row60[6];
-        $platnost  = $row60[7];
-        $ssud      = $row60[8];
+        $id         = $row60[0];
+        $tel_cislo  = $row60[1];
+        $silnice    = $row60[2];
+        $kilometr   = $row60[3];
+        $smer       = $row60[4];
+        $longitude  = $row60[5];
+        $latitude   = $row60[6];
+        $platnost   = $row60[7];
+        $ssud       = $row60[8];
         $ssud_nazev = "";
 
         switch ($silnice) {
@@ -642,7 +663,7 @@ if ($result60 = mysqli_query($link, $query60)) {
         if ($result237 = mysqli_query($link, $query237)) {
             while ($row237 = mysqli_fetch_row($result237)) {
                 $ssud_nazev = $row237[0];
-        
+
             }
         }
 
