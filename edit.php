@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ssud_err = "Přiřaďte prosím hlásku příslušnému středisku SSÚD.";
     }
 
-    if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) &&  empty($ssud_err)) {
+    if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err)) {
         $query79  = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud' WHERE id = $id;";
         $result79 = mysqli_query($link, $query79);
         if (!$result79) {$error .= mysqli_error($link) . "<br/>";}
@@ -284,6 +284,16 @@ if ($result220 = mysqli_query($link, $query220)) {
         $log_cas       = $row220[3];
 
         $log_cas_format = date("d.m.Y H:i:s", $log_cas);
+
+        if ($log_sloupec == "ssud") {
+            $query633 = "SELECT popis FROM enum_ssud WHERE id = $log_new_value;";
+            if ($result633 = mysqli_query($link, $query633)) {
+                while ($row633 = mysqli_fetch_row($result633)) {
+                    $log_new_value = $row633[0];
+            
+                }
+            }
+        }
 
         echo "<tr><td>$log_sloupec</td><td>$log_new_value</td><td>$log_user</td><td>$log_cas_format</td></tr>";
     }
