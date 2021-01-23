@@ -54,14 +54,14 @@ require_once 'config.php';
     PageHeader();
 
     echo "<table width=\"100%\">";
-    echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Status</th><th></th></tr>";
+    echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Status</th><th></th></tr>";
     $i = 0;
 
-    $sql = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited FROM hlasky ORDER BY tel_cislo";
+    $sql = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud FROM hlasky ORDER BY tel_cislo";
 
     if ($stmt = mysqli_prepare($link, $sql)) {
         if (mysqli_stmt_execute($stmt)) {
-            mysqli_stmt_bind_result($stmt, $id, $tel_cislo, $silnice, $kilometr, $smer, $longitude, $latitude, $platnost, $export, $edited);
+            mysqli_stmt_bind_result($stmt, $id, $tel_cislo, $silnice, $kilometr, $smer, $longitude, $latitude, $platnost, $export, $edited, $ssud);
 
             while (mysqli_stmt_fetch($stmt)) {
                 switch ($silnice) {
@@ -235,7 +235,7 @@ require_once 'config.php';
                 if ($platnost == 0) {
                     echo "-strikeout";
                 }
-                echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td>";
+                echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud</td>";
 
                 if ($export == "0") {
                     echo "<td>Připraveno k exportu</td>";
