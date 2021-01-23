@@ -335,18 +335,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #fff;
             color: red;
         }
-
-        tr.strikeout td:before {
-            content: " ";
-            position: absolute;
-            display: inline-block;
-            padding: 4px 10px;
-            left: 0;
-            border-bottom: 1px solid #111;
-            width: 100%;
-        }
     </style>
-
 </head>
 
 <body>
