@@ -425,7 +425,7 @@ mysqli_stmt_close($stmt);
             </div>
 
             <div class="form-group <?php echo (!empty($ssud_err)) ? 'has-error' : ''; ?>">
-                <label for="ssud">Název ssud:</label>
+                <label for="ssud">Středisko SSÚD:</label>
                 <select class="form-control" id="ssud" name="ssud">
                     <option value="">---</option>
                     <?php
