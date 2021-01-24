@@ -249,6 +249,7 @@ if ($result81 = mysqli_query($link, $query81)) {
             echo "background-color:#fff;";
         }
         echo "\"><td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+        echo "<td><a href=\"submit_test.php?id=$sel_id\">Požádat o schválení</a></td>";
         echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
         $i = $i + 1;
 
