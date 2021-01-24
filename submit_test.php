@@ -78,8 +78,8 @@ if ($error == 0) {
 </head>
 <body>
 <p>Byl zadán požadavek na schválení testu hlásek:</p>
-<p><b>Datum: </b>'. $datumformat .'</p>
-<p><b>Silnice: </b>'. $silnice .'</p>
+<p><b>Datum: </b>'. $datumformat .'<br/>
+<b>Silnice: </b>'. $silnice .'</p>
 </body>
 </html>
 ';
@@ -92,11 +92,12 @@ if ($error == 0) {
     $headers[] = 'From: Testy hlásek <basket@zirland.org>';
 
 // Mail it
-//    mail($to, $subject, $message, implode("\r\n", $headers));
+mail($to, $subject, $message, implode("\r\n", $headers));
+
 $query96 = "UPDATE testovani SET finalni = 1 WHERE id = '$id';";
-// $prikaz96 = mysqli_query($link, $query96);
+$prikaz96 = mysqli_query($link, $query96);
+
 echo $message;
-echo $query96;
 }
 ?>
 
