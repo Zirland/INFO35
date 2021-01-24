@@ -211,51 +211,53 @@ if ($result179 = mysqli_query($link, $query179)) {
         $strediska[] = $row179[0];
     }
 }
-$strediska = array_filter($strediska);
+if ($strediska) {
+    $strediska = array_filter($strediska);
 
-echo "<tr>";
-foreach ($strediska as $stredisko) {
-    $ssud_nazev = "";
-    echo "<td style=\"padding:10px\"><table>";
-    $query237 = "SELECT popis FROM enum_ssud WHERE id = '$stredisko';";
-    if ($result237 = mysqli_query($link, $query237)) {
-        while ($row237 = mysqli_fetch_row($result237)) {
-            $ssud_nazev = $row237[0];
+    echo "<tr>";
+    foreach ($strediska as $stredisko) {
+        $ssud_nazev = "";
+        echo "<td style=\"padding:10px\"><table>";
+        $query237 = "SELECT popis FROM enum_ssud WHERE id = '$stredisko';";
+        if ($result237 = mysqli_query($link, $query237)) {
+            while ($row237 = mysqli_fetch_row($result237)) {
+                $ssud_nazev = $row237[0];
+            }
         }
-    }
-    echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
-    $i        = 0;
-    $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' ORDER BY CAST(kilometr AS unsigned), smer";
-    if ($result193 = mysqli_query($link, $query193)) {
-        while ($row193 = mysqli_fetch_row($result193)) {
-            $hl_id       = $row193[0];
-            $hl_telcislo = $row193[1];
-            $hl_kilometr = $row193[2];
-            $hl_smer     = $row193[3];
-            $hl_smoke    = $row193[4];
+        echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
+        $i        = 0;
+        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' ORDER BY CAST(kilometr AS unsigned), smer";
+        if ($result193 = mysqli_query($link, $query193)) {
+            while ($row193 = mysqli_fetch_row($result193)) {
+                $hl_id       = $row193[0];
+                $hl_telcislo = $row193[1];
+                $hl_kilometr = $row193[2];
+                $hl_smer     = $row193[3];
+                $hl_smoke    = $row193[4];
 
-            echo "<tr class=\"";
-            if ($i % 2 == 0) {
-                echo "dark";
-            } else {
-                echo "light";
+                echo "<tr class=\"";
+                if ($i % 2 == 0) {
+                    echo "dark";
+                } else {
+                    echo "light";
+                }
+                if ($hl_smoke == 0) {
+                    echo "-smoke";
+                }
+                echo "\"><td><input type=\"checkbox\" name=\"line$z\" value=\"$hl_id\"";
+                if (in_array($hl_id, $hlasky_array)) {
+                    echo " CHECKED";
+                }
+                echo "></td>";
+                echo "<td>$hl_telcislo | km $hl_kilometr směr $hl_smer</td></tr>\n";
+                $z = $z + 1;
+                $i = $i + 1;
             }
-            if ($hl_smoke == 0) {
-                echo "-smoke";
-            }
-            echo "\"><td><input type=\"checkbox\" name=\"line$z\" value=\"$hl_id\"";
-            if (in_array($hl_id, $hlasky_array)) {
-                echo " CHECKED";
-            }
-            echo "></td>";
-            echo "<td>$hl_telcislo | km $hl_kilometr směr $hl_smer</td></tr>\n";
-            $z = $z + 1;
-            $i = $i + 1;
         }
+        echo "</table></td>";
     }
-    echo "</table></td>";
+    echo "</tr>";
 }
-echo "</tr>";
 ?>
 <tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></form></td></tr>
 </table>
