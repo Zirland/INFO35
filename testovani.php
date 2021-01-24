@@ -42,15 +42,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Index databáze INFO35</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 500px; padding: 20px; }
+        body {
+            font: 14px sans-serif;
+        }
+        .wrapper {
+            width: 500px; padding: 20px;
+        }
     </style>
 </head>
 <body>
     <?php
 PageHeader();
 $today = date("Y-m-d", strtotime("+ 1 day"));
-$today = "2021-01-01";
 ?>
     <div class="wrapper">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -120,11 +123,12 @@ mysqli_stmt_close($stmt);
     </div>
     <hr>
     <?php
+echo "<h3>Dokončená testování</h3>";
 echo "<table width=\"100%\">";
-echo "<tr><th>&nbsp;</th><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th>Počet hlásek</th><th></th></tr>";
+echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
 
-$query81 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani ORDER BY datum, silnice;";
+$query81 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani WHERE overeno = 1 ORDER BY datum, silnice;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id      = $row81[0];
@@ -138,14 +142,14 @@ if ($result81 = mysqli_query($link, $query81)) {
         $query138 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id='$sel_osoba';";
         if ($result138 = mysqli_query($link, $query138)) {
             while ($row138 = mysqli_fetch_row($result138)) {
-                $jmeno = $row138[0];
+                $jmeno     = $row138[0];
                 $tel_cislo = $row138[1];
             }
         }
         $koordinator = $jmeno . " | " . $tel_cislo;
 
-        $hlasky_arr = explode("|", $sel_hlasky);
-        $hlasky_arr = array_filter($hlasky_arr);
+        $hlasky_arr   = explode("|", $sel_hlasky);
+        $hlasky_arr   = array_filter($hlasky_arr);
         $pocet_hlasek = count($hlasky_arr);
 
         echo "<tr style=\"";
@@ -159,9 +163,130 @@ if ($result81 = mysqli_query($link, $query81)) {
         $i = $i + 1;
 
     }
+    if (mysqli_num_rows($result81) == 0) {
+        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+    }
 }
 
 echo "</table>";
+echo "<hr>";
+echo "<h3>Naplánovaná testování</h3>";
+echo "<table width=\"100%\">";
+echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
+$i = 0;
 
+$query81 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE finalni = 1 ORDER BY datum, silnice;";
+if ($result81 = mysqli_query($link, $query81)) {
+    while ($row81 = mysqli_fetch_row($result81)) {
+        $sel_id      = $row81[0];
+        $sel_datum   = $row81[1];
+        $sel_silnice = $row81[2];
+        $sel_osoba   = $row81[3];
+        $sel_hlasky  = $row81[4];
+        $schvaleno   = $row81[5];
+        $odmitnuto   = $row81[6];
+        $komentar    = $row81[7];
+
+        $datum_format = date("d.m.Y", strtotime($sel_datum));
+
+        $query138 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id='$sel_osoba';";
+        if ($result138 = mysqli_query($link, $query138)) {
+            while ($row138 = mysqli_fetch_row($result138)) {
+                $jmeno     = $row138[0];
+                $tel_cislo = $row138[1];
+            }
+        }
+        $koordinator = $jmeno . " | " . $tel_cislo;
+
+        $hlasky_arr   = explode("|", $sel_hlasky);
+        $hlasky_arr   = array_filter($hlasky_arr);
+        $pocet_hlasek = count($hlasky_arr);
+
+        if ($i % 2 == 0) {
+            $back_line_col = "#ddd";
+        } else {
+            $back_line_col = "#fff";
+        }
+
+        echo "<tr style=\"background-color:$back_line_col;\">";
+        echo "<td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+        $stav_schvaleni = "Čeká na schválení";
+        $bg_col         = $back_line_col;
+        if ($schvaleno == 1) {
+            $stav_schvaleni = "Schváleno";
+            $bg_col         = "#0f0";
+        }
+        if ($odmitnuto == 1) {
+            $stav_schvaleni = "Odmítnuto";
+            $bg_col         = "#f00";
+        }
+        echo "<td style=\"background-color:$bg_col;\">";
+        if ($komentar != "") {
+            echo "<span title=\"$komentar\" style=\"border-bottom: 1px dotted black;\">";
+        }
+        echo "$stav_schvaleni";
+        if ($komentar != "") {
+            echo "</span>";
+        }
+        echo "</td>";
+        echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
+        $i = $i + 1;
+
+    }
+    if (mysqli_num_rows($result81) == 0) {
+        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+    }
+}
+
+echo "</table>";
+echo "<hr>";
+echo "<h3>Připravovaná testování</h3>";
+echo "<table width=\"100%\">";
+echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
+$i = 0;
+
+$query81 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani WHERE finalni = 0 ORDER BY datum, silnice;";
+if ($result81 = mysqli_query($link, $query81)) {
+    while ($row81 = mysqli_fetch_row($result81)) {
+        $sel_id      = $row81[0];
+        $sel_datum   = $row81[1];
+        $sel_silnice = $row81[2];
+        $sel_osoba   = $row81[3];
+        $sel_hlasky  = $row81[4];
+
+        $datum_format = date("d.m.Y", strtotime($sel_datum));
+
+        $query138 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id='$sel_osoba';";
+        if ($result138 = mysqli_query($link, $query138)) {
+            while ($row138 = mysqli_fetch_row($result138)) {
+                $jmeno     = $row138[0];
+                $tel_cislo = $row138[1];
+            }
+        }
+        $koordinator = $jmeno . " | " . $tel_cislo;
+
+        $hlasky_arr   = explode("|", $sel_hlasky);
+        $hlasky_arr   = array_filter($hlasky_arr);
+        $pocet_hlasek = count($hlasky_arr);
+
+        echo "<tr style=\"";
+        if ($i % 2 == 0) {
+            echo "background-color:#ddd;";
+        } else {
+            echo "background-color:#fff;";
+        }
+        echo "\"><td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+        echo "<td><a href=\"submit_test.php?id=$sel_id\">Požádat o schválení</a></td>";
+        echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
+        $i = $i + 1;
+
+    }
+    if (mysqli_num_rows($result81) == 0) {
+        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+    }
+}
+
+echo "</table>";
+echo "<hr>";
 mysqli_close($link);
 ?>

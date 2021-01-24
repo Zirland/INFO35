@@ -24,11 +24,12 @@ $x_err         = "";
 $y             = @$_POST["y"];
 $y_err         = "";
 $override      = @$_POST["override"];
+$ssud          = @$_POST["ssud"];
+$ssud_err      = "";
 //$ico           = "65993390";
 //$OpID          = "777";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     switch ($format) {
         case '1':
             $x      = trim($x);
@@ -172,11 +173,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err)) {
-        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?)";
+    if (empty(trim($ssud))) {
+        $ssud_err = "Přiřaďte prosím hlásku příslušnému středisku SSÚD.";
+    }
+
+    if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err)) {
+        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon);
+            mysqli_stmt_bind_param($stmt, "sssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud);
 
             $param_tel_cislo = $tel_cislo;
             $param_silnice   = $silnice;
@@ -184,6 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_smer      = $smer;
             $param_lat       = $lat;
             $param_lon       = $lon;
+            $param_ssud      = $ssud;
 
             if (mysqli_stmt_execute($stmt)) {
                 $param_id = mysqli_insert_id($link);
@@ -273,6 +279,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "";
                     }
                 }
+                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
+                if ($stmt = mysqli_prepare($link, $sql)) {
+                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
+                    $param_hlaska_id = $param_id;
+                    $param_user      = htmlspecialchars($_SESSION["username"]);
+                    $param_cas       = microtime(true);
+                    $param_sloupec   = "ssud";
+                    $param_new_value = $param_ssud;
+                    if (!mysqli_stmt_execute($stmt)) {
+                        echo "";
+                    }
+                }
             }
             mysqli_stmt_close($stmt);
         }
@@ -298,22 +316,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 20px;
         }
 
-        tr.strikeout td:before {
-            content: " ";
-            position: absolute;
-            display: inline-block;
-            padding: 4px 10px;
-            left: 0;
-            border-bottom: 1px solid #111;
-            width: 100%;
+        tr.dark {
+            background-color: #ddd;
+            color: black;
+        }
+
+        tr.light {
+            background-color: #fff;
+            color: black;
+        }
+
+        tr.dark-strikeout {
+            background-color: #ddd;
+            color: red;
+        }
+
+        tr.light-strikeout {
+            background-color: #fff;
+            color: red;
         }
     </style>
 </head>
 
 <body>
     <?php
-    PageHeader();
-    ?>
+PageHeader();
+?>
     <div class="wrapper">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($tel_cislo_err)) ? 'has-error' : ''; ?>">
@@ -327,23 +355,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-                    $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+$sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
+if ($stmt = mysqli_prepare($link, $sql)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
 
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$sil_id\"";
-                                if ($sil_id == $silnice) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$sil_name</option>\n";
-                            }
-                        }
-                    }
-                    mysqli_stmt_close($stmt);
-                    ?>
+        while (mysqli_stmt_fetch($stmt)) {
+            echo "<option value=\"$sil_id\"";
+            if ($sil_id == $silnice) {
+                echo " SELECTED";
+            }
+            echo ">$sil_name</option>\n";
+        }
+    }
+}
+mysqli_stmt_close($stmt);
+?>
                 </select>
                 <span class="help-block"><?php echo $silnice_err; ?></span>
             </div>
@@ -358,15 +386,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="smer">Směr:</label>
                 <select class="form-control" id="smer" name="smer">
                     <option value="+" <?php
-                                        if ($smer == "+") {
-                                            echo " SELECTED";
-                                        }
-                                        ?>>rostoucí</option>
+if ($smer == "+") {
+    echo " SELECTED";
+}
+?>>rostoucí</option>
                     <option value="-" <?php
-                                        if ($smer == "-") {
-                                            echo " SELECTED";
-                                        }
-                                        ?>>klesající</option>
+if ($smer == "-") {
+    echo " SELECTED";
+}
+?>>klesající</option>
                 </select>
             </div>
 
@@ -374,23 +402,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="format">Formát souřadnice:</label>
                 <select class="form-control" id="format" name="format">
                     <?php
-                    $sql = "SELECT `id`,`name` FROM enum_srid ORDER BY `name`";
+$sql = "SELECT `id`,`name` FROM enum_srid ORDER BY `name`";
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $srid_id, $srid_name);
+if ($stmt = mysqli_prepare($link, $sql)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $srid_id, $srid_name);
 
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$srid_id\"";
-                                if ($srid_id == $format) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$srid_name</option>\n";
-                            }
-                        }
-                    }
-                    mysqli_stmt_close($stmt);
-                    ?>
+        while (mysqli_stmt_fetch($stmt)) {
+            echo "<option value=\"$srid_id\"";
+            if ($srid_id == $format) {
+                echo " SELECTED";
+            }
+            echo ">$srid_name</option>\n";
+        }
+    }
+}
+mysqli_stmt_close($stmt);
+?>
                 </select>
             </div>
 
@@ -406,6 +434,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <span class="help-block"><?php echo $y_err; ?></span>
             </div>
 
+            <div class="form-group <?php echo (!empty($ssud_err)) ? 'has-error' : ''; ?>">
+                <label for="ssud">Středisko SSÚD:</label>
+                <select class="form-control" id="ssud" name="ssud">
+                    <option value="">---</option>
+                    <?php
+$sql = "SELECT id,popis FROM enum_ssud ORDER BY popis";
+
+if ($stmt = mysqli_prepare($link, $sql)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $ssud_id, $ssud_name);
+
+        while (mysqli_stmt_fetch($stmt)) {
+            echo "<option value=\"$ssud_id\"";
+            if ($ssud_id == $ssud) {
+                echo " SELECTED";
+            }
+            echo ">$ssud_name</option>\n";
+        }
+    }
+}
+mysqli_stmt_close($stmt);
+?>
+                </select>
+                <span class="help-block"><?php echo $ssud_err; ?></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Vložit">
             </div>
@@ -414,196 +468,210 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <hr>
     <?php
-    echo "<table width=\"100%\">";
-    echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th></th></tr>";
-    $i = 0;
+echo "<table width=\"100%\">";
+echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th></th></tr>";
+$i = 0;
 
-    $sql = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost FROM hlasky WHERE export = 0 ORDER BY tel_cislo";
+$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud FROM hlasky WHERE export = 0 ORDER BY tel_cislo";
+if ($result60 = mysqli_query($link, $query60)) {
+    while ($row60 = mysqli_fetch_row($result60)) {
+        $id         = $row60[0];
+        $tel_cislo  = $row60[1];
+        $silnice    = $row60[2];
+        $kilometr   = $row60[3];
+        $smer       = $row60[4];
+        $longitude  = $row60[5];
+        $latitude   = $row60[6];
+        $platnost   = $row60[7];
+        $ssud       = $row60[8];
+        $ssud_nazev = "";
 
-    if ($stmt = mysqli_prepare($link, $sql)) {
-        if (mysqli_stmt_execute($stmt)) {
-            mysqli_stmt_bind_result($stmt, $id, $tel_cislo, $silnice, $kilometr, $smer, $longitude, $latitude, $platnost);
-
-            while (mysqli_stmt_fetch($stmt)) {
-                switch ($silnice) {
-                    case 'D0':
-                        if ($smer == "+" && $kilometr < 30) {
-                            $smer_nazev = "letiště";
-                        } elseif ($smer == "+" && $kilometr < 65) {
-                            $smer_nazev = "Štěrboholy";
-                        } elseif ($smer == "+") {
-                            $smer_nazev = "letiště";
-                        } elseif ($smer == "-" && $kilometr > 65) {
-                            $smer_nazev = "Brno";
-                        } elseif ($smer == "-" && $kilometr > 30) {
-                            $smer_nazev = "Liberec";
-                        } else {
-                            $smer_nazev = "Brno";
-                        }
-                        break;
-
-                    case 'D1':
-                        if ($smer == "+" && $kilometr < 189) {
-                            $smer_nazev = "Brno";
-                        } elseif ($smer == "+" && $kilometr < 273) {
-                            $smer_nazev = "Hulín";
-                        } elseif ($smer == "+") {
-                            $smer_nazev = "Bohumín";
-                        } elseif ($smer == "-" && $kilometr > 273) {
-                            $smer_nazev = "Přerov";
-                        } elseif ($smer == "-" && $kilometr > 203) {
-                            $smer_nazev = "Brno";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D2':
-                        if ($smer == "+") {
-                            $smer_nazev = "Lanžhot";
-                        } else {
-                            $smer_nazev = "Brno";
-                        }
-                        break;
-
-                    case 'D3':
-                        if ($smer == "+") {
-                            $smer_nazev = "České Budějovice";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D4':
-                        if ($smer == "+") {
-                            $smer_nazev = "Písek";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D5':
-                        if ($smer == "+") {
-                            $smer_nazev = "Rozvadov";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D6':
-                        if ($smer == "+" && $kilometr < 112) {
-                            $smer_nazev = "Karlovy Vary";
-                        } elseif ($smer == "+") {
-                            $smer_nazev = "Cheb";
-                        } elseif ($smer == "-" && $kilometr > 112) {
-                            $smer_nazev = "Karlovy Vary";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D7':
-                        if ($smer == "+") {
-                            $smer_nazev = "Chomutov";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D8':
-                        if ($smer == "+") {
-                            $smer_nazev = "Petrovice";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D11':
-                        if ($smer == "+") {
-                            $smer_nazev = "Hradec Králové";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case 'D35':
-                        if ($smer == "+" && $kilometr < 140) {
-                            $smer_nazev = "Opatovice nad Labem";
-                        } elseif ($smer == "+") {
-                            $smer_nazev = "Lipník nad Bečvou";
-                        } elseif ($smer == "-" && $kilometr > 220) {
-                            $smer_nazev = "Mohelnice";
-                        } else {
-                            $smer_nazev = "Praha";
-                        }
-                        break;
-
-                    case '35':
-                        if ($smer == "+") {
-                            $smer_nazev = "Valašské Meziříčí";
-                        } else {
-                            $smer_nazev = "Hranice";
-                        }
-                        break;
-
-                    case 'D48':
-                        if ($smer == "+") {
-                            $smer_nazev = "Český Těšín";
-                        } else {
-                            $smer_nazev = "Bělotín";
-                        }
-                        break;
-
-                    case 'D55':
-                        if ($smer == "+") {
-                            $smer_nazev = "Zlín";
-                        } else {
-                            $smer_nazev = "Kroměříž";
-                        }
-                        break;
-                    case '57':
-                        if ($smer == "+") {
-                            $smer_nazev = "Vsetín";
-                        } else {
-                            $smer_nazev = "Valašské Meziříčí";
-                        }
-                        break;
-
-                    case '58':
-                        if ($smer == "+") {
-                            $smer_nazev = "Ostrava";
-                        } else {
-                            $smer_nazev = "Rožnov pod Radhošťem";
-                        }
-                        break;
-
-                    default:
-                        $smer_nazev = $smer;
-                        break;
-                }
-
-                if (substr($silnice, 0, 1) != "D") {
-                    $silnice = "I/" . $silnice;
-                }
-
-                echo "<tr style=\"";
-                if ($i % 2 == 0) {
-                    echo "background-color:#ddd;";
+        switch ($silnice) {
+            case 'D0':
+                if ($smer == "+" && $kilometr < 30) {
+                    $smer_nazev = "letiště";
+                } elseif ($smer == "+" && $kilometr < 65) {
+                    $smer_nazev = "Štěrboholy";
+                } elseif ($smer == "+") {
+                    $smer_nazev = "letiště";
+                } elseif ($smer == "-" && $kilometr > 65) {
+                    $smer_nazev = "Brno";
+                } elseif ($smer == "-" && $kilometr > 30) {
+                    $smer_nazev = "Liberec";
                 } else {
-                    echo "background-color:#fff;";
+                    $smer_nazev = "Brno";
                 }
-                if ($platnost == 0) {
-                    echo "\" class=\"strikeout";
+                break;
+
+            case 'D1':
+                if ($smer == "+" && $kilometr < 189) {
+                    $smer_nazev = "Brno";
+                } elseif ($smer == "+" && $kilometr < 273) {
+                    $smer_nazev = "Hulín";
+                } elseif ($smer == "+") {
+                    $smer_nazev = "Bohumín";
+                } elseif ($smer == "-" && $kilometr > 273) {
+                    $smer_nazev = "Přerov";
+                } elseif ($smer == "-" && $kilometr > 203) {
+                    $smer_nazev = "Brno";
+                } else {
+                    $smer_nazev = "Praha";
                 }
-                echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td>";
-                echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
-                $i = $i + 1;
+                break;
+
+            case 'D2':
+                if ($smer == "+") {
+                    $smer_nazev = "Lanžhot";
+                } else {
+                    $smer_nazev = "Brno";
+                }
+                break;
+
+            case 'D3':
+                if ($smer == "+") {
+                    $smer_nazev = "České Budějovice";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D4':
+                if ($smer == "+") {
+                    $smer_nazev = "Písek";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D5':
+                if ($smer == "+") {
+                    $smer_nazev = "Rozvadov";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D6':
+                if ($smer == "+" && $kilometr < 112) {
+                    $smer_nazev = "Karlovy Vary";
+                } elseif ($smer == "+") {
+                    $smer_nazev = "Cheb";
+                } elseif ($smer == "-" && $kilometr > 112) {
+                    $smer_nazev = "Karlovy Vary";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D7':
+                if ($smer == "+") {
+                    $smer_nazev = "Chomutov";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D8':
+                if ($smer == "+") {
+                    $smer_nazev = "Petrovice";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D11':
+                if ($smer == "+") {
+                    $smer_nazev = "Hradec Králové";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case 'D35':
+                if ($smer == "+" && $kilometr < 140) {
+                    $smer_nazev = "Opatovice nad Labem";
+                } elseif ($smer == "+") {
+                    $smer_nazev = "Lipník nad Bečvou";
+                } elseif ($smer == "-" && $kilometr > 220) {
+                    $smer_nazev = "Mohelnice";
+                } else {
+                    $smer_nazev = "Praha";
+                }
+                break;
+
+            case '35':
+                if ($smer == "+") {
+                    $smer_nazev = "Valašské Meziříčí";
+                } else {
+                    $smer_nazev = "Hranice";
+                }
+                break;
+
+            case 'D48':
+                if ($smer == "+") {
+                    $smer_nazev = "Český Těšín";
+                } else {
+                    $smer_nazev = "Bělotín";
+                }
+                break;
+
+            case 'D55':
+                if ($smer == "+") {
+                    $smer_nazev = "Zlín";
+                } else {
+                    $smer_nazev = "Kroměříž";
+                }
+                break;
+            case '57':
+                if ($smer == "+") {
+                    $smer_nazev = "Vsetín";
+                } else {
+                    $smer_nazev = "Valašské Meziříčí";
+                }
+                break;
+
+            case '58':
+                if ($smer == "+") {
+                    $smer_nazev = "Ostrava";
+                } else {
+                    $smer_nazev = "Rožnov pod Radhošťem";
+                }
+                break;
+
+            default:
+                $smer_nazev = $smer;
+                break;
+        }
+
+        if (substr($silnice, 0, 1) != "D") {
+            $silnice = "I/" . $silnice;
+        }
+        $kilometr = str_replace(".", ",", $kilometr);
+
+        $query237 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
+        if ($result237 = mysqli_query($link, $query237)) {
+            while ($row237 = mysqli_fetch_row($result237)) {
+                $ssud_nazev = $row237[0];
+
             }
         }
+
+        echo "<tr class=\"";
+        if ($i % 2 == 0) {
+            echo "dark";
+        } else {
+            echo "light";
+        }
+        if ($platnost == 0) {
+            echo "-strikeout";
+        }
+        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
+        echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
+        $i = $i + 1;
+
     }
-    mysqli_stmt_close($stmt);
+}
+echo "</table>";
 
-    echo "</table>";
-
-    mysqli_close($link);
-    ?>
+mysqli_close($link);
+?>
