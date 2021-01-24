@@ -30,13 +30,22 @@ function PageHeader()
             echo "Aplikace není registrována!!<br/>";
         } else {
             while ($row33 = mysqli_fetch_row($result33)) {
-                $id_prev = $row33[0];
-                $up_app  = $row33[1];
+                $id_prev     = $row33[0];
+                $up_app_code = $row33[1];
             }
         }
     }
 
-    $up_app  = "index.php";
+    $query39 = "SELECT url FROM aplikace WHERE app_id = '$up_app_code';";
+    if ($result39 = mysqli_query($link, $query39)) {
+        while ($row39 = mysqli_fetch_row($result39)) {
+            $up_app = $row39[0];
+        }
+        if (mysqli_num_rows($result39) == 0) {
+            $up_app = "index.php";
+        }
+    }
+
     $id_user = $_SESSION["id"];
     $query30 = "SELECT app_id FROM opravneni WHERE user_id = $id_user AND app_id IN (SELECT app_id FROM aplikace WHERE up = $id_prev);";
     if ($result30 = mysqli_query($link, $query30)) {
@@ -45,7 +54,7 @@ function PageHeader()
         }
     }
 
-    echo "<td width=\"5%\"><a href=\"$up_app\" class=\"btn btn-secondry\">Úvodní strana</a></td>";
+    echo "<td width=\"5%\"><a href=\"$up_app\" class=\"btn btn-secondry\">Návrat zpět</a></td>";
 
     if (!$opravneni) {
         $opravneni = [];
@@ -62,7 +71,7 @@ function PageHeader()
                 while ($row52 = mysqli_fetch_row($result52)) {
                     $nazev_aplikace = $row52[0];
                     $url_aplikace   = $row52[1];
-                    $newTarget = 0;
+                    $newTarget      = 0;
 
                     if ($tlacitka == "1" && $id_prev == "1") {
                         Redir($url_aplikace);
@@ -70,7 +79,7 @@ function PageHeader()
 
                     if (substr($url_aplikace, 0, 1) == "#") {
                         $url_aplikace = substr($url_aplikace, 1);
-                        $newTarget = 1;
+                        $newTarget    = 1;
                     }
 
                     echo "<td style=\"text-align:center;\" width=\"" . 75 / $tlacitka . "%\">";
