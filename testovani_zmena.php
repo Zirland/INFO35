@@ -120,8 +120,8 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
 <table width="100%" style="text-align:center;">
 <tr><th>&nbsp;</th><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th></th></tr>
 <tr><td></td>
-<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>"></td>
-<td><select class="form-control" id="silnice" name="silnice">
+<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>" readonly></td>
+<td><select class="form-control" id="silnice" name="silnice" disabled>
     <option value="">---</option>
 <?php
 $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
