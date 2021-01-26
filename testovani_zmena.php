@@ -101,13 +101,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum   = $row16[0];
         $old_silnice = $row16[1];
         $old_osoba   = $row16[2];
         $old_hlasky  = $row16[3];
+        $schvaleno   = $row16[4];
+        $odmitnuto   = $row16[5];
+        $komentar    = $row16[6];
+
     }
 }
 PageHeader();
@@ -164,7 +168,22 @@ mysqli_stmt_close($stmt);
 ?>
 </select></td>
 <td><input type="submit" value="Uložit změny v záhlaví"></form></td></tr></table>
-
+<?php
+$stav_schvaleni = "Čeká na schválení";
+        $bg_col         = "#fff";
+        if ($schvaleno == 1) {
+            $stav_schvaleni = "Schváleno";
+            $bg_col         = "#0f0";
+        }
+        if ($odmitnuto == 1) {
+            $stav_schvaleni = "Odmítnuto";
+            $bg_col         = "#f00";
+        }
+        echo "<tr colspan=\"5\">";
+        echo "<td colspan=\"2\" style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
+        echo "<td colspan=\"3\">$komentar</td>";
+        echo "</tr>";
+?>
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 <input type="hidden" name="id" value="<?php echo $id; ?>">
 <input type="hidden" name="action" value="hlasky">
