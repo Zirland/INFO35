@@ -49,56 +49,63 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <?php
 require_once 'config.php';
 
+$id_user = $_SESSION["id"];
+
 $id = @$_GET["id"];
 if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT osoba FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, osoba FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
-        $old_osoba   = $row16[0];
+        $old_datum   = $row16[0];
+        $old_osoba   = $row16[1];
     }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id     = @$_POST["id"];
-    $action = @$_POST["action"];
 
-    switch ($action) {
-        case "hlavicka":
+            $datum       = @$_POST["datum"];
+            $datum_err   = "";
             $osoba       = @$_POST["osoba"];
             $osoba_err   = "";
+            $odvolat = @$_POST["odvolat"];
+            $schvalit = @$_POST["schvalit"];
+            $komentar = @$_POST["komentar"];
+            $komentar_err = "";
+
+            if (empty(trim($datum))) {
+                $datum_err = "Zadejte prosím datum.";
+            }
 
             if (empty(trim($osoba))) {
                 $osoba_err = "Vyberte prosím odpovědnou osobu.";
             }
 
-            if (empty($osoba_err)) {
-                $query79  = "UPDATE testovani SET osoba= '$osoba' WHERE id = $id;";
-                $prikaz79 = mysqli_query($link, $query79);
-            }
-            break;
-
-        case "hlasky":
-            unset($seznam_hlasek);
-            $pocet = $_POST['pocet'];
-            for ($y = 0; $y < $pocet; $y++) {
-                $$ind            = $y;
-                $arrindex        = "line" . ${$ind};
-                $hlaska          = $_POST[$arrindex];
-                $seznam_hlasek[] = $hlaska;
+            if ($odvolat == "1" && empty(trim($komentar))) {
+                $komentar_err = "Je nutno vyplnit komentář";
             }
 
-            $seznam_hlasek = array_filter($seznam_hlasek);
+            if ($odvolat == "1") {
+                 $cancel = 1;
+            } else {
+                $cancel = 0;
+            }
 
-            $hlasky   = implode("|", $seznam_hlasek);
-            $query93  = "UPDATE testovani SET hlasky = '$hlasky' WHERE id = $id;";
-            $prikaz93 = mysqli_query($link, $query93);
-            Redir("testovani.php");
-            break;
-    }
+            if ($schvalit == "1") {
+                $approve = 1;
+           } else {
+               $approve = 0;
+           }
 
+            if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
+                $query79  = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar', schvaleno = '$approve', odmitnuto = '$cancel' WHERE id = $id;";
+                echo "$query79";
+//                $prikaz79 = mysqli_query($link, $query79);
+//            Redir("testovani.php");
+            }
 }
 
 $query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
@@ -108,9 +115,9 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_silnice = $row16[1];
         $old_osoba   = $row16[2];
         $old_hlasky  = $row16[3];
-        $schvaleno   = $row16[4];
-        $odmitnuto   = $row16[5];
-        $komentar    = $row16[6];
+        $old_schvaleno   = $row16[4];
+        $old_odmitnuto   = $row16[5];
+        $old_komentar    = $row16[6];
 
     }
 }
@@ -120,11 +127,10 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 <input type="hidden" name="id" value="<?php echo $id; ?>">
-<input type="hidden" name="action" value="hlavicka">
 <table width="100%" style="text-align:center;">
-<tr><th>&nbsp;</th><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th></th></tr>
-<tr><td></td>
-<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>" readonly></td>
+<tr><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th>&nbsp;</th></tr>
+<tr>
+<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>"></td>
 <td><select class="form-control" id="silnice" name="silnice" disabled>
     <option value="">---</option>
 <?php
@@ -167,36 +173,41 @@ if ($stmt = mysqli_prepare($link, $sql)) {
 mysqli_stmt_close($stmt);
 ?>
 </select></td>
-<td><input type="submit" value="Uložit změny v záhlaví"></form></td></tr></table>
+<td></td></tr>
 <?php
 $stav_schvaleni = "Čeká na schválení";
         $bg_col         = "#fff";
-        if ($schvaleno == 1) {
+        if ($old_schvaleno == 1) {
             $stav_schvaleni = "Schváleno";
             $bg_col         = "#0f0";
         }
-        if ($odmitnuto == 1) {
+        if ($old_odmitnuto == 1) {
             $stav_schvaleni = "Odmítnuto";
             $bg_col         = "#f00";
         }
         echo "<tr colspan=\"5\">";
-        echo "<td colspan=\"2\" style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
-        echo "<td colspan=\"3\">$komentar</td>";
+        echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
+        echo "<td><input type=\"checkbox\" name=\"schvalit\" value=\"1\"";
+        if ($old_schvaleno == "1") {
+            echo " checked";
+        }
+        if ($id_user != "1") {
+            echo " disabled";
+        }
+        echo "> Schválit termín testu<br/><input type=\"checkbox\" name=\"odvolat\" value=\"1\"";
+        if ($old_odmitnuto == "1") {
+            echo " checked disabled";
+        }      
+        echo "> Zrušit (odvolat) termín testu</td>";
+        echo "<td colspan=\"2\">Komentář: <input type=\"text\" size=\"100\" name=\"komentar\" value=\"$old_komentar\"></td>";
         echo "</tr>";
-?>
-<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-<input type="hidden" name="id" value="<?php echo $id; ?>">
-<input type="hidden" name="action" value="hlasky">
-<table style="text-align:left;">
-<tr><td colspan="2"><input type="submit" value="Uložit seznam hlásek"></form></td></tr>
 
-<?php
 $z            = 0;
 $hlasky_array = explode("|", $old_hlasky);
-
+$hlasky_list = implode(",", $hlasky_array);
 unset($strediska);
 
-$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' ORDER BY CAST(kilometr AS unsigned), smer;";
+$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list)ORDER BY CAST(kilometr AS unsigned), smer;";
 if ($result179 = mysqli_query($link, $query179)) {
     while ($row179 = mysqli_fetch_row($result179)) {
         $strediska[] = $row179[0];
@@ -217,7 +228,7 @@ if ($strediska) {
         }
         echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
         $i        = 0;
-        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' ORDER BY CAST(kilometr AS unsigned), smer";
+        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
         if ($result193 = mysqli_query($link, $query193)) {
             while ($row193 = mysqli_fetch_row($result193)) {
                 $hl_id       = $row193[0];
@@ -235,11 +246,7 @@ if ($strediska) {
                 if ($hl_smoke == 0) {
                     echo "-smoke";
                 }
-                echo "\"><td><input type=\"checkbox\" name=\"line$z\" value=\"$hl_id\"";
-                if (in_array($hl_id, $hlasky_array)) {
-                    echo " CHECKED";
-                }
-                echo "></td>";
+                echo "\"><td></td>";
                 echo "<td>$hl_telcislo | km $hl_kilometr směr $hl_smer</td></tr>\n";
                 $z = $z + 1;
                 $i = $i + 1;
@@ -251,4 +258,5 @@ if ($strediska) {
 }
 ?>
 <tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></form></td></tr>
+<tr><td><input type="submit" value="Uložit změny"></form></td></tr>
 </table>
