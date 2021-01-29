@@ -180,18 +180,13 @@ $stav_schvaleni = "Čeká na schválení";
         }
         echo "<tr colspan=\"5\">";
         echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
-        echo "<td><input type=\"checkbox\" name=\"schvalit\" value=\"1\"";
-        if ($old_schvaleno == "1") {
-            echo " checked";
+        echo "<td>";
+        if ($id_user == "1" && $old_schvaleno == 0) {
+            echo "<input type=\"checkbox\" name=\"schvalit\" value=\"1\"> Schválit termín testu<br/>";
         }
-        if ($id_user != "1") {
-            echo " disabled";
+        if ($old_odmitnuto == 0) {
+            echo "<input type=\"checkbox\" name=\"odvolat\" value=\"1\"> Zrušit (odvolat) termín testu</td>";
         }
-        echo "> Schválit termín testu<br/><input type=\"checkbox\" name=\"odvolat\" value=\"1\"";
-        if ($old_odmitnuto == "1") {
-            echo " checked disabled";
-        }      
-        echo "> Zrušit (odvolat) termín testu</td>";
         echo "<td colspan=\"2\">Komentář: <input type=\"text\" size=\"100\" name=\"komentar\" value=\"$old_komentar\"></td>";
         echo "</tr>";
 
