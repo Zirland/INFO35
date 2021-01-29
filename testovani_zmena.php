@@ -70,7 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $datum       = @$_POST["datum"];
             $datum_err   = "";
             $osoba       = @$_POST["osoba"];
-            $osoba_err   = "";
             $odvolat = @$_POST["odvolat"];
             $schvalit = @$_POST["schvalit"];
             $komentar = @$_POST["komentar"];
@@ -78,10 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (empty(trim($datum))) {
                 $datum_err = "Zadejte prosím datum.";
-            }
-
-            if (empty(trim($osoba))) {
-                $osoba_err = "Vyberte prosím odpovědnou osobu.";
             }
 
             if ($odvolat == "1" && empty(trim($komentar))) {
@@ -132,7 +127,6 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
 <tr>
 <td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>"></td>
 <td><select class="form-control" id="silnice" name="silnice" disabled>
-    <option value="">---</option>
 <?php
 $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
 
@@ -153,7 +147,6 @@ mysqli_stmt_close($stmt);
 ?>
 </select></td>
 <td><select class="form-control" id="osoba" name="osoba">
-    <option value="">---</option>
 <?php
 $sql = "SELECT id, jmeno,tel_cislo FROM test_osoby ORDER BY jmeno";
 
@@ -260,3 +253,5 @@ if ($strediska) {
 <tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></form></td></tr>
 <tr><td><input type="submit" value="Uložit změny"></form></td></tr>
 </table>
+
+<?php echo "$datum_err <br/> $komentar_err"; ?>
