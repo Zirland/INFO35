@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($jmeno_err) && empty($tel_cislo_err)) {
         $query79  = "UPDATE test_osoby SET jmeno = '$jmeno', tel_cislo = '$tel_cislo' WHERE id = $id;";
         $result79 = mysqli_query($link, $query79);
-        Redir("index.php");
+        Redir("test_osoby.php");
     }
 }
 ?>
