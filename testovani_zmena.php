@@ -56,63 +56,137 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, osoba FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, osoba, silnice FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum   = $row16[0];
         $old_osoba   = $row16[1];
+        $old_silnice = $row16[2];
     }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id     = @$_POST["id"];
+    $id = @$_POST["id"];
 
-            $datum       = @$_POST["datum"];
-            $datum_err   = "";
-            $osoba       = @$_POST["osoba"];
-            $odvolat = @$_POST["odvolat"];
-            $schvalit = @$_POST["schvalit"];
-            $komentar = @$_POST["komentar"];
-            $komentar_err = "";
+    $datum        = @$_POST["datum"];
+    $datum_err    = "";
+    $osoba        = @$_POST["osoba"];
+    $odvolat      = @$_POST["odvolat"];
+    $schvalit     = @$_POST["schvalit"];
+    $komentar     = @$_POST["komentar"];
+    $komentar_err = "";
 
-            if (empty(trim($datum))) {
-                $datum_err = "Zadejte prosím datum.";
-            }
+    if (empty(trim($datum))) {
+        $datum_err = "Zadejte prosím datum.";
+    }
 
-            if ($odvolat == "1" && empty(trim($komentar))) {
-                $komentar_err = "Je nutno vyplnit komentář";
-            }
+    if ($odvolat == "1" && empty(trim($komentar))) {
+        $komentar_err = "Je nutno vyplnit komentář";
+    }
 
-            if ($odvolat == "1") {
-                 $cancel = 1;
-            } else {
-                $cancel = 0;
-            }
+    if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
+        if ($odvolat == "1") {
+            $query88 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
+            echo "$query88<br/>";
+//            $prikaz88 = mysqli_query($link, $query88);
 
-            if ($schvalit == "1") {
-                $approve = 1;
-           } else {
-               $approve = 0;
-           }
+            $datumformat = date("d.m.Y", strtotime($datum));
+            $to          = 'Testování hlásek <hlasky@zirland.org>';
+            $subject     = 'Zrušení termínu testu';
+            $message     = '
+<html>
+<head>
+<title>Zrušení termínu testu</title>
+</head>
+<body>
+<p>Plánovaný termín testu byl zrušen:</p>
+<p><b>Datum: </b>' . $datumformat . '<br/>
+<b>Silnice: </b>' . $old_silnice . '<br/>
+<b>Komentář: </b>' . $komentar . '</p>
 
-            if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
-                $query79  = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar', schvaleno = '$approve', odmitnuto = '$cancel' WHERE id = $id;";
-                echo "$query79";
-//                $prikaz79 = mysqli_query($link, $query79);
-//            Redir("testovani.php");
-            }
+</body>
+</html>
+';
+            $headers[] = 'MIME-Version: 1.0';
+            $headers[] = 'Content-type: text/html; charset=utf-8';
+            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            echo "$message<br/>";
+//            mail($to, $subject, $message, implode("\r\n", $headers));
+        }
+
+        if ($schvalit == "1") {
+            $query93 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
+            echo "$query93<br/>";
+//            $prikaz93 = mysqli_query($link, $query93);
+
+            $datumformat = date("d.m.Y", strtotime($datum));
+            $to          = 'Testování hlásek <hlasky@zirland.org>';
+            $subject     = 'Schválení termínu testu';
+            $message     = '
+<html>
+<head>
+<title>Schválení termínu testu</title>
+</head>
+<body>
+<p>Plánovaný termín testu byl schválen:</p>
+<p><b>Datum: </b>' . $datumformat . '<br/>
+<b>Silnice: </b>' . $old_silnice . '</p>
+
+</body>
+</html>
+';
+            $headers[] = 'MIME-Version: 1.0';
+            $headers[] = 'Content-type: text/html; charset=utf-8';
+            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            echo "$message<br/>";
+//            mail($to, $subject, $message, implode("\r\n", $headers));
+        }
+
+        $query79 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
+        echo "$query79<br/>";
+//        $prikaz79 = mysqli_query($link, $query79);
+
+        if ($old_datum != $datum) {
+            $olddatumformat = date("d.m.Y", strtotime($old_datum));
+            $datumformat    = date("d.m.Y", strtotime($datum));
+
+            $to      = 'Testování hlásek <hlasky@zirland.org>';
+            $subject = 'Změna data testu';
+            $message = '
+<html>
+<head>
+<title>Změna data testu</title>
+</head>
+<body>
+<p>Plánovaný termín testu byl změněn:</p>
+<p><b>Původní datum: </b>' . $olddatumformat . '<br/>
+<b>Nové datum: </b>' . $datumformat . '<br/>
+<b>Silnice: </b>' . $old_silnice . '</p>
+
+</body>
+</html>
+';
+            $headers[] = 'MIME-Version: 1.0';
+            $headers[] = 'Content-type: text/html; charset=utf-8';
+            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            echo "$message<br/>";
+//            mail($to, $subject, $message, implode("\r\n", $headers));
+        }
+
+//        Redir("testovani.php");
+    }
 }
 
 $query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
-        $old_datum   = $row16[0];
-        $old_silnice = $row16[1];
-        $old_osoba   = $row16[2];
-        $old_hlasky  = $row16[3];
-        $old_schvaleno   = $row16[4];
-        $old_odmitnuto   = $row16[5];
-        $old_komentar    = $row16[6];
+        $old_datum     = $row16[0];
+        $old_silnice   = $row16[1];
+        $old_osoba     = $row16[2];
+        $old_hlasky    = $row16[3];
+        $old_schvaleno = $row16[4];
+        $old_odmitnuto = $row16[5];
+        $old_komentar  = $row16[6];
 
     }
 }
@@ -169,30 +243,30 @@ mysqli_stmt_close($stmt);
 <td></td></tr>
 <?php
 $stav_schvaleni = "Čeká na schválení";
-        $bg_col         = "#fff";
-        if ($old_schvaleno == 1) {
-            $stav_schvaleni = "Schváleno";
-            $bg_col         = "#0f0";
-        }
-        if ($old_odmitnuto == 1) {
-            $stav_schvaleni = "Odmítnuto";
-            $bg_col         = "#f00";
-        }
-        echo "<tr colspan=\"5\">";
-        echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
-        echo "<td>";
-        if ($id_user == "1" && $old_schvaleno == 0) {
-            echo "<input type=\"checkbox\" name=\"schvalit\" value=\"1\"> Schválit termín testu<br/>";
-        }
-        if ($old_odmitnuto == 0) {
-            echo "<input type=\"checkbox\" name=\"odvolat\" value=\"1\"> Zrušit (odvolat) termín testu</td>";
-        }
-        echo "<td colspan=\"2\">Komentář: <input type=\"text\" size=\"100\" name=\"komentar\" value=\"$old_komentar\"></td>";
-        echo "</tr>";
+$bg_col         = "#fff";
+if ($old_schvaleno == 1) {
+    $stav_schvaleni = "Schváleno";
+    $bg_col         = "#0f0";
+}
+if ($old_odmitnuto == 1) {
+    $stav_schvaleni = "Odmítnuto";
+    $bg_col         = "#f00";
+}
+echo "<tr colspan=\"5\">";
+echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
+echo "<td>";
+if ($id_user == "1" && $old_schvaleno == 0) {
+    echo "<input type=\"checkbox\" name=\"schvalit\" value=\"1\"> Schválit termín testu<br/>";
+}
+if ($old_odmitnuto == 0) {
+    echo "<input type=\"checkbox\" name=\"odvolat\" value=\"1\"> Zrušit (odvolat) termín testu</td>";
+}
+echo "<td colspan=\"2\">Komentář: <input type=\"text\" size=\"100\" name=\"komentar\" value=\"$old_komentar\"></td>";
+echo "</tr>";
 
 $z            = 0;
 $hlasky_array = explode("|", $old_hlasky);
-$hlasky_list = implode(",", $hlasky_array);
+$hlasky_list  = implode(",", $hlasky_array);
 unset($strediska);
 
 $query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list)ORDER BY CAST(kilometr AS unsigned), smer;";
