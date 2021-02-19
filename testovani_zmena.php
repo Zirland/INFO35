@@ -56,12 +56,13 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, osoba, silnice FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, osoba, silnice, hlasky FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum   = $row16[0];
         $old_osoba   = $row16[1];
         $old_silnice = $row16[2];
+        $old_hlasky  = $row16[3];
     }
 }
 
@@ -87,8 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
         if ($odvolat == "1") {
             $query88 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
-            echo "$query88<br/>";
-//            $prikaz88 = mysqli_query($link, $query88);
+            $prikaz88 = mysqli_query($link, $query88);
 
             $datumformat = date("d.m.Y", strtotime($datum));
             $to          = 'Testování hlásek <hlasky@zirland.org>';
@@ -116,8 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($schvalit == "1") {
             $query93 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
-            echo "$query93<br/>";
-//            $prikaz93 = mysqli_query($link, $query93);
+            $prikaz93 = mysqli_query($link, $query93);
 
             $datumformat = date("d.m.Y", strtotime($datum));
             $to          = 'Testování hlásek <hlasky@zirland.org>';
@@ -140,11 +139,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
             echo "$message<br/>";
 //            mail($to, $subject, $message, implode("\r\n", $headers));
+
+            $hlasky_array = explode("|", $old_hlasky);
+            foreach ($hlasky_array as $id_hlaska) {
+                $query147 = "INSERT INTO test_result (id_test, id_hlaska, zvuk, lokace, poznamka) VALUES ('$id','$id_hlaska','','','');";
+                echo "$query147<br/>";
+                $prikaz147 = mysqli_query($link, $query147);
+            }
         }
 
         $query79 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
-        echo "$query79<br/>";
-//        $prikaz79 = mysqli_query($link, $query79);
+        $prikaz79 = mysqli_query($link, $query79);
 
         if ($old_datum != $datum) {
             $olddatumformat = date("d.m.Y", strtotime($old_datum));
