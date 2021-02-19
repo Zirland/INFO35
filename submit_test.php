@@ -69,7 +69,7 @@ if ($error == 0) {
 
     $datumformat = date("d.m.Y", strtotime($datum));
 
-    $to = 'Jan Bessa Urbánek <zirland@zirland.org>';
+    $to      = 'Testování hlásek <hlasky@zirland.org>';
     $subject = 'Požadavek na schválení testu';
     $message = '
 <html>
@@ -78,26 +78,20 @@ if ($error == 0) {
 </head>
 <body>
 <p>Byl zadán požadavek na schválení testu hlásek:</p>
-<p><b>Datum: </b>'. $datumformat .'<br/>
-<b>Silnice: </b>'. $silnice .'</p>
+<p><b>Datum: </b>' . $datumformat . '<br/>
+<b>Silnice: </b>' . $silnice . '</p>
 </body>
 </html>
 ';
-
-// To send HTML mail, the Content-type header must be set
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=utf-8';
+    $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+    mail($to, $subject, $message, implode("\r\n", $headers));
 
-// Additional headers
-    $headers[] = 'From: Testy hlásek <basket@zirland.org>';
+    $query96  = "UPDATE testovani SET finalni = 1 WHERE id = '$id';";
+    $prikaz96 = mysqli_query($link, $query96);
 
-// Mail it
-mail($to, $subject, $message, implode("\r\n", $headers));
-
-$query96 = "UPDATE testovani SET finalni = 1 WHERE id = '$id';";
-$prikaz96 = mysqli_query($link, $query96);
-
-echo $message;
+    echo $message;
 }
 ?>
 

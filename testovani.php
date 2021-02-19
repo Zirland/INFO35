@@ -229,7 +229,7 @@ if ($result81 = mysqli_query($link, $query81)) {
             echo "</span>";
         }
         echo "</td>";
-        echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
+        echo "<td><a href=\"testovani_zmena.php?id=$sel_id\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }
