@@ -12,7 +12,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <html>
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
-	<title>Editace testu hlásek</title>
+	<title>Vyhodnocení testu hlásek</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
         body {
@@ -56,130 +56,9 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, osoba, silnice, hlasky FROM testovani WHERE id = $id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $old_datum   = $row16[0];
-        $old_osoba   = $row16[1];
-        $old_silnice = $row16[2];
-        $old_hlasky  = $row16[3];
-    }
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = @$_POST["id"];
 
-    $datum        = @$_POST["datum"];
-    $datum_err    = "";
-    $osoba        = @$_POST["osoba"];
-    $odvolat      = @$_POST["odvolat"];
-    $schvalit     = @$_POST["schvalit"];
-    $komentar     = @$_POST["komentar"];
-    $komentar_err = "";
-
-    if (empty(trim($datum))) {
-        $datum_err = "Zadejte prosím datum.";
-    }
-
-    if ($odvolat == "1" && empty(trim($komentar))) {
-        $komentar_err = "Je nutno vyplnit komentář";
-    }
-
-    if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
-        if ($odvolat == "1") {
-            $query88 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
-            $prikaz88 = mysqli_query($link, $query88);
-
-            $datumformat = date("d.m.Y", strtotime($datum));
-            $to          = 'Testování hlásek <hlasky@zirland.org>';
-            $subject     = 'Zrušení termínu testu';
-            $message     = '
-<html>
-<head>
-<title>Zrušení termínu testu</title>
-</head>
-<body>
-<p>Plánovaný termín testu byl zrušen:</p>
-<p><b>Datum: </b>' . $datumformat . '<br/>
-<b>Silnice: </b>' . $old_silnice . '<br/>
-<b>Komentář: </b>' . $komentar . '</p>
-
-</body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
-        }
-
-        if ($schvalit == "1") {
-            $query93 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
-            $prikaz93 = mysqli_query($link, $query93);
-
-            $datumformat = date("d.m.Y", strtotime($datum));
-            $to          = 'Testování hlásek <hlasky@zirland.org>';
-            $subject     = 'Schválení termínu testu';
-            $message     = '
-<html>
-<head>
-<title>Schválení termínu testu</title>
-</head>
-<body>
-<p>Plánovaný termín testu byl schválen:</p>
-<p><b>Datum: </b>' . $datumformat . '<br/>
-<b>Silnice: </b>' . $old_silnice . '</p>
-
-</body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
-
-            $hlasky_array = explode("|", $old_hlasky);
-            foreach ($hlasky_array as $id_hlaska) {
-                $query147 = "INSERT INTO test_result (id_test, id_hlaska, zvuk, lokace, poznamka) VALUES ('$id','$id_hlaska','','','');";
-                echo "$query147<br/>";
-                $prikaz147 = mysqli_query($link, $query147);
-            }
-        }
-
-        $query79 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
-        $prikaz79 = mysqli_query($link, $query79);
-
-        if ($old_datum != $datum) {
-            $olddatumformat = date("d.m.Y", strtotime($old_datum));
-            $datumformat    = date("d.m.Y", strtotime($datum));
-
-            $to      = 'Testování hlásek <hlasky@zirland.org>';
-            $subject = 'Změna data testu';
-            $message = '
-<html>
-<head>
-<title>Změna data testu</title>
-</head>
-<body>
-<p>Plánovaný termín testu byl změněn:</p>
-<p><b>Původní datum: </b>' . $olddatumformat . '<br/>
-<b>Nové datum: </b>' . $datumformat . '<br/>
-<b>Silnice: </b>' . $old_silnice . '</p>
-
-</body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
-        }
-
-//        Redir("testovani.php");
-    }
 }
 
 $query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
@@ -196,55 +75,36 @@ if ($result16 = mysqli_query($link, $query16)) {
     }
 }
 PageHeader();
-$today = date("Y-m-d", strtotime("+ 1 day"));
 ?>
 
-<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-<input type="hidden" name="id" value="<?php echo $id; ?>">
-<table width="100%" style="text-align:center;">
-<tr><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th>&nbsp;</th></tr>
+<table width="100%">
+<tr><th>&nbsp;</th><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th>&nbsp;</th></tr>
 <tr>
-<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>"></td>
-<td><select class="form-control" id="silnice" name="silnice" disabled>
+<td></td>
+
 <?php
-$sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+$datumtestu = date("d.m.Y", strtotime($old_datum));
+echo "<td>$datumtestu</td>";
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
-
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$sil_id\"";
-            if ($sil_id == $old_silnice) {
-                echo " SELECTED";
-            }
-            echo ">$sil_name</option>\n";
-        }
+$query89 = "SELECT nazev FROM enum_silnice WHERE id = '$old_silnice';";
+if ($result89 = mysqli_query($link, $query89)) {
+    while ($row89 = mysqli_fetch_row($result89)) {
+        $sil_name = $row89[0];
     }
 }
-mysqli_stmt_close($stmt);
-?>
-</select></td>
-<td><select class="form-control" id="osoba" name="osoba">
-<?php
-$sql = "SELECT id, jmeno,tel_cislo FROM test_osoby ORDER BY jmeno";
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $os_id, $os_jmeno, $os_cislo);
+echo "<td>$sil_name</td>";
 
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$os_id\"";
-            if ($os_id == $old_osoba) {
-                echo " SELECTED";
-            }
-            echo ">$os_jmeno | $os_cislo</option>\n";
-        }
+$query98 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id = '$old_osoba';";
+if ($result98 = mysqli_query($link, $query98)) {
+    while ($row98 = mysqli_fetch_row($result98)) {
+        $os_jmeno = $row98[0];
+        $os_cislo = $row98[1];
     }
 }
-mysqli_stmt_close($stmt);
+
+echo "<td>$os_jmeno | $os_cislo</td>";
 ?>
-</select></td>
 <td></td></tr>
 <?php
 $stav_schvaleni = "Čeká na schválení";
@@ -257,18 +117,16 @@ if ($old_odmitnuto == 1) {
     $stav_schvaleni = "Odmítnuto";
     $bg_col         = "#f00";
 }
-echo "<tr colspan=\"5\">";
-echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
-echo "<td>";
-if ($id_user == "1" && $old_schvaleno == 0) {
-    echo "<input type=\"checkbox\" name=\"schvalit\" value=\"1\"> Schválit termín testu<br/>";
-}
-if ($old_odmitnuto == 0) {
-    echo "<input type=\"checkbox\" name=\"odvolat\" value=\"1\"> Zrušit (odvolat) termín testu</td>";
-}
-echo "<td colspan=\"2\">Komentář: <input type=\"text\" size=\"100\" name=\"komentar\" value=\"$old_komentar\"></td>";
-echo "</tr>";
-
+?>
+<tr>
+<td></td>
+<td style="background-color:<?php echo $bg_col; ?>"> <?php echo $stav_schvaleni ?> </td>
+<td>
+</td>
+<td colspan="2">Komentář: <?php echo $old_komentar; ?></td>
+</tr>
+</table><table>
+<?php
 $z            = 0;
 $hlasky_array = explode("|", $old_hlasky);
 $hlasky_list  = implode(",", $hlasky_array);
