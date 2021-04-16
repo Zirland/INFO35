@@ -51,7 +51,7 @@ require_once 'config.php';
 
 <body>
     <?php
-PageHeader();
+$app_up = PageHeader();
 
 echo "<table width=\"100%\">";
 echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Status</th><th></th></tr>";
@@ -262,7 +262,7 @@ if ($result60 = mysqli_query($link, $query60)) {
             echo "<td></td>";
         }
 
-        echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
+        echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }

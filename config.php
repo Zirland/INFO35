@@ -16,7 +16,7 @@ function Redir($url_aplikace)
 
 function PageHeader()
 {
-    global $link;
+    global $link, $up;
     echo "<table width=\"100%\">";
     echo "<tr>";
 
@@ -35,7 +35,9 @@ function PageHeader()
             }
         }
     }
-
+    if ($up != "") {
+        $up_app_code = $up;
+    }
     $query39 = "SELECT url FROM aplikace WHERE app_id = '$up_app_code';";
     if ($result39 = mysqli_query($link, $query39)) {
         while ($row39 = mysqli_fetch_row($result39)) {
@@ -100,4 +102,6 @@ function PageHeader()
     echo "<td width=\"5%\"><a href=\"logout.php\" class=\"btn btn-danger\">Odhlásit se</a></td>";
     echo "</tr>";
     echo "</table>";
+
+    return $id_prev;
 }

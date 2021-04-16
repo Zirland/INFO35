@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($username_err) && empty($password_err)) {
-        $query29 = "SELECT id, username, password FROM users WHERE username = $username;";
+        $query29 = "SELECT id, username, password FROM users WHERE username = '$username';";
         if ($result29 = mysqli_query($link, $query29)) {
             while ($row29 = mysqli_fetch_row($result29)) {
                 $id              = $row29[0];
@@ -52,8 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
-
-        mysqli_free_result($result29);
     }
 
     mysqli_close($link);
