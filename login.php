@@ -26,40 +26,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($username_err) && empty($password_err)) {
-        $sql = "SELECT id, username, password FROM users WHERE username = ?";
+        $query29 = "SELECT id, username, password FROM users WHERE username = $username;";
+        if ($result29 = mysqli_query($link, $query29)) {
+            while ($row29 = mysqli_fetch_row($result29)) {
+                $id              = $row29[0];
+                $username        = $row29[1];
+                $hashed_password = $row29[2];
 
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+                if (mysqli_num_rows($result29) == 1) {
+                    if (password_verify($password, $hashed_password)) {
+                        session_start();
 
-            $param_username = $username;
+                        $_SESSION["loggedin"] = true;
+                        $_SESSION["id"]       = $id;
+                        $_SESSION["username"] = $username;
 
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password);
-                    if (mysqli_stmt_fetch($stmt)) {
-                        if (password_verify($password, $hashed_password)) {
-                            session_start();
-
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["id"]       = $id;
-                            $_SESSION["username"] = $username;
-
-                            header("location: index.php");
-                        } else {
-                            $password_err = "Zadané heslo není správné.";
-                        }
+                        header("location: index.php");
+                    } else {
+                        $password_err = "Zadané heslo není správné.";
                     }
                 } else {
                     $username_err = "Zadaný uživatel neexistuje.";
                 }
-            } else {
-                echo "Něco se nepovedlo. Zkuste to prosím znovu.";
             }
+        } else {
+            echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
 
-        mysqli_stmt_close($stmt);
+        mysqli_free_result($result29);
     }
 
     mysqli_close($link);
