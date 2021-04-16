@@ -123,7 +123,7 @@ mysqli_stmt_close($stmt);
     </div>
     <hr>
     <?php
-echo "<h3>Dokončená testování</h3>";
+echo "<h3>&nbsp; Dokončená testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
@@ -164,13 +164,13 @@ if ($result81 = mysqli_query($link, $query81)) {
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 
 echo "</table>";
 echo "<hr>";
-echo "<h3>Naplánovaná testování</h3>";
+echo "<h3>&nbsp; Naplánovaná testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
@@ -234,13 +234,13 @@ if ($result81 = mysqli_query($link, $query81)) {
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 
 echo "</table>";
 echo "<hr>";
-echo "<h3>Připravovaná testování</h3>";
+echo "<h3>&nbsp; Připravovaná testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
@@ -282,7 +282,7 @@ if ($result81 = mysqli_query($link, $query81)) {
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 

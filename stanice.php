@@ -145,7 +145,7 @@ Adresa: <input onChange="najdi(this.value)">
 </td><td><a href="mapa.php" target="_blank">Mapa</a></td></tr></table>
 <hr>
 <?php
-echo "<table>";
+echo "<table width=\"100%\">";
 echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná délka</th><th>Zeměpisná šířka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
 $i        = 0;
 $query110 = "SELECT * FROM stanice ORDER BY tel_cislo;";
