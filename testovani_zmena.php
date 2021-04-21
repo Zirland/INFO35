@@ -150,8 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $hlasky_array = explode("|", $old_hlasky);
             foreach ($hlasky_array as $id_hlaska) {
-                $query147 = "INSERT INTO test_result (id_test, id_hlaska, zvuk, lokace, poznamka) VALUES ('$id','$id_hlaska','','','');";
-                echo "$query147<br/>";
+                $query147 = "INSERT INTO test_result (id_test, id_hlaska) VALUES ('$id','$id_hlaska');";
                 $prikaz147 = mysqli_query($link, $query147);
             }
         }

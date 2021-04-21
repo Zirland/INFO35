@@ -99,8 +99,6 @@ if ($error == 0) {
 
     $query96  = "UPDATE testovani SET finalni = 1, zadatel = '$logID' WHERE id = '$id';";
     $prikaz96 = mysqli_query($link, $query96);
-
-    echo $message;
 }
 ?>
 
