@@ -56,13 +56,14 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, osoba, silnice, hlasky FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, osoba, silnice, hlasky, zadatel FROM testovani WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum   = $row16[0];
         $old_osoba   = $row16[1];
         $old_silnice = $row16[2];
         $old_hlasky  = $row16[3];
+        $zadatel     = $row16[4];
     }
 }
 
@@ -86,8 +87,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
+        $query72 = "SELECT email FROM users WHERE id = '$zadatel';";
+        if ($result72 = mysqli_query($link, $query72)) {
+            while ($row72 = mysqli_fetch_row($result72)) {
+                $koordinator = $row72[0];
+            }
+        }
+
         if ($odvolat == "1") {
-            $query88 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
+            $query88  = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
             $prikaz88 = mysqli_query($link, $query88);
 
             $datumformat = date("d.m.Y", strtotime($datum));
@@ -110,12 +118,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
+            $headers[] = 'To: ' . $koordinator;
+            mail($to, $subject, $message, implode("\r\n", $headers));
         }
 
         if ($schvalit == "1") {
-            $query93 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
+            $query93  = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
             $prikaz93 = mysqli_query($link, $query93);
 
             $datumformat = date("d.m.Y", strtotime($datum));
@@ -137,8 +145,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
+            $headers[] = 'To: ' . $koordinator;
+            mail($to, $subject, $message, implode("\r\n", $headers));
 
             $hlasky_array = explode("|", $old_hlasky);
             foreach ($hlasky_array as $id_hlaska) {
@@ -148,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        $query79 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
+        $query79  = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
         $prikaz79 = mysqli_query($link, $query79);
 
         if ($old_datum != $datum) {
@@ -174,11 +182,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            echo "$message<br/>";
-//            mail($to, $subject, $message, implode("\r\n", $headers));
+            $headers[] = 'To: ' . $koordinator;
+            mail($to, $subject, $message, implode("\r\n", $headers));
         }
 
-//        Redir("testovani.php");
+        Redir("testovani.php");
     }
 }
 
