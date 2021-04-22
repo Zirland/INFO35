@@ -32,6 +32,7 @@ include 'Converter.php';
 $converter = new JTSK\Converter();
 
 $id = @$_GET["id"];
+$up = @$_GET["up"];
 if ($id == "") {
     $id = @$_POST["id"];
 }
@@ -65,6 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $platnost     = @$_POST["platnost"];
     $ssud         = @$_POST["ssud"];
     $ssud_err     = "";
+    $up           = @$_POST["up"];
 
     $x      = trim($x);
     $x_pole = explode(" ", trim($x));
@@ -189,15 +191,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!$result33) {$error .= mysqli_error($link) . "<br/>";}
         }
 
-        Redir("index.php");
+        $query39 = "SELECT url FROM aplikace WHERE app_id = '$up';";
+        if ($result39 = mysqli_query($link, $query39)) {
+            while ($row39 = mysqli_fetch_row($result39)) {
+                $up_app = $row39[0];
+            }
+            if (mysqli_num_rows($result39) == 0) {
+                $up_app = "index.php";
+            }
+        }
+
+        Redir("$up_app");
     }
 }
 
-PageHeader();
+$up_app = PageHeader();
 ?>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 <input type="hidden" name="id" value="<?php echo $id; ?>">
+<input type="hidden" name="up" value="<?php echo $up; ?>">
 <table width="100%" style="text-align:center;">
 <tr><td colspan="8">Editace hlásky</td></tr>
 <tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Platnost</th></tr>
@@ -290,7 +303,7 @@ if ($result220 = mysqli_query($link, $query220)) {
             if ($result633 = mysqli_query($link, $query633)) {
                 while ($row633 = mysqli_fetch_row($result633)) {
                     $log_new_value = $row633[0];
-            
+
                 }
             }
         }
@@ -300,7 +313,7 @@ if ($result220 = mysqli_query($link, $query220)) {
 }
 echo "</table>";
 
-//------------------------------------------------------------------------------------------------    ?>
+//------------------------------------------------------------------------------------------------     ?>
 <script type="text/javascript">
 	function SelectElement(id, valueToSelect)
 	{

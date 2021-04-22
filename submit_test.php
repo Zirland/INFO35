@@ -68,6 +68,14 @@ if ($hlasky == "") {
 if ($error == 0) {
 
     $datumformat = date("d.m.Y", strtotime($datum));
+    $logID = $_SESSION["id"];
+
+    $query72 = "SELECT email FROM users WHERE id = '$logID';";
+    if ($result72 = mysqli_query($link, $query72)) {
+        while ($row72 = mysqli_fetch_row($result72)) {
+            $koordinator   = $row72[0];
+        }
+    }
 
     $to      = 'Testování hlásek <hlasky@zirland.org>';
     $subject = 'Požadavek na schválení testu';
@@ -86,12 +94,11 @@ if ($error == 0) {
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=utf-8';
     $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+    $headers[] = 'To: '. $koordinator;
     mail($to, $subject, $message, implode("\r\n", $headers));
 
-    $query96  = "UPDATE testovani SET finalni = 1 WHERE id = '$id';";
+    $query96  = "UPDATE testovani SET finalni = 1, zadatel = '$logID' WHERE id = '$id';";
     $prikaz96 = mysqli_query($link, $query96);
-
-    echo $message;
 }
 ?>
 

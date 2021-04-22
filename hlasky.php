@@ -340,7 +340,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <?php
-PageHeader();
+$app_up = PageHeader();
 ?>
     <div class="wrapper">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -666,7 +666,7 @@ if ($result60 = mysqli_query($link, $query60)) {
             echo "-strikeout";
         }
         echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
-        echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
+        echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }

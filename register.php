@@ -1,35 +1,25 @@
 <?php
 require_once "config.php";
 
-$username     = $password     = $confirm_password     = "";
-$username_err = $password_err = $confirm_password_err = "";
+$username     = $password     = $confirm_password     = $email     = "";
+$username_err = $password_err = $confirm_password_err = $email_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty(trim($_POST["username"]))) {
         $username_err = "Zadejte prosím uživatelské jméno.";
     } else {
-        $sql = "SELECT id FROM users WHERE username = ?";
-
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
-
-            $param_username = trim($_POST["username"]);
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $username_err = "Uživatelské jméno je již obsazeno.";
-                } else {
-                    $username = trim($_POST["username"]);
-                }
+        $input   = trim($_POST["username"]);
+        $query12 = "SELECT id FROM users WHERE username = '$input';";
+        if ($result12 = mysqli_query($link, $query12)) {
+            if (mysqli_num_rows($result12) == 1) {
+                $username_err = "Uživatelské jméno je již obsazeno.";
             } else {
-                echo "Něco se nepovedlo. Zkuste to prosím znovu.";
+                $username = trim($_POST["username"]);
             }
+        } else {
+            echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
-
-        mysqli_stmt_close($stmt);
     }
 
     if (empty(trim($_POST["password"]))) {
@@ -49,25 +39,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
-
-            $param_username = $username;
-            $param_password = password_hash($password, PASSWORD_DEFAULT);
-
-            if (mysqli_stmt_execute($stmt)) {
-                header("location: login.php");
-            } else {
-                echo "Něco se nepovedlo. Zkuste to prosím znovu.";
-            }
+    if (empty(trim($_POST["email"]))) {
+        $email_err = "Zadejte prosím e-mailovou adresu.";
+    } else {
+        if (!filter_var(trim($_POST["email"]), FILTER_VALIDATE_EMAIL)) {
+            $email_err = "Zadaná adresa není platná.";
+        } else {
+            $email = trim($_POST["email"]);
         }
-
-        mysqli_stmt_close($stmt);
     }
 
+    if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($email_err)) {
+        $param_username = $username;
+        $param_password = password_hash($password, PASSWORD_DEFAULT);
+        $param_email    = $email;
+
+        $query57 = "INSERT INTO users (username, password, email) VALUES ('$param_username', '$param_password', '$param_email')";
+        if ($prikaz57 = mysqli_query($link, $query57)) {
+            header("location: login.php");
+        } else {
+            echo "Něco se nepovedlo. Zkuste to prosím znovu.";
+        }
+    }
     mysqli_close($link);
 }
 ?>
@@ -92,6 +85,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label>Uživatelské jméno</label>
                 <input type="text" name="username" class="form-control" value="<?php echo $username; ?>">
                 <span class="help-block"><?php echo $username_err; ?></span>
+            </div>
+            <div class="form-group <?php echo (!empty($email_err)) ? 'has-error' : ''; ?>">
+                <label>E-mail</label>
+                <input type="text" name="email" class="form-control" value="<?php echo $email; ?>">
+                <span class="help-block"><?php echo $email_err; ?></span>
             </div>
             <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
                 <label>Heslo</label>
