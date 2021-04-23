@@ -51,17 +51,48 @@ require_once 'config.php';
 
 $id_user = $_SESSION["id"];
 
-$id = @$_GET["id"];
-if ($id == "") {
-    $id = @$_POST["id"];
+$test_id = @$_GET["id"];
+if ($test_id == "") {
+    $test_id = @$_POST["id"];
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = @$_POST["id"];
+    $test_id = @$_POST["id"];
 
+    $projekt = $_POST["projekt"];
+    $query63 = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";
+    $prikaz63 = mysqli_query($link, $query63);
+
+    $query66 = "SELECT hlasky FROM testovani WHERE id = $test_id;";
+    if ($result66 = mysqli_query($link, $query66)) {
+        while ($row66 = mysqli_fetch_row($result66)) {
+            $old_hlasky    = $row66[0];    
+        }
+    }
+    $hlasky_array = explode("|", $old_hlasky);
+
+    foreach ($hlasky_array as $hl_id) {
+        $Zindex = "H".$hl_id."Z";
+        $Oindex = "H".$hl_id."O";
+        $Iindex = "H".$hl_id."I";
+        $Lindex = "H".$hl_id."L";
+        $Pindex = "H".$hl_id."P";
+
+        $newZkouska = $_POST[$Zindex];
+        $newHovorOut = $_POST[$Oindex];
+        $newHovorIn = $_POST[$Iindex];
+        $newLokace = $_POST[$Lindex];
+        $newPoznamka = $_POST[$Pindex];
+
+        $query81 = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        $prikaz81 = mysqli_query($link, $query81);
+    }
+
+    $time = date("H:i:s",time());
+    echo "<span style=\"background-color:yellow;\">Data uložena v $time.</span>";
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
+$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar, projekt FROM testovani WHERE id = $test_id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum     = $row16[0];
@@ -71,6 +102,7 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_schvaleno = $row16[4];
         $old_odmitnuto = $row16[5];
         $old_komentar  = $row16[6];
+        $old_projekt = $row16[7];
 
     }
 }
@@ -125,64 +157,112 @@ if ($old_odmitnuto == 1) {
 </td>
 <td colspan="2">Komentář: <?php echo $old_komentar; ?></td>
 </tr>
-</table><table>
+</table>
+<br/>
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+<input type="hidden" name="id" value="<?php echo $test_id; ?>">
+<table>
+<tr>
+<td>
+&nbsp; Název projektu: <input type="text" name="projekt" size="50" value="<?php echo $old_projekt; ?>">
+</td>
+</tr>
+</table>
+<br/>
+<table>
 <?php
 $z            = 0;
 $hlasky_array = explode("|", $old_hlasky);
 $hlasky_list  = implode(",", $hlasky_array);
-unset($strediska);
 
-$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list)ORDER BY CAST(kilometr AS unsigned), smer;";
-if ($result179 = mysqli_query($link, $query179)) {
-    while ($row179 = mysqli_fetch_row($result179)) {
-        $strediska[] = $row179[0];
-    }
-}
-if ($strediska) {
-    $strediska = array_filter($strediska);
+echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Lokalizace</th><th style=\"padding:10px\">Poznámka</th></tr>";
+$i        = 0;
+$query193 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
+if ($result193 = mysqli_query($link, $query193)) {
+    while ($row193 = mysqli_fetch_row($result193)) {
+        $hl_id       = $row193[0];
+        $hl_silnice  = $row193[1];
+        $hl_kilometr = $row193[2];
+        $hl_smer     = $row193[3];
+        $hl_smoke    = $row193[4];
+        $hl_typ      = $row193[5];
 
-    echo "<tr>";
-    foreach ($strediska as $stredisko) {
-        $ssud_nazev = "";
-        echo "<td style=\"padding:10px\"><table>";
-        $query237 = "SELECT popis FROM enum_ssud WHERE id = '$stredisko';";
-        if ($result237 = mysqli_query($link, $query237)) {
-            while ($row237 = mysqli_fetch_row($result237)) {
-                $ssud_nazev = $row237[0];
+        $smer_nazev = SmerNazev($hl_silnice, $hl_smer);
+
+        $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokace, poznamka FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        if ($result174 = mysqli_query($link, $query174)) {
+            while ($row174 = mysqli_fetch_row($result174)) {
+                $zkouska   = $row174[0];
+                $hovor_out  = $row174[1];
+                $hovor_in = $row174[2];
+                $lokace    = $row174[3];
+                $poznamka  = $row174[4];
             }
         }
-        echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
-        $i        = 0;
-        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
-        if ($result193 = mysqli_query($link, $query193)) {
-            while ($row193 = mysqli_fetch_row($result193)) {
-                $hl_id       = $row193[0];
-                $hl_telcislo = $row193[1];
-                $hl_kilometr = $row193[2];
-                $hl_smer     = $row193[3];
-                $hl_smoke    = $row193[4];
-
-                echo "<tr class=\"";
-                if ($i % 2 == 0) {
-                    echo "dark";
-                } else {
-                    echo "light";
-                }
-                if ($hl_smoke == 0) {
-                    echo "-smoke";
-                }
-                echo "\"><td></td>";
-                echo "<td>$hl_telcislo | km $hl_kilometr směr $hl_smer</td></tr>\n";
-                $z = $z + 1;
-                $i = $i + 1;
-            }
+        echo "<tr class=\"";
+        if ($i % 2 == 0) {
+            echo "dark";
+        } else {
+            echo "light";
         }
-        echo "</table></td>";
+        if ($hl_smoke == 0) {
+            echo "-smoke";
+        }
+        echo "\"><td>";
+        
+        if ($hovor_out && $hovor_in == "1" && $lokace == "1") {
+            echo "Stav OK";
+        } else {
+            echo "Chyba";
+        }
+
+        echo "</td><td style=\"text-align:center;\">";
+        echo $hl_typ;
+        "</td>";
+        echo "<td style=\"text-align:center;\">$hl_kilometr</td>";
+        echo "<td>$smer_nazev</td>";
+        echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
+        echo $hl_id;
+        echo "Z\" value=\"1\"";
+        if ($zkouska == "1") {
+            echo " CHECKED";
+        }
+        echo "></td>";
+
+        echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
+        echo $hl_id;
+        echo "O\" value=\"1\"";
+        if ($hovor_out == "1") {
+            echo " CHECKED";
+        }
+        echo "></td>";
+
+        echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
+        echo $hl_id;
+        echo "I\" value=\"1\"";
+        if ($hovor_in == "1") {
+            echo " CHECKED";
+        }
+        echo "></td>";
+
+        echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
+        echo $hl_id;
+        echo "L\" value=\"1\"";
+        if ($lokace == "1") {
+            echo " CHECKED";
+        }
+        echo "></td>";
+
+        echo "<td><input type=\"text\" name=\"H";
+        echo $hl_id;
+        echo "P\" value=\"$poznamka\"></td>";
+
+        $z = $z + 1;
+        $i = $i + 1;
     }
-    echo "</tr>";
 }
 ?>
-<tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></form></td></tr>
+<tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></td></tr>
 <tr><td><input type="submit" value="Uložit změny"></form></td></tr>
 </table>
 
