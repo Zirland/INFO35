@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $query106 = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
-//    $prikaz106 = mysqli_query($link, $query106);
+    $query106  = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
+    $prikaz106 = mysqli_query($link, $query106);
 }
 
 ?>
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 PageHeader();
 ?>
 <table><tr><td>
-<form method="post" action="index2.php" name="generuj">
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 <input name="action" value="generuj" type="hidden">
 
 Telefonní číslo: <input type="text" name="tel_cislo" value="" autofocus><br/>
@@ -146,7 +146,7 @@ Adresa: <input onChange="najdi(this.value)">
 <hr>
 <?php
 echo "<table>";
-echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná délka</th><th>Zeměpisná šířka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
+echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
 $i        = 0;
 $query110 = "SELECT * FROM stanice ORDER BY tel_cislo;";
 if ($result110 = mysqli_query($link, $query110)) {
@@ -175,7 +175,7 @@ if ($result110 = mysqli_query($link, $query110)) {
         if ($i % 2 == 0) {
             echo " bgcolor=\"#ddd\"";
         }
-        echo "><td><a href=\"stanice_edit.php?cislo=$tel_cislo\">$prijmeni</a></td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$longitude</td><td>$latitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
+        echo "><td><a href=\"stanice_edit.php?cislo=$tel_cislo\">$prijmeni</a></td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
         $i = $i + 1;
     }
 }

@@ -51,184 +51,31 @@ require_once 'config.php';
 
 <body>
     <?php
-PageHeader();
+$app_up = PageHeader();
 
 echo "<table width=\"100%\">";
-echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Status</th><th></th></tr>";
+echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Status</th><th></th></tr>";
 $i = 0;
 
-$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud FROM hlasky ORDER BY tel_cislo";
+$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky ORDER BY tel_cislo";
 if ($result60 = mysqli_query($link, $query60)) {
     while ($row60 = mysqli_fetch_row($result60)) {
-        $id        = $row60[0];
-        $tel_cislo = $row60[1];
-        $silnice   = $row60[2];
-        $kilometr  = $row60[3];
-        $smer      = $row60[4];
-        $longitude = $row60[5];
-        $latitude  = $row60[6];
-        $platnost  = $row60[7];
-        $export    = $row60[8];
-        $edited    = $row60[9];
-        $ssud      = $row60[10];
+        $id         = $row60[0];
+        $tel_cislo  = $row60[1];
+        $silnice    = $row60[2];
+        $kilometr   = $row60[3];
+        $smer       = $row60[4];
+        $longitude  = $row60[5];
+        $latitude   = $row60[6];
+        $platnost   = $row60[7];
+        $export     = $row60[8];
+        $edited     = $row60[9];
+        $ssud       = $row60[10];
         $ssud_nazev = "";
+        $typ        = $row60[11];
+        $typ_nazev  = "";
 
-        switch ($silnice) {
-            case 'D0':
-                if ($smer == "+" && $kilometr < 30) {
-                    $smer_nazev = "letiště";
-                } elseif ($smer == "+" && $kilometr < 65) {
-                    $smer_nazev = "Štěrboholy";
-                } elseif ($smer == "+") {
-                    $smer_nazev = "letiště";
-                } elseif ($smer == "-" && $kilometr > 65) {
-                    $smer_nazev = "Brno";
-                } elseif ($smer == "-" && $kilometr > 30) {
-                    $smer_nazev = "Liberec";
-                } else {
-                    $smer_nazev = "Brno";
-                }
-                break;
-
-            case 'D1':
-                if ($smer == "+" && $kilometr < 189) {
-                    $smer_nazev = "Brno";
-                } elseif ($smer == "+" && $kilometr < 273) {
-                    $smer_nazev = "Hulín";
-                } elseif ($smer == "+") {
-                    $smer_nazev = "Bohumín";
-                } elseif ($smer == "-" && $kilometr > 273) {
-                    $smer_nazev = "Přerov";
-                } elseif ($smer == "-" && $kilometr > 203) {
-                    $smer_nazev = "Brno";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D2':
-                if ($smer == "+") {
-                    $smer_nazev = "Lanžhot";
-                } else {
-                    $smer_nazev = "Brno";
-                }
-                break;
-
-            case 'D3':
-                if ($smer == "+") {
-                    $smer_nazev = "České Budějovice";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D4':
-                if ($smer == "+") {
-                    $smer_nazev = "Písek";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D5':
-                if ($smer == "+") {
-                    $smer_nazev = "Rozvadov";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D6':
-                if ($smer == "+" && $kilometr < 112) {
-                    $smer_nazev = "Karlovy Vary";
-                } elseif ($smer == "+") {
-                    $smer_nazev = "Cheb";
-                } elseif ($smer == "-" && $kilometr > 112) {
-                    $smer_nazev = "Karlovy Vary";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D7':
-                if ($smer == "+") {
-                    $smer_nazev = "Chomutov";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D8':
-                if ($smer == "+") {
-                    $smer_nazev = "Petrovice";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D11':
-                if ($smer == "+") {
-                    $smer_nazev = "Hradec Králové";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case 'D35':
-                if ($smer == "+" && $kilometr < 140) {
-                    $smer_nazev = "Opatovice nad Labem";
-                } elseif ($smer == "+") {
-                    $smer_nazev = "Lipník nad Bečvou";
-                } elseif ($smer == "-" && $kilometr > 220) {
-                    $smer_nazev = "Mohelnice";
-                } else {
-                    $smer_nazev = "Praha";
-                }
-                break;
-
-            case '35':
-                if ($smer == "+") {
-                    $smer_nazev = "Valašské Meziříčí";
-                } else {
-                    $smer_nazev = "Hranice";
-                }
-                break;
-
-            case 'D48':
-                if ($smer == "+") {
-                    $smer_nazev = "Český Těšín";
-                } else {
-                    $smer_nazev = "Bělotín";
-                }
-                break;
-
-            case 'D55':
-                if ($smer == "+") {
-                    $smer_nazev = "Zlín";
-                } else {
-                    $smer_nazev = "Kroměříž";
-                }
-                break;
-            case '57':
-                if ($smer == "+") {
-                    $smer_nazev = "Vsetín";
-                } else {
-                    $smer_nazev = "Valašské Meziříčí";
-                }
-                break;
-
-            case '58':
-                if ($smer == "+") {
-                    $smer_nazev = "Ostrava";
-                } else {
-                    $smer_nazev = "Rožnov pod Radhošťem";
-                }
-                break;
-
-            default:
-                $smer_nazev = $smer;
-                break;
-        }
+        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
         if (substr($silnice, 0, 1) != "D") {
             $silnice = "I/" . $silnice;
@@ -239,7 +86,13 @@ if ($result60 = mysqli_query($link, $query60)) {
         if ($result237 = mysqli_query($link, $query237)) {
             while ($row237 = mysqli_fetch_row($result237)) {
                 $ssud_nazev = $row237[0];
-        
+            }
+        }
+
+        $query237 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
+        if ($result237 = mysqli_query($link, $query237)) {
+            while ($row237 = mysqli_fetch_row($result237)) {
+                $typ_nazev = $row237[0];
             }
         }
 
@@ -252,17 +105,17 @@ if ($result60 = mysqli_query($link, $query60)) {
         if ($platnost == 0) {
             echo "-strikeout";
         }
-        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
+        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";
 
         if ($export == "0") {
             echo "<td>Připraveno k exportu</td>";
         } elseif ($edited == "1") {
-            echo "<td>Čeká na schválení HZS ČR</td>";
+            echo "<td>Čeká na schválení O2 ITS</td>";
         } else {
             echo "<td></td>";
         }
 
-        echo "<td><a href=\"edit.php?id=$id\">Edit</a></td></tr>";
+        echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }

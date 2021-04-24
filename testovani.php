@@ -123,12 +123,14 @@ mysqli_stmt_close($stmt);
     </div>
     <hr>
     <?php
+$today = date("Y-m-d");
+
 echo "<h3>Dokončená testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
 
-$query81 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani WHERE overeno = 1 ORDER BY datum, silnice;";
+$query81 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE schvaleno = 1 and datum <= '$today' ORDER BY datum, silnice;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id      = $row81[0];
@@ -136,6 +138,7 @@ if ($result81 = mysqli_query($link, $query81)) {
         $sel_silnice = $row81[2];
         $sel_osoba   = $row81[3];
         $sel_hlasky  = $row81[4];
+        $overeno     = $row81[5];
 
         $datum_format = date("d.m.Y", strtotime($sel_datum));
 
@@ -152,30 +155,40 @@ if ($result81 = mysqli_query($link, $query81)) {
         $hlasky_arr   = array_filter($hlasky_arr);
         $pocet_hlasek = count($hlasky_arr);
 
-        echo "<tr style=\"";
         if ($i % 2 == 0) {
-            echo "background-color:#ddd;";
+            $back_line_col = "#ddd";
         } else {
-            echo "background-color:#fff;";
+            $back_line_col = "#fff";
         }
-        echo "\"><td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
-        echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
+
+        echo "<tr style=\"background-color:$back_line_col;\">";
+        echo "<td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+        $stav_schvaleni = "Nevyhodnoceno";
+        $bg_col         = $back_line_col;
+        if ($overeno == 1) {
+            $stav_schvaleni = "Schváleno";
+            $bg_col         = "#0f0";
+        }
+        echo "<td style=\"background-color:$bg_col;\">";
+        echo "$stav_schvaleni";
+        echo "</td>";
+        echo "<td><a href=\"testovani_finish.php?id=$sel_id\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 
 echo "</table>";
 echo "<hr>";
-echo "<h3>Naplánovaná testování</h3>";
+echo "<h3>&nbsp; Naplánovaná testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
 
-$query81 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE finalni = 1 ORDER BY datum, silnice;";
+$query81 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE finalni = 1 AND datum > '$today' ORDER BY datum, silnice;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id      = $row81[0];
@@ -229,18 +242,18 @@ if ($result81 = mysqli_query($link, $query81)) {
             echo "</span>";
         }
         echo "</td>";
-        echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
+        echo "<td><a href=\"testovani_zmena.php?id=$sel_id\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 
 echo "</table>";
 echo "<hr>";
-echo "<h3>Připravovaná testování</h3>";
+echo "<h3>&nbsp; Připravovaná testování</h3>";
 echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
@@ -282,7 +295,7 @@ if ($result81 = mysqli_query($link, $query81)) {
 
     }
     if (mysqli_num_rows($result81) == 0) {
-        echo "<tr><td colspan=\"6\"><i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
+        echo "<tr><td colspan=\"6\">&nbsp; <i>Nebyla nalezena položka odpovídající tomuto omezení.</i></td></tr>";
     }
 }
 

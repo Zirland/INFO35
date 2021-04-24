@@ -16,7 +16,7 @@ function Redir($url_aplikace)
 
 function PageHeader()
 {
-    global $link;
+    global $link, $up;
     echo "<table width=\"100%\">";
     echo "<tr>";
 
@@ -35,7 +35,9 @@ function PageHeader()
             }
         }
     }
-
+    if ($up != "") {
+        $up_app_code = $up;
+    }
     $query39 = "SELECT url FROM aplikace WHERE app_id = '$up_app_code';";
     if ($result39 = mysqli_query($link, $query39)) {
         while ($row39 = mysqli_fetch_row($result39)) {
@@ -100,4 +102,167 @@ function PageHeader()
     echo "<td width=\"5%\"><a href=\"logout.php\" class=\"btn btn-danger\">Odhlásit se</a></td>";
     echo "</tr>";
     echo "</table>";
+
+    return $id_prev;
+}
+
+function SmerNazev($silnice, $smer, $kilometr) {
+    switch ($silnice) {
+        case 'D0':
+            if ($smer == "+" && $kilometr < 30) {
+                $smer_nazev = "letiště";
+            } elseif ($smer == "+" && $kilometr < 65) {
+                $smer_nazev = "Štěrboholy";
+            } elseif ($smer == "+") {
+                $smer_nazev = "letiště";
+            } elseif ($smer == "-" && $kilometr > 65) {
+                $smer_nazev = "Brno";
+            } elseif ($smer == "-" && $kilometr > 30) {
+                $smer_nazev = "Liberec";
+            } else {
+                $smer_nazev = "Brno";
+            }
+            break;
+
+        case 'D1':
+            if ($smer == "+" && $kilometr < 189) {
+                $smer_nazev = "Brno";
+            } elseif ($smer == "+" && $kilometr < 273) {
+                $smer_nazev = "Hulín";
+            } elseif ($smer == "+") {
+                $smer_nazev = "Bohumín";
+            } elseif ($smer == "-" && $kilometr > 273) {
+                $smer_nazev = "Přerov";
+            } elseif ($smer == "-" && $kilometr > 203) {
+                $smer_nazev = "Brno";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D2':
+            if ($smer == "+") {
+                $smer_nazev = "Lanžhot";
+            } else {
+                $smer_nazev = "Brno";
+            }
+            break;
+
+        case 'D3':
+            if ($smer == "+") {
+                $smer_nazev = "České Budějovice";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D4':
+            if ($smer == "+") {
+                $smer_nazev = "Písek";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D5':
+            if ($smer == "+") {
+                $smer_nazev = "Rozvadov";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D6':
+            if ($smer == "+" && $kilometr < 112) {
+                $smer_nazev = "Karlovy Vary";
+            } elseif ($smer == "+") {
+                $smer_nazev = "Cheb";
+            } elseif ($smer == "-" && $kilometr > 112) {
+                $smer_nazev = "Karlovy Vary";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D7':
+            if ($smer == "+") {
+                $smer_nazev = "Chomutov";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D8':
+            if ($smer == "+") {
+                $smer_nazev = "Petrovice";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D11':
+            if ($smer == "+") {
+                $smer_nazev = "Hradec Králové";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case 'D35':
+            if ($smer == "+" && $kilometr < 140) {
+                $smer_nazev = "Opatovice nad Labem";
+            } elseif ($smer == "+") {
+                $smer_nazev = "Lipník nad Bečvou";
+            } elseif ($smer == "-" && $kilometr > 220) {
+                $smer_nazev = "Mohelnice";
+            } else {
+                $smer_nazev = "Praha";
+            }
+            break;
+
+        case '35':
+            if ($smer == "+") {
+                $smer_nazev = "Valašské Meziříčí";
+            } else {
+                $smer_nazev = "Hranice";
+            }
+            break;
+
+        case 'D48':
+            if ($smer == "+") {
+                $smer_nazev = "Český Těšín";
+            } else {
+                $smer_nazev = "Bělotín";
+            }
+            break;
+
+        case 'D55':
+            if ($smer == "+") {
+                $smer_nazev = "Zlín";
+            } else {
+                $smer_nazev = "Kroměříž";
+            }
+            break;
+        case '57':
+            if ($smer == "+") {
+                $smer_nazev = "Vsetín";
+            } else {
+                $smer_nazev = "Valašské Meziříčí";
+            }
+            break;
+
+        case '58':
+            if ($smer == "+") {
+                $smer_nazev = "Ostrava";
+            } else {
+                $smer_nazev = "Rožnov pod Radhošťem";
+            }
+            break;
+
+        default:
+            $smer_nazev = $smer;
+            break;
+    }
+
+    return $smer_nazev;
 }
