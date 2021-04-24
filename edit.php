@@ -37,7 +37,7 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud FROM hlasky WHERE id = $id;";
+$query16 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud, typ FROM hlasky WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_tel_cislo = $row16[0];
@@ -48,6 +48,7 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_longitude = $row16[5];
         $old_platnost  = $row16[6];
         $old_ssud      = $row16[7];
+        $old_typ       = $row16[8];
     }
 }
 
@@ -66,6 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $platnost     = @$_POST["platnost"];
     $ssud         = @$_POST["ssud"];
     $ssud_err     = "";
+    $typ          = @$_POST["typ"];
+    $typ_err      = "";
     $up           = @$_POST["up"];
 
     $x      = trim($x);
@@ -108,8 +111,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ssud_err = "Přiřaďte prosím hlásku příslušnému středisku SSÚD.";
     }
 
-    if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err)) {
-        $query79  = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud' WHERE id = $id;";
+    if (empty(trim($typ))) {
+        $typ_err = "Vyberte prosím typ hlásky.";
+    }
+
+    if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
+        $query79  = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud', typ = '$typ' WHERE id = $id;";
         $result79 = mysqli_query($link, $query79);
         if (!$result79) {$error .= mysqli_error($link) . "<br/>";}
 
@@ -185,6 +192,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_cas       = microtime(true);
             $param_sloupec   = "ssud";
             $param_new_value = $ssud;
+        }
+
+        if ($old_typ != $typ) {
+            $param_hlaska_id = $id;
+            $param_user      = htmlspecialchars($_SESSION["username"]);
+            $param_cas       = microtime(true);
+            $param_sloupec   = "typ";
+            $param_new_value = $typ;
 
             $query33  = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $result33 = mysqli_query($link, $query33);
@@ -213,7 +228,7 @@ $up_app = PageHeader();
 <input type="hidden" name="up" value="<?php echo $up; ?>">
 <table width="100%" style="text-align:center;">
 <tr><td colspan="8">Editace hlásky</td></tr>
-<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Platnost</th></tr>
+<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Platnost</th></tr>
 <tr><td></td>
 <td><?php echo $old_tel_cislo; ?></td>
 <td><select class="form-control" id="silnice" name="silnice">
@@ -278,6 +293,27 @@ if ($stmt = mysqli_prepare($link, $sql)) {
 mysqli_stmt_close($stmt);
 ?>
 </select></td>
+<td><select class="form-control" id="typ" name="typ">
+    <option value="">---</option>
+<?php
+$sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
+
+if ($stmt = mysqli_prepare($link, $sql)) {
+    if (mysqli_stmt_execute($stmt)) {
+        mysqli_stmt_bind_result($stmt, $typ_id, $typ_name);
+
+        while (mysqli_stmt_fetch($stmt)) {
+            echo "<option value=\"$typ_id\"";
+            if ($typ_id == $old_typ) {
+                echo " SELECTED";
+            }
+            echo ">$typ_name</option>\n";
+        }
+    }
+}
+mysqli_stmt_close($stmt);
+?>
+</select></td>
 <td><input type="checkbox" name="platnost" value="1" <?php if ($old_platnost == 1) {echo " CHECKED";}?>></td>
 </tr>
 <tr><td colspan="3"></td><td colspan="5"><input type="submit" value="Uložit změny"></form></td></tr>
@@ -308,12 +344,22 @@ if ($result220 = mysqli_query($link, $query220)) {
             }
         }
 
+        if ($log_sloupec == "typ") {
+            $query633 = "SELECT popis FROM enum_typ WHERE id = $log_new_value;";
+            if ($result633 = mysqli_query($link, $query633)) {
+                while ($row633 = mysqli_fetch_row($result633)) {
+                    $log_new_value = $row633[0];
+
+                }
+            }
+        }
+
         echo "<tr><td>$log_sloupec</td><td>$log_new_value</td><td>$log_user</td><td>$log_cas_format</td></tr>";
     }
 }
 echo "</table>";
 
-//------------------------------------------------------------------------------------------------     ?>
+//------------------------------------------------------------------------------------------------      ?>
 <script type="text/javascript">
 	function SelectElement(id, valueToSelect)
 	{
