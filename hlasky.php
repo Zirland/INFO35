@@ -486,7 +486,7 @@ if ($result60 = mysqli_query($link, $query60)) {
         $ssud       = $row60[8];
         $ssud_nazev = "";
 
-        $smer_nazev = SmerNazev($silnice, $kilometr);
+        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
         if (substr($silnice, 0, 1) != "D") {
             $silnice = "I/" . $silnice;

@@ -106,7 +106,7 @@ function PageHeader()
     return $id_prev;
 }
 
-function SmerNazev($silnice, $smer) {
+function SmerNazev($silnice, $smer, $kilometr) {
     switch ($silnice) {
         case 'D0':
             if ($smer == "+" && $kilometr < 30) {
