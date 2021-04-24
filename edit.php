@@ -217,6 +217,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         Redir("$up_app");
+    } else {
+        echo "$silnice_err $kilometr_err $x_err $y_err $ssud_err $typ_err<br/>";
     }
 }
 
