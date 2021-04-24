@@ -54,24 +54,26 @@ require_once 'config.php';
 $app_up = PageHeader();
 
 echo "<table width=\"100%\">";
-echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Status</th><th></th></tr>";
+echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Status</th><th></th></tr>";
 $i = 0;
 
-$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud FROM hlasky ORDER BY tel_cislo";
+$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky ORDER BY tel_cislo";
 if ($result60 = mysqli_query($link, $query60)) {
     while ($row60 = mysqli_fetch_row($result60)) {
-        $id        = $row60[0];
-        $tel_cislo = $row60[1];
-        $silnice   = $row60[2];
-        $kilometr  = $row60[3];
-        $smer      = $row60[4];
-        $longitude = $row60[5];
-        $latitude  = $row60[6];
-        $platnost  = $row60[7];
-        $export    = $row60[8];
-        $edited    = $row60[9];
-        $ssud      = $row60[10];
+        $id         = $row60[0];
+        $tel_cislo  = $row60[1];
+        $silnice    = $row60[2];
+        $kilometr   = $row60[3];
+        $smer       = $row60[4];
+        $longitude  = $row60[5];
+        $latitude   = $row60[6];
+        $platnost   = $row60[7];
+        $export     = $row60[8];
+        $edited     = $row60[9];
+        $ssud       = $row60[10];
         $ssud_nazev = "";
+        $typ        = $row60[11];
+        $typ_nazev  = "";
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
@@ -84,7 +86,13 @@ if ($result60 = mysqli_query($link, $query60)) {
         if ($result237 = mysqli_query($link, $query237)) {
             while ($row237 = mysqli_fetch_row($result237)) {
                 $ssud_nazev = $row237[0];
-        
+            }
+        }
+
+        $query237 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
+        if ($result237 = mysqli_query($link, $query237)) {
+            while ($row237 = mysqli_fetch_row($result237)) {
+                $typ_nazev = $row237[0];
             }
         }
 
@@ -97,12 +105,12 @@ if ($result60 = mysqli_query($link, $query60)) {
         if ($platnost == 0) {
             echo "-strikeout";
         }
-        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td>";
+        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";
 
         if ($export == "0") {
             echo "<td>Připraveno k exportu</td>";
         } elseif ($edited == "1") {
-            echo "<td>Čeká na schválení HZS ČR</td>";
+            echo "<td>Čeká na schválení O2 ITS</td>";
         } else {
             echo "<td></td>";
         }
