@@ -15,7 +15,7 @@ if ($result14 = mysqli_query($link, $query14)) {
         $kilometr  = $row14[2];
         $smer      = $row14[3];
 
-        $smer_nazev = SmerNazev($silnice, $kilometr);
+        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
         if (substr($silnice, 0, 1) != "D") {
             $silnice = "I/" . $silnice;

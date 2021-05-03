@@ -187,7 +187,7 @@ if ($result193 = mysqli_query($link, $query193)) {
         $hl_smoke    = $row193[4];
         $hl_typ      = $row193[5];
 
-        $smer_nazev = SmerNazev($hl_silnice, $hl_smer);
+        $smer_nazev = SmerNazev($hl_silnice, $hl_smer, $hl_kilometr);
 
         $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokace, poznamka FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         if ($result174 = mysqli_query($link, $query174)) {
