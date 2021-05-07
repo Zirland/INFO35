@@ -59,36 +59,42 @@ if ($test_id == "") {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $test_id = @$_POST["id"];
 
-    $projekt = $_POST["projekt"];
-    $query63 = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";
+    $projekt  = $_POST["projekt"];
+    $query63  = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";
     $prikaz63 = mysqli_query($link, $query63);
 
     $query66 = "SELECT hlasky FROM testovani WHERE id = $test_id;";
     if ($result66 = mysqli_query($link, $query66)) {
         while ($row66 = mysqli_fetch_row($result66)) {
-            $old_hlasky    = $row66[0];    
+            $old_hlasky = $row66[0];
         }
     }
     $hlasky_array = explode("|", $old_hlasky);
 
     foreach ($hlasky_array as $hl_id) {
-        $Zindex = "H".$hl_id."Z";
-        $Oindex = "H".$hl_id."O";
-        $Iindex = "H".$hl_id."I";
-        $Lindex = "H".$hl_id."L";
-        $Pindex = "H".$hl_id."P";
+        $Zindex = "H" . $hl_id . "Z";
+        $Oindex = "H" . $hl_id . "O";
+        $Iindex = "H" . $hl_id . "I";
+        $Lindex = "H" . $hl_id . "L";
+        $Pindex = "H" . $hl_id . "P";
 
-        $newZkouska = $_POST[$Zindex];
+        $newZkouska  = $_POST[$Zindex];
         $newHovorOut = $_POST[$Oindex];
-        $newHovorIn = $_POST[$Iindex];
-        $newLokace = $_POST[$Lindex];
+        $newHovorIn  = $_POST[$Iindex];
+        $newLokace   = $_POST[$Lindex];
         $newPoznamka = $_POST[$Pindex];
 
-        $query81 = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        if ($newHovorOut == "1" && $newHovorIn == "1" && $newLokace == "1") {
+            $newStatus = "1";
+        } else {
+            $newStatus = "0";
+        }
+
+        $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         $prikaz81 = mysqli_query($link, $query81);
     }
 
-    $time = date("H:i:s",time());
+    $time = date("H:i:s", time());
     echo "<span style=\"background-color:yellow;\">Data uložena v $time.</span>";
 }
 
@@ -102,8 +108,7 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_schvaleno = $row16[4];
         $old_odmitnuto = $row16[5];
         $old_komentar  = $row16[6];
-        $old_projekt = $row16[7];
-
+        $old_projekt   = $row16[7];
     }
 }
 PageHeader();
@@ -189,14 +194,15 @@ if ($result193 = mysqli_query($link, $query193)) {
 
         $smer_nazev = SmerNazev($hl_silnice, $hl_smer, $hl_kilometr);
 
-        $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokace, poznamka FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokace, poznamka, `status` FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         if ($result174 = mysqli_query($link, $query174)) {
             while ($row174 = mysqli_fetch_row($result174)) {
                 $zkouska   = $row174[0];
-                $hovor_out  = $row174[1];
-                $hovor_in = $row174[2];
+                $hovor_out = $row174[1];
+                $hovor_in  = $row174[2];
                 $lokace    = $row174[3];
                 $poznamka  = $row174[4];
+                $status = $row174[5];
             }
         }
         echo "<tr class=\"";
@@ -209,8 +215,8 @@ if ($result193 = mysqli_query($link, $query193)) {
             echo "-smoke";
         }
         echo "\"><td>";
-        
-        if ($hovor_out && $hovor_in == "1" && $lokace == "1") {
+
+        if ($status == "1") {
             echo "Stav OK";
         } else {
             echo "Chyba";
@@ -218,7 +224,7 @@ if ($result193 = mysqli_query($link, $query193)) {
 
         echo "</td><td style=\"text-align:center;\">";
         echo $hl_typ;
-        "</td>";
+        echo "</td>";
         echo "<td style=\"text-align:center;\">$hl_kilometr</td>";
         echo "<td>$smer_nazev</td>";
         echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
@@ -256,7 +262,7 @@ if ($result193 = mysqli_query($link, $query193)) {
         echo "<td><input type=\"text\" name=\"H";
         echo $hl_id;
         echo "P\" value=\"$poznamka\"></td>";
-
+        echo "</tr>";
         $z = $z + 1;
         $i = $i + 1;
     }
