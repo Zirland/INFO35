@@ -22,9 +22,6 @@ require_once 'config.php';
             margin-right: auto;
             font-family:arial;
         }
-        tr {
-            vertical-align:top;
-        }
         td {
             font-size:13px;
         }
@@ -179,7 +176,7 @@ if ($result110 = mysqli_query($link, $query110)) {
 ?>
 
 <table>
-<tr><th style="width:15mm">&nbsp;</th>
+<tr><th style="width:15mm;">&nbsp;</th>
 <th>Typ</th><th class="rotated">Označení</th><th>Směr</th><th class="rotated">Zkouška</th><th class="rotated">SOS–IZS</th><th class="rotated">IZS–SOS</th><th class="rotated">Lokalizace</th><th>Poznámka</th></tr>
 <?php
 echo $zarizeni;
@@ -187,8 +184,9 @@ echo $zarizeni;
 </tr>
 </table>
 
+<?php
 print_r($radky);
-
+?>
 
 </td>
 </tr>
