@@ -85,9 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $newPoznamka = $_POST[$Pindex];
 
         if ($newHovorOut == "1" && $newHovorIn == "1" && $newLokace == "1") {
-            $newStatus = "1";
-        } else {
             $newStatus = "0";
+        } else {
+            $newStatus = "1";
         }
 
         $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
@@ -216,7 +216,7 @@ if ($result193 = mysqli_query($link, $query193)) {
         }
         echo "\"><td>";
 
-        if ($status == "1") {
+        if ($status == "0") {
             echo "Stav OK";
         } else {
             echo "Chyba";

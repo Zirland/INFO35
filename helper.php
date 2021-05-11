@@ -1,7 +1,6 @@
 <?php
 $dotaz = $_GET['opt'];
 
-$post = explode(' ', $dotaz);
 $query = urlencode($dotaz);
 
 $url = "http://ags.cuzk.cz/arcgis/rest/services/RUIAN/Vyhledavaci_sluzba_nad_daty_RUIAN/MapServer/exts/GeocodeSOE/findAddressCandidates?SingleLine=$query&f=pjson";
