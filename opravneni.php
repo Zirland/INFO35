@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $usr = $split[1];
         $app = $split[2];
 
-        $query91 = "DELETE FROM opravneni WHERE user_id = '$usr' AND app_id = '$app';<br/>";
+        $query91 = "DELETE FROM opravneni WHERE user_id = '$usr' AND app_id = '$app';";
         $prikaz91 = mysqli_query($link, $query91);
     }
 
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $usr = $split[1];
         $app = $split[2];
 
-        $query91 = "INSERT INTO opravneni (user_id, app_id) VALUES ('$usr', '$app');<br/>";
+        $query91 = "INSERT INTO opravneni (user_id, app_id) VALUES ('$usr', '$app');";
         $prikaz91 = mysqli_query($link, $query91);
     }
 }
