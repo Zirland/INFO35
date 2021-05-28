@@ -74,7 +74,22 @@ require_once 'config.php';
     <?php
 $app_up = PageHeader();
 
-echo "<table width=\"100%\"><tr><td width=\"10\">&nbsp;</th><td width=\"150\"><input id=\"telcislo\" onChange=\"telcislo(this.value)\" style=\"width:140px;\"></td><td width=\"100\">Silnice</td><td width=\"100\">Kilometr</td><td width=\"300\">Směr</td><td>Zeměpisná šířka</td><td>Zeměpisná délka</td><td>SSÚD</td><td>Typ</td><td>Status</td><td></td></tr></table>";
+echo "<table width=\"100%\">
+<tr>
+<td width=\"10\">&nbsp;</td>
+<td width=\"150\"><input id=\"telcislo\" onChange=\"telcislo(this.value)\" style=\"width:140px;\"></td>
+<td width=\"100\">Silnice</td>
+<td width=\"100\">Kilometr</td>
+<td width=\"300\">Směr</td>
+<td width=\"300\">Zeměpisná šířka</td>
+<td width=\"300\">Zeměpisná délka</td>
+<td width=\"200\">SSÚD</td>
+<td width=\"100\">Typ</td>
+<td>Status</td>
+<td width=\"100\">&nbsp;</td>
+<td width=\"10\">&nbsp;</td>
+</tr>
+</table>";
 
 echo "<div id=\"data\">";
 echo "</div>";

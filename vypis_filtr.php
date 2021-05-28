@@ -4,7 +4,21 @@ require_once 'config.php';
 $dotaz = $_GET['telcislo'];
 $app_up = "8";
 echo "<table width=\"100%\">";
-echo "<tr><th width=\"10\">&nbsp;</th><th width=\"150\">Telefonní číslo</th><th width=\"100\">Silnice</th><th width=\"100\">Kilometr</th><th width=\"300\">Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Status</th><th></th></tr>";
+echo "<tr>";
+echo "<th width=\"10\">&nbsp;</th>";
+echo "<th width=\"150\">Telefonní číslo</th>";
+echo "<th width=\"100\">Silnice</th>";
+echo "<th width=\"100\">Kilometr</th>";
+echo "<th width=\"300\">Směr</th>";
+echo "<th width=\"300\">Zeměpisná šířka</th>";
+echo "<th width=\"300\">Zeměpisná délka</th>";
+echo "<th width=\"200\">SSÚD</th>";
+echo "<th width=\"100\">Typ</th>";
+echo "<th>Status</th>";
+echo "<th width=\"100\">&nbsp;</th>";
+echo "<th width=\"10\">&nbsp;</th>";
+echo "</tr>";
+
 $i = 0;
 $query5 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky WHERE tel_cislo LIKE '$dotaz%' ORDER BY tel_cislo;";
 if ($result5 = mysqli_query($link, $query5)) {
