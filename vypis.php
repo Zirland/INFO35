@@ -26,7 +26,7 @@ require_once 'config.php';
             width: 500px;
             padding: 20px;
         }
-        
+
         tr.dark {
             background-color: #ddd;
             color: black;
@@ -47,26 +47,58 @@ require_once 'config.php';
             color: red;
         }
     </style>
-      
+
     <script type="text/javascript">
-    function telcislo(str) {
-        var xmlhttp;
+        var tel_cislo;
+        var silnice;
+        var ssud;
+        var typ;
 
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        function telcislo(num) {
+        	tel_cislo=num;
+            filtr();
+        }
+
+        function search(str) {
+            var xmlhttp;
+
             xmlhttp=new XMLHttpRequest();
-        } else {// code for IE6, IE5
-            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
 
-        xmlhttp.onreadystatechange = function() {
-            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("data").innerHTML = xmlhttp.responseText;
+            xmlhttp.onreadystatechange = function() {
+                if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById("data").innerHTML = xmlhttp.responseText;
+                }
             }
+            window.alert('vypis_filtr.php?'+str);
+            xmlhttp.open("GET",'vypis_filtr.php?'+str, true);
+            xmlhttp.send();
         }
 
-        xmlhttp.open("GET","vypis_filtr.php?telcislo="+str, true);
-        xmlhttp.send();
-    }
+        function filtr() {
+        	var qry='';
+            if (tel_cislo) {
+                qry += 'tel_cislo=' + tel_cislo;
+            }
+            if (tel_cislo && silnice) {
+                qry += '&silnice=' + silnice;
+            }
+            else if (silnice) {
+                qry += 'silnice=' + silnice;
+            }
+            if ((tel_cislo && ssud) || (silnice && ssud)) {
+                qry += '&ssud=' + ssud;
+            }
+            else if (ssud) {
+                qry += 'ssud=' + ssud;
+            }
+            if ((tel_cislo && typ) || (silnice && typ) || (ssud && typ)) {
+                qry += '&typ=' + typ;
+            }
+            else if (typ) {
+                qry += 'typ=' + typ;
+            }
+    		search(qry);
+        }
     </script>
 </head>
 
