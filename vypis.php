@@ -55,7 +55,7 @@ require_once 'config.php';
         var typ;
 
         function telcislo(num) {
-        	tel_cislo=num;
+            tel_cislo=num;
             filtr();
         }
 
@@ -75,7 +75,7 @@ require_once 'config.php';
         }
 
         function filtr() {
-        	var qry='';
+            var qry='';
             if (tel_cislo) {
                 qry += 'tel_cislo=' + tel_cislo;
             }
@@ -97,7 +97,7 @@ require_once 'config.php';
             else if (typ) {
                 qry += 'typ=' + typ;
             }
-    		search(qry);
+            search(qry);
         }
     </script>
 </head>

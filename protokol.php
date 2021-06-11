@@ -31,7 +31,7 @@ require_once 'config.php';
             font-size:13px;
             padding: 5px;
         }
-        
+
         th.inline {
             border: 1px solid black;
             font-size:13px;

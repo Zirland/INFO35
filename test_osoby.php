@@ -74,7 +74,7 @@ $query81 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id = $row81[0];
-        $sel_jmeno = $row81[1]; 
+        $sel_jmeno = $row81[1];
         $sel_tel_cislo = $row81[2];
 
         echo "<tr style=\"";
