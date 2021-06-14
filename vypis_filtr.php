@@ -2,11 +2,29 @@
 require_once 'config.php';
 
 $tel_cislo = $_GET['tel_cislo'];
-$silnice = $_GET['silnice'];
-$ssud = $_GET['ssud'];
-$typ = $_GET['typ'];
+$silnice   = $_GET['silnice'];
+$ssud      = $_GET['ssud'];
+$typ       = $_GET['typ'];
 
-$dotaz = "tel_cislo LIKE '$tel_cislo%'";
+$dotaz = "";
+if ($tel_cislo != '') {
+    $dotaz .= "WHERE tel_cislo LIKE '$tel_cislo%'";
+}
+if ($tel_cislo != '' && $silnice != '') {
+    $dotaz .= "AND silnice = '$silnice'";
+} else if ($silnice != '') {
+    $dotaz .= "WHERE silnice = '$silnice'";
+}
+if (($tel_cislo != '' && $ssud != '') || ($silnice != '' && $ssud != '')) {
+    $dotaz .= "AND ssud = '$ssud'";
+} else if ($ssud != '') {
+    $dotaz .= "WHERE ssud = '$ssud'";
+}
+if (($tel_cislo != '' && $typ != '') || ($silnice != '' && $typ != '') || ($ssud != '' && $typ != '')) {
+    $dotaz .= "AND typ = '$typ'";
+} else if ($typ != '') {
+    $dotaz .= "WHERE typ = '$typ'";
+}
 
 $app_up = "8";
 echo "<table width=\"100%\">";
@@ -25,8 +43,8 @@ echo "<th width=\"100\">&nbsp;</th>";
 echo "<th width=\"10\">&nbsp;</th>";
 echo "</tr>";
 
-$i = 0;
-$query5 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky WHERE $dotaz ORDER BY tel_cislo;";
+$i      = 0;
+$query5 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky $dotaz ORDER BY tel_cislo;";
 if ($result5 = mysqli_query($link, $query5)) {
     while ($row5 = mysqli_fetch_row($result5)) {
         $id         = $row5[0];
@@ -90,5 +108,3 @@ if ($result5 = mysqli_query($link, $query5)) {
     }
 }
 echo "</table>";
-?>
-
