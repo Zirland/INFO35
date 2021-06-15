@@ -43,6 +43,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             background-color: #dc143c;
             color: white;
         }
+
+        tr.dark-smoke input{
+            color: black;
+        }
+
+        tr.light-smoke input{
+            color: black;
+        }
+
     </style>
 </head>
 
@@ -92,6 +101,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         $prikaz81 = mysqli_query($link, $query81);
+
+        if ($newStatus == "0") {
+            $query81  = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";
+            $prikaz81 = mysqli_query($link, $query81);
+            }
     }
 
     $time = date("H:i:s", time());
@@ -223,7 +237,16 @@ if ($result193 = mysqli_query($link, $query193)) {
         }
 
         echo "</td><td style=\"text-align:center;\">";
-        echo $hl_typ;
+
+        $query146 = "SELECT popis FROM enum_typ WHERE id = '$hl_typ';";
+        if ($result146 = mysqli_query($link, $query146)) {
+            while ($row146 = mysqli_fetch_row($result146)) {
+                $nazev_typu = $row146[0];
+            }
+        }
+
+        echo $nazev_typu;
+
         echo "</td>";
         echo "<td style=\"text-align:center;\">$hl_kilometr</td>";
         echo "<td>$smer_nazev</td>";
@@ -272,4 +295,10 @@ if ($result193 = mysqli_query($link, $query193)) {
 <tr><td><input type="submit" value="Uložit změny"></form></td></tr>
 </table>
 
-<?php echo "$datum_err <br/> $komentar_err"; ?>
+<p>&nbsp;</p>
+<?php
+echo "$datum_err <br/> $komentar_err";
+echo "<p>&nbsp;</p>";
+echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
+echo "<p>&nbsp;</p>";
+//echo "<a href=\"archiv.php?id=$test_id\">Archivace testování</a>";

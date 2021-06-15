@@ -166,7 +166,7 @@ if ($result81 = mysqli_query($link, $query81)) {
         $stav_schvaleni = "Nevyhodnoceno";
         $bg_col         = $back_line_col;
         if ($overeno == 1) {
-            $stav_schvaleni = "Schváleno";
+            $stav_schvaleni = "Provedeno vyhodnocení";
             $bg_col         = "#0f0";
         }
         echo "<td style=\"background-color:$bg_col;\">";

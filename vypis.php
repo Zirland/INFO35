@@ -168,7 +168,7 @@ if ($stmt = mysqli_prepare($link, $sql)) {
 mysqli_stmt_close($stmt);
 
 echo "</select></td>
-<td width=\"100\"><select id=\"typ\" name=\"typ\" onChange=\"typ(this.value)\" style=\"width:90px;\"><option value=\"\">---</option>";
+<td width=\"150\"><select id=\"typ\" name=\"typ\" onChange=\"typ(this.value)\" style=\"width:140px;\"><option value=\"\">---</option>";
 
 $sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
 

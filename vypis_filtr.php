@@ -37,7 +37,7 @@ echo "<th width=\"300\">Směr</th>";
 echo "<th width=\"300\">Zeměpisná šířka</th>";
 echo "<th width=\"300\">Zeměpisná délka</th>";
 echo "<th width=\"200\">SSÚD</th>";
-echo "<th width=\"100\">Typ</th>";
+echo "<th width=\"150\">Typ</th>";
 echo "<th>Status</th>";
 echo "<th width=\"100\">&nbsp;</th>";
 echo "<th width=\"10\">&nbsp;</th>";
