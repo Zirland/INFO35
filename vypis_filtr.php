@@ -102,7 +102,7 @@ if ($result5 = mysqli_query($link, $query5)) {
             echo "<td></td>";
         }
 
-        echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
+        echo "<td><a href=\"edit.php?id=$id&up=$app_up\" target=\"_blank\">Edit</a></td></tr>";
         $i = $i + 1;
 
     }
