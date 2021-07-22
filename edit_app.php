@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($app_name_err == "" && $app_url_err == "" && $app_del != "1") {
-        $query66  = "UPDATE aplikace (nazev, url, up) VALUES ('$app_name','$app_url', '$app_up') WHERE app_id = '$app_id';";
+        $query66  = "UPDATE aplikace SET nazev = '$app_name', `url` = '$app_url', up = '$app_up' WHERE app_id = '$app_id';";
         $prikaz66 = mysqli_query($link, $query66);
     } elseif ($app_del == "1" && $app_del_err == "") {
         $query70  = "DELETE FROM aplikace WHERE app_id = '$app_id';";
