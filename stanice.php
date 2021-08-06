@@ -127,8 +127,8 @@ PageHeader();
 <input name="action" value="generuj" type="hidden">
 
 Telefonní číslo: <input type="text" name="tel_cislo" value="" autofocus><br/>
-Příjmení/Název: *<input type="text" name="prijmeni" value="Komerční banka a.s." readonly>	Jméno: <input name="jmeno" value="" readonly><br/>
-IČO: <input name="ico" value="45317054" readonly>	OpID: <input name="OpID" size="3" value="111" readonly><br/>
+Příjmení/Název: *<input type="text" name="prijmeni" value="Fio banka a.s." readonly>	Jméno: <input name="jmeno" value="" readonly><br/>
+IČO: <input name="ico" value="61858374" readonly>	OpID: <input name="OpID" size="3" value="222" readonly><br/>
 
 Adresa: <input onChange="najdi(this.value)">
 	<select id="data" onChange="vyber(this.value)" multiple>
@@ -148,7 +148,7 @@ Adresa: <input onChange="najdi(this.value)">
 echo "<table width=\"100%\">";
 echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
 $i        = 0;
-$query110 = "SELECT * FROM stanice WHERE OpID = '111' AND nazev_okresu IN ('Hodonín','Hradec Králové','Cheb','Chomutov','Chrudim','Jablonec nad Nisou','Jeseník','Jičín','Jihlava','Jindřichův Hradec') ORDER BY tel_cislo;";
+$query110 = "SELECT * FROM stanice WHERE OpID = '222' AND tel_cislo LIKE '2243464%' ORDER BY tel_cislo;";
 if ($result110 = mysqli_query($link, $query110)) {
     while ($row110 = mysqli_fetch_row($result110)) {
         $prijmeni              = $row110[0];

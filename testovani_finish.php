@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($newStatus == "0") {
             $query81  = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";
             $prikaz81 = mysqli_query($link, $query81);
-            }
+        }
     }
 
     $time = date("H:i:s", time());
@@ -216,7 +216,7 @@ if ($result193 = mysqli_query($link, $query193)) {
                 $hovor_in  = $row174[2];
                 $lokace    = $row174[3];
                 $poznamka  = $row174[4];
-                $status = $row174[5];
+                $status    = $row174[5];
             }
         }
         echo "<tr class=\"";
