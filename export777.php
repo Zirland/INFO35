@@ -38,7 +38,6 @@ if ($result14 = mysqli_query($link, $query14)) {
             case '381201262':
             case '381201277':
             case '382201079':
-            case '415735455':
             case '558405170':
             case '558416206':
             case '595150460':
