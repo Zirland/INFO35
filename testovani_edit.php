@@ -259,5 +259,5 @@ if ($strediska) {
     echo "</tr>";
 }
 ?>
-<tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></form></td></tr>
+<tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z; ?>"></form></td></tr>
 </table>

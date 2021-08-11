@@ -82,7 +82,7 @@ if ($error == 0) {
     $message = '
 <html>
 <head>
-  <title>Požadavek na schválení testu</title>
+<title>Požadavek na schválení testu</title>
 </head>
 <body>
 <p>Byl zadán požadavek na schválení testu hlásek:</p>
