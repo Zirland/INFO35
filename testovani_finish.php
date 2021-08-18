@@ -81,25 +81,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hlasky_array = explode("|", $old_hlasky);
 
     foreach ($hlasky_array as $hl_id) {
-        $Zindex = "H" . $hl_id . "Z";
-        $Oindex = "H" . $hl_id . "O";
-        $Iindex = "H" . $hl_id . "I";
-        $Lindex = "H" . $hl_id . "L";
-        $Pindex = "H" . $hl_id . "P";
+        $Zindex  = "H" . $hl_id . "Z";
+        $Oindex  = "H" . $hl_id . "O";
+        $Iindex  = "H" . $hl_id . "I";
+        $LSindex = "H" . $hl_id . "LS";
+        $L1index = "H" . $hl_id . "L1";
+        $Pindex  = "H" . $hl_id . "P";
+        $Rindex  = "H" . $hl_id . "R";
 
         $newZkouska  = $_POST[$Zindex];
         $newHovorOut = $_POST[$Oindex];
         $newHovorIn  = $_POST[$Iindex];
-        $newLokace   = $_POST[$Lindex];
+        $newLokaceS  = $_POST[$LSindex];
+        $newLokace1  = $_POST[$L1index];
         $newPoznamka = $_POST[$Pindex];
+        $newStatus   = $_POST[$Rindex];
 
-        if ($newHovorOut == "1" && $newHovorIn == "1" && $newLokace == "1") {
-            $newStatus = "0";
-        } else {
-            $newStatus = "1";
-        }
-
-        $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokace = '$newLokace', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokaceSPEL = '$newLokaceS', lokace112 = '$newLokace1', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         $prikaz81 = mysqli_query($link, $query81);
 
         if ($newStatus == "0") {
@@ -208,15 +206,16 @@ if ($result193 = mysqli_query($link, $query193)) {
 
         $smer_nazev = SmerNazev($hl_silnice, $hl_smer, $hl_kilometr);
 
-        $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokace, poznamka, `status` FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         if ($result174 = mysqli_query($link, $query174)) {
             while ($row174 = mysqli_fetch_row($result174)) {
-                $zkouska   = $row174[0];
-                $hovor_out = $row174[1];
-                $hovor_in  = $row174[2];
-                $lokace    = $row174[3];
-                $poznamka  = $row174[4];
-                $status    = $row174[5];
+                $zkouska    = $row174[0];
+                $hovor_out  = $row174[1];
+                $hovor_in   = $row174[2];
+                $lokaceSPEL = $row174[3];
+                $lokace112  = $row174[4];
+                $poznamka   = $row174[5];
+                $status     = $row174[6];
             }
         }
         echo "<tr class=\"";
@@ -235,6 +234,8 @@ if ($result193 = mysqli_query($link, $query193)) {
         } else {
             echo "Chyba";
         }
+
+// combobox - H _id_ R
 
         echo "</td><td style=\"text-align:center;\">";
 
@@ -276,8 +277,16 @@ if ($result193 = mysqli_query($link, $query193)) {
 
         echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
         echo $hl_id;
-        echo "L\" value=\"1\"";
-        if ($lokace == "1") {
+        echo "LS\" value=\"1\"";
+        if ($lokaceSPEL == "1") {
+            echo " CHECKED";
+        }
+        echo "></td>";
+
+        echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
+        echo $hl_id;
+        echo "L1\" value=\"1\"";
+        if ($lokace112 == "1") {
             echo " CHECKED";
         }
         echo "></td>";
