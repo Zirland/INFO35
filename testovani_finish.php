@@ -192,7 +192,7 @@ $z            = 0;
 $hlasky_array = explode("|", $old_hlasky);
 $hlasky_list  = implode(",", $hlasky_array);
 
-echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Lokalizace SPEL</th><th style=\"padding:10px\">Lokalizace 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
+echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha SPEL</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
 $i        = 0;
 $query193 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
 if ($result193 = mysqli_query($link, $query193)) {
