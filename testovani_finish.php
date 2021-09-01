@@ -59,6 +59,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 require_once 'config.php';
 
 $id_user = $_SESSION["id"];
+$up      = $_GET["up"];
 
 $test_id = @$_GET["id"];
 if ($test_id == "") {
@@ -110,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<span style=\"background-color:yellow;\">Data uložena v $time.</span>";
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar, projekt FROM testovani WHERE id = $test_id;";
+$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar, projekt, archiv, overeno FROM testovani WHERE id = $test_id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_datum     = $row16[0];
@@ -121,6 +122,8 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_odmitnuto = $row16[5];
         $old_komentar  = $row16[6];
         $old_projekt   = $row16[7];
+        $archiv        = $row16[8];
+        $overeno       = $row16[9];
     }
 }
 PageHeader();
@@ -301,15 +304,22 @@ if ($result193 = mysqli_query($link, $query193)) {
         $i = $i + 1;
     }
 }
-?>
-<tr><td colspan="2"><input type="hidden" name="pocet" value="<?php echo $z - 1; ?>"></td></tr>
-<tr><td><input type="submit" value="Uložit změny"></form></td></tr>
-</table>
 
-<p>&nbsp;</p>
-<?php
+$pom = $z - 1;
+echo "<tr><td colspan=\"2\"><input type=\"hidden\" name=\"pocet\" value=\"$pom\"></td></tr>";
+
+if ($archiv == "0") {
+    echo "<tr><td><input type=\"submit\" value=\"Uložit změny\"></form></td></tr>";
+}
+
+echo "</table>";
+echo "<p>&nbsp;</p>";
+
 echo "$datum_err <br/> $komentar_err";
 echo "<p>&nbsp;</p>";
 echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
-echo "<p>&nbsp;</p>";
-//echo "<a href=\"archiv.php?id=$test_id\">Archivace testování</a>";
+
+if ($archiv == "0" && $overeno == "1") {
+    echo "<p>&nbsp;</p>";
+    echo "<a href=\"archivuj.php?id=$test_id\">Archivace testování</a>";
+}
