@@ -84,7 +84,7 @@ if ($result47 = mysqli_query($link, $query47)) {
         $hlasky_array = explode("|", $hlasky);
         $hlasky_list  = implode(",", $hlasky_array);
 
-        $query60 = "SELECT min(kilometr), max(kilometr) FROM hlasky WHERE silnice = '$silnice' AND id IN ($hlasky_list);";
+        $query60 = "SELECT min(CAST(kilometr AS DOUBLE)), max(CAST(kilometr AS DOUBLE)) FROM hlasky WHERE silnice = '$silnice' AND id IN ($hlasky_list);";
         if ($result60 = mysqli_query($link, $query60)) {
             while ($row60 = mysqli_fetch_row($result60)) {
                 $km_min = $row60[0];
@@ -136,7 +136,7 @@ Hlásky byly testovány na úsecích dálnice <?php echo $silnice; ?> (km <?php 
 <?php
 unset($radky);
 
-$query110 = "SELECT typ, kilometr, smer, zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' ORDER BY kilometr, smer DESC;";
+$query110 = "SELECT typ, kilometr, smer, zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' ORDER BY CAST(kilometr AS DOUBLE), smer DESC;";
 if ($result110 = mysqli_query($link, $query110)) {
     while ($row110 = mysqli_fetch_row($result110)) {
         $typ        = $row110[0];
@@ -151,6 +151,7 @@ if ($result110 = mysqli_query($link, $query110)) {
         $status     = $row110[9];
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
+        $kilometr = str_replace(".", ",", $kilometr);
 
         $zarizeni .= "<tr><td>";
         $zarizeni .= "</td><td class=\"inline\" style=\"text-align:center;\">";
