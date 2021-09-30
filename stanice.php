@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <title>Záznam INFO35</title>
+    <title>Lokalizace telefonních stanic</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
@@ -132,7 +132,7 @@ IČO: <input name="ico" value="61858374" readonly>	OpID: <input name="OpID" size
 
 Adresa: <input onChange="najdi(this.value)">
 	<select id="data" onChange="vyber(this.value)" multiple>
-		<option>Select an Option...</option>
+		<option>Vyhledejte adresu...</option>
 	</select>
 	<br/>
 	<div id="mistoUdal">
@@ -142,11 +142,17 @@ Adresa: <input onChange="najdi(this.value)">
 
 <input type="submit">
 </form>
-</td><td><a href="mapa.php" target="_blank">Mapa</a></td></tr></table>
+</td><td>
+<?php
+if ($id_user == '1') {
+    echo "<a href=\"mapa.php\" target=\"_blank\">Mapa</a>";
+}
+?>
+</td></tr></table>
 <hr>
 <?php
 echo "<table width=\"100%\">";
-echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
+echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
 $i        = 0;
 $query110 = "SELECT * FROM stanice WHERE OpID = '222' AND tel_cislo LIKE '2243464%' ORDER BY tel_cislo;";
 if ($result110 = mysqli_query($link, $query110)) {
@@ -175,7 +181,7 @@ if ($result110 = mysqli_query($link, $query110)) {
         if ($i % 2 == 0) {
             echo " bgcolor=\"#ddd\"";
         }
-        echo "><td><a href=\"stanice_edit.php?cislo=$tel_cislo\">$prijmeni</a></td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
+        echo "><td><a href=\"stanice_edit.php?cislo=$tel_cislo\">$prijmeni</a></td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
         $i = $i + 1;
     }
 }
