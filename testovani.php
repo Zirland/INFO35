@@ -130,7 +130,7 @@ echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
 
-$query81 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE schvaleno = 1 and odmitnuto = 0 and datum <= '$today' ORDER BY datum, silnice;";
+$query81 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE schvaleno = 1 and odmitnuto = 0 and archiv = 0 and datum <= '$today' ORDER BY datum, silnice;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id      = $row81[0];

@@ -263,7 +263,7 @@ if ($old_smer == "+") {
 }
 ?>
                     >rostoucí</option>
-                    <option value="-"
+            		<option value="-"
 <?php
 if ($old_smer == "-") {
     echo " SELECTED";

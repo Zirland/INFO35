@@ -12,7 +12,7 @@ $kandidati = $vysledek['candidates'];
 
 switch($pocKandid) {
 	case 0:
-		echo "<option>Zadejte dotaz...</option>";
+		echo "<option>Vyhledejte adresu...</option>";
 	break;
 	default:
 		foreach($kandidati as $items) {
