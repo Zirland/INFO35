@@ -99,7 +99,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $newStatus   = $_POST[$Rindex];
 
         $query81  = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokaceSPEL = '$newLokaceS', lokace112 = '$newLokace1', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+// echo "$query81<br/>";
         $prikaz81 = mysqli_query($link, $query81);
+//if (!$prikaz81) {
+//    echo "Error: " . mysqli_error($link) . "<br/>";
+//}
 
         if ($newStatus == "0") {
             $query81  = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";

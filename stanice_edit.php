@@ -142,7 +142,7 @@ if ($result110 = mysqli_query($link, $query110)) {
 Telefonní číslo: <input type="text" name="tel_cislo" value="<?php echo $tel_cislo ?>" readonly><br/>
 Příjmení/Název: *<input type="text" name="prijmeni" value="<?php echo $prijmeni ?>">
 Jméno: <input name="jmeno" value="<?php echo $jmeno ?>"><br/>
-IČO: <input name="ico" value="00007064">	OpID: <input name="OpID" size="3" value="555"><br/>
+IČO: <input name="ico" value="<?php echo $ico ?>">	OpID: <input name="OpID" size="3" value="<?php echo $OpID ?>"><br/>
 
 Adresa: <input onChange="najdi(this.value)">
 	<select id="data" onChange="vyber(this.value)" multiple>

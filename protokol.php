@@ -17,7 +17,7 @@ require_once 'config.php';
     <title>Protokol z funkční zkoušky</title>
     <style type="text/css">
         table.page {
-            width:18cm;
+            width:19cm;
             margin-left: auto;
             margin-right: auto;
             font-family:arial;
@@ -28,13 +28,13 @@ require_once 'config.php';
 
         td.inline {
             border: 1px solid black;
-            font-size:14px;
+            font-size:13px;
             padding: 5px;
         }
 
         th.inline {
             border: 1px solid black;
-            font-size:14px;
+            font-size:13px;
             vertical-align:middle;
             text-align:center;
         }
@@ -52,6 +52,7 @@ require_once 'config.php';
 		div {
 			page-break-inside: avoid;
 		}
+        .page-break {page-break-before: always; }
     }
     </style>
 </head>
@@ -134,8 +135,8 @@ Hlásky byly testovány na úsecích dálnice <?php echo $silnice; ?> (km <?php 
 </table>
 <div class="arial22">&nbsp;</div>
 <?php
-unset($radky);
-
+$r        = 0;
+$zarizeni = "";
 $query110 = "SELECT typ, kilometr, smer, zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' ORDER BY CAST(kilometr AS DOUBLE), smer DESC;";
 if ($result110 = mysqli_query($link, $query110)) {
     while ($row110 = mysqli_fetch_row($result110)) {
@@ -151,7 +152,12 @@ if ($result110 = mysqli_query($link, $query110)) {
         $status     = $row110[9];
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
-        $kilometr = str_replace(".", ",", $kilometr);
+        $kilometr   = str_replace(".", ",", $kilometr);
+
+        if (($r == 0) || ($r == 12) || (($r-12) % 30 == 0)) {
+            $zarizeni .= "<table class=\"inline\">";
+            $zarizeni .= "<tr><th style=\"width:5mm;\">&nbsp;</th><th class=\"inline\">Typ</th><th class=\"inline\">Označení</th><th class=\"inline\">Směr</th><th class=\"inline\">Zkouška</th><th class=\"inline\">SOS–IZS</th><th class=\"inline\">IZS–SOS</th><th class=\"inline\">Pozice SPEL</th><th class=\"inline\">Pozice 112</th><th class=\"inline\">Poznámka</th><th style=\"width:5mm;\">&nbsp;</th></tr>";
+        }
 
         $zarizeni .= "<tr><td>";
         $zarizeni .= "</td><td class=\"inline\" style=\"text-align:center;\">";
@@ -210,6 +216,12 @@ if ($result110 = mysqli_query($link, $query110)) {
         $zarizeni .= "<td class=\"inline\">$poznamka</td>";
         $zarizeni .= "<td></td>";
         $zarizeni .= "</tr>";
+
+        if (($r == 11) || (($r-12) % 30) == 29) {
+            $zarizeni .= "</table><p class=\"page-break\"></p)>";
+        }
+
+        $r = $r + 1;
     }
 }
 ?>
@@ -268,14 +280,9 @@ if ($result180 = mysqli_query($link, $query180)) {
 <td>Funkční zkouška systému:</td>
 </tr>
 </table>
-<table class="inline">
-<tr><th style="width:5mm;">&nbsp;</th>
-<th class="inline">Typ</th><th class="inline">Označení</th><th class="inline">Směr</th><th class="inline">Zkouška</th><th class="inline">SOS–IZS</th><th class="inline">IZS–SOS</th><th class="inline">Pozice SPEL</th><th class="inline">Pozice 112</th><th class="inline">Poznámka</th><th style="width:5mm;">&nbsp;</th></tr>
 <?php
 echo $zarizeni;
 ?>
-</tr>
-</table>
 <table>
 <tr><td style="width:5mm;">&nbsp;</td>
 <td style="font-size:13px;"><i>Zkouška spojení – test volání ze SOS hlásky do veřejné telekomunikační sítě.</i><br/>
