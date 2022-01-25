@@ -202,7 +202,7 @@ function SmerNazev($silnice, $smer, $kilometr) {
 
         case 'D11':
             if ($smer == "+") {
-                $smer_nazev = "Hradec Králové";
+                $smer_nazev = "Jaroměř";
             } else {
                 $smer_nazev = "Praha";
             }

@@ -17,7 +17,7 @@ require_once 'config.php';
     <title>Protokol z funkční zkoušky</title>
     <style type="text/css">
         table.page {
-            width:18cm;
+            width:19cm;
             margin-left: auto;
             margin-right: auto;
             font-family:arial;
@@ -28,13 +28,13 @@ require_once 'config.php';
 
         td.inline {
             border: 1px solid black;
-            font-size:14px;
+            font-size:13px;
             padding: 5px;
         }
 
         th.inline {
             border: 1px solid black;
-            font-size:14px;
+            font-size:13px;
             vertical-align:middle;
             text-align:center;
         }
@@ -52,6 +52,7 @@ require_once 'config.php';
 		div {
 			page-break-inside: avoid;
 		}
+        .page-break {page-break-before: always; }
     }
     </style>
 </head>
@@ -76,15 +77,15 @@ if ($result47 = mysqli_query($link, $query47)) {
             }
         }
 
-        $query79 = "UPDATE testovani SET overeno = '1' WHERE id = $id;";
+        $query79  = "UPDATE testovani SET overeno = '1' WHERE id = $id;";
         $prikaz79 = mysqli_query($link, $query79);
-        
+
         $datum_format = date("d.m.Y", strtotime($datum));
 
         $hlasky_array = explode("|", $hlasky);
         $hlasky_list  = implode(",", $hlasky_array);
 
-        $query60 = "SELECT min(kilometr), max(kilometr) FROM hlasky WHERE silnice = '$silnice' AND id IN ($hlasky_list);";
+        $query60 = "SELECT min(CAST(kilometr AS DOUBLE)), max(CAST(kilometr AS DOUBLE)) FROM hlasky WHERE silnice = '$silnice' AND id IN ($hlasky_list);";
         if ($result60 = mysqli_query($link, $query60)) {
             while ($row60 = mysqli_fetch_row($result60)) {
                 $km_min = $row60[0];
@@ -107,7 +108,7 @@ if ($result47 = mysqli_query($link, $query47)) {
 <div class="arial22">&nbsp;<br/>&nbsp;</div>
 
 <table>
-<tr><td style="width:15mm">&nbsp;</td>
+<tr><td style="width:5mm">&nbsp;</td>
 <td style="width:2cm">Projekt:</td>
 <td><?php echo $projekt; ?></td>
 </tr>
@@ -126,7 +127,7 @@ if ($result47 = mysqli_query($link, $query47)) {
 <div class="arial22">&nbsp;<br/>&nbsp;</div>
 
 <table class="inline">
-<tr><td style="width:15mm">&nbsp;</td>
+<tr><td style="width:5mm">&nbsp;</td>
 <td>SPEL, a.s. provedl <?php echo $datum_format; ?> funkční zkoušku spojení.<br/>
 Hlásky byly testovány na úsecích dálnice <?php echo $silnice; ?> (km <?php echo "$km_min – $km_max"; ?>)
 </td>
@@ -134,22 +135,29 @@ Hlásky byly testovány na úsecích dálnice <?php echo $silnice; ?> (km <?php 
 </table>
 <div class="arial22">&nbsp;</div>
 <?php
-unset($radky);
-
-$query110 = "SELECT typ, kilometr, smer, zkouska, hovorOUT, hovorIN, lokace, poznamka, `status` FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' ORDER BY kilometr, smer DESC;";
+$r        = 0;
+$zarizeni = "";
+$query110 = "SELECT typ, kilometr, smer, zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' ORDER BY CAST(kilometr AS DOUBLE), smer DESC;";
 if ($result110 = mysqli_query($link, $query110)) {
     while ($row110 = mysqli_fetch_row($result110)) {
-        $typ       = $row110[0];
-        $kilometr  = $row110[1];
-        $smer      = $row110[2];
-        $zkouska   = $row110[3];
-        $hovor_out = $row110[4];
-        $hovor_in  = $row110[5];
-        $lokace    = $row110[6];
-        $poznamka  = $row110[7];
-        $status    = $row110[8];
+        $typ        = $row110[0];
+        $kilometr   = $row110[1];
+        $smer       = $row110[2];
+        $zkouska    = $row110[3];
+        $hovor_out  = $row110[4];
+        $hovor_in   = $row110[5];
+        $lokaceSPEL = $row110[6];
+        $lokace112  = $row110[7];
+        $poznamka   = $row110[8];
+        $status     = $row110[9];
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
+        $kilometr   = str_replace(".", ",", $kilometr);
+
+        if (($r == 0) || ($r == 12) || (($r-12) % 30 == 0)) {
+            $zarizeni .= "<table class=\"inline\">";
+            $zarizeni .= "<tr><th style=\"width:5mm;\">&nbsp;</th><th class=\"inline\">Typ</th><th class=\"inline\">Označení</th><th class=\"inline\">Směr</th><th class=\"inline\">Zkouška</th><th class=\"inline\">SOS–IZS</th><th class=\"inline\">IZS–SOS</th><th class=\"inline\">Pozice SPEL</th><th class=\"inline\">Pozice 112</th><th class=\"inline\">Poznámka</th><th style=\"width:5mm;\">&nbsp;</th></tr>";
+        }
 
         $zarizeni .= "<tr><td>";
         $zarizeni .= "</td><td class=\"inline\" style=\"text-align:center;\">";
@@ -190,7 +198,15 @@ if ($result110 = mysqli_query($link, $query110)) {
         $zarizeni .= "</td>";
 
         $zarizeni .= "<td class=\"inline\" style=\"text-align:center;\">";
-        if ($lokace == "1") {
+        if ($lokaceSPEL == "1") {
+            $zarizeni .= "&#9745;";
+        } else {
+            $zarizeni .= "&#9744;";
+        }
+        $zarizeni .= "</td>";
+
+        $zarizeni .= "<td class=\"inline\" style=\"text-align:center;\">";
+        if ($lokace112 == "1") {
             $zarizeni .= "&#9745;";
         } else {
             $zarizeni .= "&#9744;";
@@ -200,11 +216,17 @@ if ($result110 = mysqli_query($link, $query110)) {
         $zarizeni .= "<td class=\"inline\">$poznamka</td>";
         $zarizeni .= "<td></td>";
         $zarizeni .= "</tr>";
+
+        if (($r == 11) || (($r-12) % 30) == 29) {
+            $zarizeni .= "</table><p class=\"page-break\"></p)>";
+        }
+
+        $r = $r + 1;
     }
 }
 ?>
 <table class="inline">
-<tr><th style="width:15mm;">&nbsp;</th>
+<tr><th style="width:5mm;">&nbsp;</th>
 <th class="inline">Zařízení</th><th class="inline">Typ</th><th class="inline">Počet</th><th class="inline">Stav</th></tr>
 <?php
 $query180 = "SELECT smer, typ, count(*) FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' GROUP BY smer, typ ORDER BY smer DESC;";
@@ -217,7 +239,7 @@ if ($result180 = mysqli_query($link, $query180)) {
         if ($smer_hlasky == "+") {
             $hlavni = "Hláska hlavní";
         } else {
-            $hlavni = "Hláska hlavní";
+            $hlavni = "Hláska vedlejší";
         }
 
         $query211 = "SELECT popis FROM enum_typ WHERE id = '$typ_hlasky';";
@@ -254,60 +276,58 @@ if ($result180 = mysqli_query($link, $query180)) {
 </table>
 <p>&nbsp;</p>
 <table>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>Funkční zkouška systému:</td>
 </tr>
 </table>
-<table class="inline">
-<tr><th style="width:15mm;">&nbsp;</th>
-<th class="inline">Typ</th><th class="inline">Označení</th><th class="inline">Směr</th><th class="inline">Zkouška</th><th class="inline">SOS–IZS</th><th class="inline">IZS–SOS</th><th class="inline">Lokalizace</th><th class="inline">Poznámka</th><th style="width:15mm;">&nbsp;</th></tr>
 <?php
 echo $zarizeni;
 ?>
-</tr>
-</table>
 <table>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td style="font-size:13px;"><i>Zkouška spojení – test volání ze SOS hlásky do veřejné telekomunikační sítě.</i><br/>
-<i>SOS – IZS – test volání ze SOS hlásky na telefonní linku 112.</i><br/>
-<i>IZS – SOS – test volání z telefonní linky 112 na SOS hlásku.</i><br/>
+<i>SOS–IZS – test volání ze SOS hlásky na telefonní linku 112.</i><br/>
+<i>IZS–SOS – test volání z telefonní linky 112 na SOS hlásku.</i><br/>
+<i>Pozice SPEL – kontrola údajů evidovaných u dodavatele.</i><br/>
+<i>Pozice 112 – kontrola údajů zobrazených na lince 112.</i><br/>
 </td>
 </tr>
 </table>
+<p>&nbsp;</p>
 <div>
 <table>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>Funkční zkoušky provedli:</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>Za dodavatele<br/>SPEL, a.s.</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>&nbsp;</td>
 <td><?php echo $podpis; ?></td>
 <td style="text-align:center;">&nbsp;&nbsp;……………………<br/>podpis</td>
 </tr>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>Za TCTV 112<br/>&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 </tr>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>&nbsp;</td>
 <td>Ing. Bessa Urbánek Jan</td>
 <td style="text-align:center;">&nbsp;&nbsp;……………………<br/>podpis</td>
@@ -315,7 +335,7 @@ echo $zarizeni;
 </table>
 <p>&nbsp;</p>
 <table>
-<tr><td style="width:15mm;">&nbsp;</td>
+<tr><td style="width:5mm;">&nbsp;</td>
 <td>V Kolíně dne
 <?php
 $dnes_datum = date("d.m.Y", time());
