@@ -154,7 +154,7 @@ if ($id_user == '1') {
 echo "<table width=\"100%\">";
 echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
 $i        = 0;
-$query110 = "SELECT * FROM stanice WHERE OpID = '002' ORDER BY tel_cislo;";
+$query110 = "SELECT * FROM stanice ORDER BY tel_cislo;";
 if ($result110 = mysqli_query($link, $query110)) {
     while ($row110 = mysqli_fetch_row($result110)) {
         $prijmeni              = $row110[0];
