@@ -57,7 +57,7 @@ echo "<table width=\"100%\">";
 echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Status</th><th></th></tr>";
 $i = 0;
 
-$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky ORDER BY tel_cislo";
+$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky WHERE archiv='0' ORDER BY tel_cislo";
 if ($result60 = mysqli_query($link, $query60)) {
     while ($row60 = mysqli_fetch_row($result60)) {
         $id         = $row60[0];

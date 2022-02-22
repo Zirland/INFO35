@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
     } else {
-        $sql = "SELECT tel_cislo FROM hlasky WHERE tel_cislo = ?";
+        $sql = "SELECT tel_cislo FROM hlasky WHERE archiv='0' AND tel_cislo = ?";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
             mysqli_stmt_bind_param($stmt, "ss", $param_tel_cislo, $param_tel_cislo);
