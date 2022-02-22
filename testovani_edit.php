@@ -205,7 +205,7 @@ $hlasky_array = explode("|", $old_hlasky);
 
 unset($strediska);
 
-$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' ORDER BY CAST(kilometr AS unsigned), smer;";
+$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND archiv = '0' ORDER BY CAST(kilometr AS unsigned), smer;";
 if ($result179 = mysqli_query($link, $query179)) {
     while ($row179 = mysqli_fetch_row($result179)) {
         $strediska[] = $row179[0];
@@ -226,7 +226,7 @@ if ($strediska) {
         }
         echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
         $i        = 0;
-        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' ORDER BY CAST(kilometr AS unsigned), smer";
+        $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko'  AND archiv = '0' ORDER BY CAST(kilometr AS unsigned), smer";
         if ($result193 = mysqli_query($link, $query193)) {
             while ($row193 = mysqli_fetch_row($result193)) {
                 $hl_id       = $row193[0];
