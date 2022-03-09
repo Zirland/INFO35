@@ -127,8 +127,8 @@ PageHeader();
 <input name="action" value="generuj" type="hidden">
 
 Telefonní číslo: <input type="text" name="tel_cislo" value="" autofocus><br/>
-Příjmení/Název: *<input type="text" name="prijmeni" value="Kooperativa pojišťovna, a.s., Vienna Insurance Group">	Jméno: <input name="jmeno" value=""><br/>
-IČO: <input name="ico" value="47116617">	OpID: <input name="OpID" size="3" value="002" readonly><br/>
+Příjmení/Název: *<input type="text" name="prijmeni" value="<?php echo $prijmeni; ?>">	Jméno: <input name="jmeno" value=""><br/>
+IČO: <input name="ico" value="<?php echo $ico; ?>">	OpID: <input name="OpID" size="3" value="<?php echo $OpID; ?>"><br/>
 
 Adresa: <input onChange="najdi(this.value)">
 	<select id="data" onChange="vyber(this.value)" multiple>

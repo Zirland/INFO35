@@ -33,7 +33,7 @@ for ($i = 2; $i < 10; $i++) {
         if ($radky26 == 0) {
             echo $i . "__ ___ ___<br/>";
         } else {
-            $query33 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i';";
+            $query33 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev, obecKod FROM hlasky WHERE tel_cislo = '$i';";
             if ($result33 = mysqli_query($link, $query33)) {
                 while ($row33 = mysqli_fetch_row($result33)) {
                     $prijmeni         = $row33[0];
@@ -42,6 +42,14 @@ for ($i = 2; $i < 10; $i++) {
                     $cislo_orientacni = $row33[3];
                     $nazev_obce       = $row33[4];
                     $nazev_casti_obce = $row33[5];
+                    $kod_obce         = $row33[6];
+
+                    $query47 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                    if ($result47 = mysqli_query($link, $query47)) {
+                        while ($row47 = mysqli_fetch_row($result47)) {
+                            $orig = $row47[0];
+                        }
+                    }
 
                     if ($cislo_orientacni != "") {
                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -55,11 +63,11 @@ for ($i = 2; $i < 10; $i++) {
                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                     }
 
-                    echo $i . "__ ___ ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                    echo $i . "__ ___ ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                 }
             }
             $reg     = $i . "[0-9]+";
-            $query41 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+            $query41 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
             if ($result41 = mysqli_query($link, $query41)) {
                 $radky41 = mysqli_num_rows($result41);
             }
@@ -72,7 +80,7 @@ for ($i = 2; $i < 10; $i++) {
                         if ($radky47 == 0) {
                             echo $i . $j . "_ ___ ___<br/>";
                         } else {
-                            $query54 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j';";
+                            $query54 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j';";
                             if ($result54 = mysqli_query($link, $query54)) {
 
                                 while ($row54 = mysqli_fetch_row($result54)) {
@@ -82,6 +90,14 @@ for ($i = 2; $i < 10; $i++) {
                                     $cislo_orientacni = $row54[3];
                                     $nazev_obce       = $row54[4];
                                     $nazev_casti_obce = $row54[5];
+                                    $kod_obce         = $row54[6];
+
+                                    $query90 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                    if ($result90 = mysqli_query($link, $query90)) {
+                                        while ($row90 = mysqli_fetch_row($result90)) {
+                                            $orig = $row90[0];
+                                        }
+                                    }
 
                                     if ($cislo_orientacni != "") {
                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -94,11 +110,11 @@ for ($i = 2; $i < 10; $i++) {
                                     } else {
                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                     }
-                                    echo $i . $j . "_ ___ ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                    echo $i . $j . "_ ___ ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                 }
                             }
                             $reg     = $i . $j . "[0-9]+";
-                            $query63 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                            $query63 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                             if ($result63 = mysqli_query($link, $query63)) {
                                 $radky63 = mysqli_num_rows($result63);
                             }
@@ -111,7 +127,7 @@ for ($i = 2; $i < 10; $i++) {
                                         if ($radky69 == 0) {
                                             echo $i . $j . $k . " ___ ___<br/>";
                                         } else {
-                                            $query76 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k';";
+                                            $query76 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k';";
                                             if ($result76 = mysqli_query($link, $query76)) {
 
                                                 while ($row76 = mysqli_fetch_row($result76)) {
@@ -121,6 +137,14 @@ for ($i = 2; $i < 10; $i++) {
                                                     $cislo_orientacni = $row76[3];
                                                     $nazev_obce       = $row76[4];
                                                     $nazev_casti_obce = $row76[5];
+                                                    $kod_obce         = $row76[6];
+
+                                                    $query132 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                    if ($result132 = mysqli_query($link, $query132)) {
+                                                        while ($row132 = mysqli_fetch_row($result132)) {
+                                                            $orig = $row132[0];
+                                                        }
+                                                    }
 
                                                     if ($cislo_orientacni != "") {
                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -133,11 +157,11 @@ for ($i = 2; $i < 10; $i++) {
                                                     } else {
                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                     }
-                                                    echo $i . $j . $k . " ___ ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                    echo $i . $j . $k . " ___ ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                 }
                                             }
                                             $reg     = $i . $j . $k . "[0-9]+";
-                                            $query85 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                            $query85 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                             if ($result85 = mysqli_query($link, $query85)) {
                                                 $radky85 = mysqli_num_rows($result85);
                                             }
@@ -150,7 +174,7 @@ for ($i = 2; $i < 10; $i++) {
                                                         if ($radky91 == 0) {
                                                             echo $i . $j . $k . " " . $l . "__ ___<br/>";
                                                         } else {
-                                                            $query98 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l';";
+                                                            $query98 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l';";
                                                             if ($result98 = mysqli_query($link, $query98)) {
                                                                 while ($row98 = mysqli_fetch_row($result98)) {
                                                                     $prijmeni         = $row98[0];
@@ -159,6 +183,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                     $cislo_orientacni = $row98[3];
                                                                     $nazev_obce       = $row98[4];
                                                                     $nazev_casti_obce = $row98[5];
+                                                                    $kod_obce         = $row98[6];
+
+                                                                    $query173 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                    if ($result173 = mysqli_query($link, $query173)) {
+                                                                        while ($row173 = mysqli_fetch_row($result173)) {
+                                                                            $orig = $row173[0];
+                                                                        }
+                                                                    }
 
                                                                     if ($cislo_orientacni != "") {
                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -171,11 +203,11 @@ for ($i = 2; $i < 10; $i++) {
                                                                     } else {
                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                     }
-                                                                    echo $i . $j . $k . " " . $l . "__ ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                    echo $i . $j . $k . " " . $l . "__ ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                 }
                                                             }
                                                             $reg      = $i . $j . $k . $l . "[0-9]+";
-                                                            $query106 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                                            $query106 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                                             if ($result106 = mysqli_query($link, $query106)) {
                                                                 $radky106 = mysqli_num_rows($result106);
                                                             }
@@ -188,7 +220,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                         if ($radky112 == 0) {
                                                                             echo $i . $j . $k . " " . $l . $m . "_ ___<br/>";
                                                                         } else {
-                                                                            $query119 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l$m';";
+                                                                            $query119 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l$m';";
                                                                             if ($result119 = mysqli_query($link, $query119)) {
                                                                                 while ($row119 = mysqli_fetch_row($result119)) {
                                                                                     $prijmeni         = $row119[0];
@@ -197,6 +229,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                                     $cislo_orientacni = $row119[3];
                                                                                     $nazev_obce       = $row119[4];
                                                                                     $nazev_casti_obce = $row119[5];
+                                                                                    $kod_obce         = $row119[6];
+
+                                                                                    $query214 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                                    if ($result214 = mysqli_query($link, $query214)) {
+                                                                                        while ($row214 = mysqli_fetch_row($result214)) {
+                                                                                            $orig = $row214[0];
+                                                                                        }
+                                                                                    }
 
                                                                                     if ($cislo_orientacni != "") {
                                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -209,11 +249,11 @@ for ($i = 2; $i < 10; $i++) {
                                                                                     } else {
                                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                                     }
-                                                                                    echo $i . $j . $k . " " . $l . $m . "_ ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                                    echo $i . $j . $k . " " . $l . $m . "_ ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                                 }
                                                                             }
                                                                             $reg      = $i . $j . $k . $l . $m . "[0-9]+";
-                                                                            $query127 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                                                            $query127 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                                                             if ($result127 = mysqli_query($link, $query127)) {
                                                                                 $radky127 = mysqli_num_rows($result127);
                                                                             }
@@ -226,7 +266,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                                         if ($radky133 == 0) {
                                                                                             echo $i . $j . $k . " " . $l . $m . $n . " ___<br/>";
                                                                                         } else {
-                                                                                            $query140 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n';";
+                                                                                            $query140 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n';";
                                                                                             if ($result140 = mysqli_query($link, $query140)) {
                                                                                                 while ($row140 = mysqli_fetch_row($result140)) {
                                                                                                     $prijmeni         = $row140[0];
@@ -235,6 +275,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                     $cislo_orientacni = $row140[3];
                                                                                                     $nazev_obce       = $row140[4];
                                                                                                     $nazev_casti_obce = $row140[5];
+                                                                                                    $kod_obce         = $row140[6];
+
+                                                                                                    $query255 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                                                    if ($result255 = mysqli_query($link, $query255)) {
+                                                                                                        while ($row255 = mysqli_fetch_row($result255)) {
+                                                                                                            $orig = $row255[0];
+                                                                                                        }
+                                                                                                    }
 
                                                                                                     if ($cislo_orientacni != "") {
                                                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -247,11 +295,11 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                     } else {
                                                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                                                     }
-                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " ___ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " ___ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                                                 }
                                                                                             }
                                                                                             $reg      = $i . $j . $k . $l . $m . $n . "[0-9]+";
-                                                                                            $query148 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                                                                            $query148 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                                                                             if ($result148 = mysqli_query($link, $query148)) {
                                                                                                 $radky148 = mysqli_num_rows($result148);
                                                                                             }
@@ -264,7 +312,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                         if ($radky154 == 0) {
                                                                                                             echo $i . $j . $k . " " . $l . $m . $n . " " . $o . "__<br/>";
                                                                                                         } else {
-                                                                                                            $query161 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o';";
+                                                                                                            $query161 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o';";
                                                                                                             if ($result161 = mysqli_query($link, $query161)) {
                                                                                                                 while ($row161 = mysqli_fetch_row($result161)) {
                                                                                                                     $prijmeni         = $row161[0];
@@ -273,6 +321,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                     $cislo_orientacni = $row161[3];
                                                                                                                     $nazev_obce       = $row161[4];
                                                                                                                     $nazev_casti_obce = $row161[5];
+                                                                                                                    $kod_obce         = $row161[6];
+
+                                                                                                                    $query296 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                                                                    if ($result296 = mysqli_query($link, $query296)) {
+                                                                                                                        while ($row296 = mysqli_fetch_row($result296)) {
+                                                                                                                            $orig = $row296[0];
+                                                                                                                        }
+                                                                                                                    }
 
                                                                                                                     if ($cislo_orientacni != "") {
                                                                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -285,11 +341,11 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                     } else {
                                                                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                                                                     }
-                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . "__ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . "__ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                                                                 }
                                                                                                             }
                                                                                                             $reg      = $i . $j . $k . $l . $m . $n . $o . "[0-9]+";
-                                                                                                            $query169 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                                                                                            $query169 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                                                                                             if ($result169 = mysqli_query($link, $query169)) {
                                                                                                                 $radky169 = mysqli_num_rows($result169);
                                                                                                             }
@@ -302,7 +358,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                         if ($radky175 == 0) {
                                                                                                                             echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . "_<br/>";
                                                                                                                         } else {
-                                                                                                                            $query182 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o$p' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o$p';";
+                                                                                                                            $query182 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o$p' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o$p';";
                                                                                                                             if ($result182 = mysqli_query($link, $query182)) {
                                                                                                                                 while ($row182 = mysqli_fetch_row($result182)) {
                                                                                                                                     $prijmeni         = $row182[0];
@@ -311,6 +367,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                                     $cislo_orientacni = $row182[3];
                                                                                                                                     $nazev_obce       = $row182[4];
                                                                                                                                     $nazev_casti_obce = $row182[5];
+                                                                                                                                    $kod_obce         = $row182[6];
+
+                                                                                                                                    $query337 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                                                                                    if ($result337 = mysqli_query($link, $query337)) {
+                                                                                                                                        while ($row337 = mysqli_fetch_row($result337)) {
+                                                                                                                                            $orig = $row337[0];
+                                                                                                                                        }
+                                                                                                                                    }
 
                                                                                                                                     if ($cislo_orientacni != "") {
                                                                                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -323,11 +387,11 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                                     } else {
                                                                                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                                                                                     }
-                                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . "_ = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . "_ = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                                                                                 }
                                                                                                                             }
                                                                                                                             $reg      = $i . $j . $k . $l . $m . $n . $o . $p . "[0-9]+";
-                                                                                                                            $query190 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo REGEXP '$reg';";
+                                                                                                                            $query190 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo REGEXP '$reg' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo REGEXP '$reg';";
                                                                                                                             if ($result190 = mysqli_query($link, $query190)) {
                                                                                                                                 $radky190 = mysqli_num_rows($result190);
                                                                                                                             }
@@ -340,7 +404,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                                         if ($radky196 == 0) {
                                                                                                                                             echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . $q . "<br/>";
                                                                                                                                         } else {
-                                                                                                                                            $query203 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o$p$q' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o$p$q';";
+                                                                                                                                            $query203 = "SELECT prijmeni, nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, kod_obce FROM stanice WHERE tel_cislo = '$i$j$k$l$m$n$o$p$q' UNION SELECT typ, silnice, kilometr, smer, obecNazev, castObceNazev,  FROM hlasky WHERE tel_cislo = '$i$j$k$l$m$n$o$p$q';";
                                                                                                                                             if ($result203 = mysqli_query($link, $query203)) {
                                                                                                                                                 while ($row203 = mysqli_fetch_row($result203)) {
                                                                                                                                                     $nazev_ulice      = $row203[1];
@@ -348,6 +412,14 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                                                     $cislo_orientacni = $row203[3];
                                                                                                                                                     $nazev_obce       = $row203[4];
                                                                                                                                                     $nazev_casti_obce = $row203[5];
+                                                                                                                                                    $kod_obce         = $row203[6];
+
+                                                                                                                                                    $query377 = "SELECT orig FROM obce WHERE kod = '$kod_obce';";
+                                                                                                                                                    if ($result377 = mysqli_query($link, $query377)) {
+                                                                                                                                                        while ($row377 = mysqli_fetch_row($result377)) {
+                                                                                                                                                            $orig = $row377[0];
+                                                                                                                                                        }
+                                                                                                                                                    }
 
                                                                                                                                                     if ($cislo_orientacni != "") {
                                                                                                                                                         $domovni = $cislo_popisne . "/" . $cislo_orientacni;
@@ -361,7 +433,7 @@ for ($i = 2; $i < 10; $i++) {
                                                                                                                                                         $mesto = $nazev_obce . "-" . $nazev_casti_obce;
                                                                                                                                                     }
                                                                                                                                                     $prijmeni = $row203[0];
-                                                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . $q . " = $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
+                                                                                                                                                    echo $i . $j . $k . " " . $l . $m . $n . " " . $o . $p . $q . " = ($orig) $prijmeni, $nazev_ulice $domovni, $mesto<br/>";
                                                                                                                                                 }
                                                                                                                                             }
                                                                                                                                         }
