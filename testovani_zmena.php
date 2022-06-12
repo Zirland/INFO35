@@ -118,6 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
         }
@@ -145,6 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
 
@@ -181,6 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
         }
