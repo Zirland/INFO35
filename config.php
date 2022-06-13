@@ -243,6 +243,15 @@ function SmerNazev($silnice, $smer, $kilometr) {
                 $smer_nazev = "Kroměříž";
             }
             break;
+
+        case 'D56':
+            if ($smer == "+") {
+                $smer_nazev = "Frýdek-Místek";
+            } else {
+                $smer_nazev = "Ostrava";
+            }
+            break;
+
         case '57':
             if ($smer == "+") {
                 $smer_nazev = "Vsetín";

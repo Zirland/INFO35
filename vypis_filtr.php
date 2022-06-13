@@ -6,24 +6,24 @@ $silnice   = $_GET['silnice'];
 $ssud      = $_GET['ssud'];
 $typ       = $_GET['typ'];
 
-$dotaz = "";
+$dotaz = "WHERE archiv = '0'";
 if ($tel_cislo != '') {
-    $dotaz .= "WHERE tel_cislo LIKE '$tel_cislo%'";
+    $dotaz .= " AND tel_cislo LIKE '$tel_cislo%'";
 }
 if ($tel_cislo != '' && $silnice != '') {
-    $dotaz .= "AND silnice = '$silnice'";
+    $dotaz .= " AND silnice = '$silnice'";
 } else if ($silnice != '') {
-    $dotaz .= "WHERE silnice = '$silnice'";
+    $dotaz .= " AND silnice = '$silnice'";
 }
 if (($tel_cislo != '' && $ssud != '') || ($silnice != '' && $ssud != '')) {
-    $dotaz .= "AND ssud = '$ssud'";
+    $dotaz .= " AND ssud = '$ssud'";
 } else if ($ssud != '') {
-    $dotaz .= "WHERE ssud = '$ssud'";
+    $dotaz .= " AND ssud = '$ssud'";
 }
 if (($tel_cislo != '' && $typ != '') || ($silnice != '' && $typ != '') || ($ssud != '' && $typ != '')) {
-    $dotaz .= "AND typ = '$typ'";
+    $dotaz .= " AND typ = '$typ'";
 } else if ($typ != '') {
-    $dotaz .= "WHERE typ = '$typ'";
+    $dotaz .= " AND typ = '$typ'";
 }
 
 $app_up = "8";
