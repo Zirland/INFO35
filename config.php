@@ -228,11 +228,27 @@ function SmerNazev($silnice, $smer, $kilometr) {
             }
             break;
 
+        case '38':
+            if ($smer == "+") {
+                $smer_nazev = "Znojmo";
+            } else {
+                $smer_nazev = "Havlíčkův Brod";
+            }
+            break;
+
         case 'D48':
             if ($smer == "+") {
                 $smer_nazev = "Český Těšín";
             } else {
                 $smer_nazev = "Bělotín";
+            }
+            break;
+
+        case 'D52':
+            if ($smer == "+") {
+                $smer_nazev = "Mikulov";
+            } else {
+                $smer_nazev = "Brno";
             }
             break;
 
