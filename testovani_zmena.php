@@ -118,6 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
         }
@@ -145,6 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
 
@@ -181,6 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=utf-8';
             $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+            $headers[] = 'Bcc: zirland@gmail.com';
             $headers[] = 'To: ' . $koordinator;
             mail($to, $subject, $message, implode("\r\n", $headers));
         }
@@ -281,7 +284,7 @@ $hlasky_array = explode("|", $old_hlasky);
 $hlasky_list  = implode(",", $hlasky_array);
 unset($strediska);
 
-$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list)ORDER BY CAST(kilometr AS unsigned), smer;";
+$query179 = "SELECT DISTINCT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer;";
 if ($result179 = mysqli_query($link, $query179)) {
     while ($row179 = mysqli_fetch_row($result179)) {
         $strediska[] = $row179[0];
