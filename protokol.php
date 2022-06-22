@@ -71,9 +71,9 @@ if ($result47 = mysqli_query($link, $query47)) {
         $zadatel = $row47[4];
 
         if (substr($silnice, 0, 1) != "D") {
-            $silnice = "silnice I/" . $silnice;
+            $textsilnice = "silnice I/" . $silnice;
         } else {
-            $silnice = "dálnice " . $silnice;
+            $textsilnice = "dálnice " . $silnice;
         }
 
         $query72 = "SELECT jmeno FROM test_osoby WHERE id = '$zadatel';";
@@ -135,7 +135,7 @@ if ($result47 = mysqli_query($link, $query47)) {
 <table class="inline">
 <tr><td style="width:5mm">&nbsp;</td>
 <td>SPEL, a.s. provedl <?php echo $datum_format; ?> funkční zkoušku spojení.<br/>
-Hlásky byly testovány na úsecích <?php echo $silnice; ?> (km <?php echo "$km_min – $km_max"; ?>)
+Hlásky byly testovány na úsecích <?php echo $textsilnice; ?> (km <?php echo "$km_min – $km_max"; ?>)
 </td>
 </tr>
 </table>
