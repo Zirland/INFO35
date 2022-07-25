@@ -44,11 +44,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             color: white;
         }
 
-        tr.dark-smoke input{
+        tr.dark-smoke select,input{
             color: black;
         }
 
-        tr.light-smoke input{
+        tr.light-smoke select,input{
             color: black;
         }
 
