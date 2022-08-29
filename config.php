@@ -209,8 +209,8 @@ function SmerNazev($silnice, $smer, $kilometr) {
             break;
 
         case 'D35':
-            if ($smer == "+" && $kilometr < 140) {
-                $smer_nazev = "Opatovice nad Labem";
+            if ($smer == "+" && $kilometr < 160) {
+                $smer_nazev = "Vysoké Mýto";
             } elseif ($smer == "+") {
                 $smer_nazev = "Lipník nad Bečvou";
             } elseif ($smer == "-" && $kilometr > 220) {
