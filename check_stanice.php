@@ -23,6 +23,7 @@ echo "$check_id<br/>";
 $error = 0;
 
 $query15 = "SELECT nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, nazev_okresu, longitude, latitude, kod_objektu, kod_adresy, kod_obce, kod_casti_obce, kod_ulice FROM stanice WHERE tel_cislo = '$check_id';";
+echo "$query15<br/>";
 if ($result15 = mysqli_query($link, $query15)) {
     while ($row15 = mysqli_fetch_row($result15)) {
         $nazev_ulice      = $row15[0];
@@ -211,6 +212,7 @@ if ($result15 = mysqli_query($link, $query15)) {
             }
 
             $del_check  = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
+            echo "$del_check<br/>";
             $prikaz_del = mysqli_query($link, $del_check);
         }
     }
