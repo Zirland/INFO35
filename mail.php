@@ -1,41 +1,43 @@
 
 <?php
-$to = 'zirland@gmail.com';
+$to = 'Testování hlásek <hlasky@zirland.org>';
 
 // Subject
-$subject = 'Birthday Reminders for August';
+$subject = 'Schválení termínu testu';
 
 // Message
 $message = '
 <html>
 <head>
-  <title>Birthday Reminders for August</title>
+<title>Schválení termínu testu</title>
 </head>
 <body>
-  <p>Here are the birthdays upcoming in August!</p>
-  <table>
-    <tr>
-      <th>Person</th><th>Day</th><th>Month</th><th>Year</th>
-    </tr>
-    <tr>
-      <td>Johny</td><td>10th</td><td>August</td><td>1970</td>
-    </tr>
-    <tr>
-      <td>Sally</td><td>17th</td><td>August</td><td>1973</td>
-    </tr>
-  </table>
+<p>Plánovaný termín testu byl schválen:</p>
+<p><b>Datum: </b> 1.6.2022 <br/>
+<b>Silnice: </b> D1 </p>
+
 </body>
 </html>
 ';
 
 // To send HTML mail, the Content-type header must be set
 $headers[] = 'MIME-Version: 1.0';
-$headers[] = 'Content-type: text/html; charset=iso-8859-1';
+$headers[] = 'Content-type: text/html; charset=utf-8';
 
 // Additional headers
-$headers[] = 'To: Zirland <zirland@zirland.org>';
-$headers[] = 'From: Evidence hlásek <zirland@zirland.org>';
+$headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
+$headers[] = 'To: zirland@zirland.org';
+$headers[] = 'Bcc: zirland@gmail.com';
+
 
 // Mail it
-mail($to, $subject, $message, implode("\r\n", $headers));
+$odeslano = mail($to, $subject, $message, implode("\r\n", $headers));
+if (!$odeslano) {
+  echo "FAIL";
+} else {
+  echo "Success";
+}
 ?>
+
+
+

@@ -162,10 +162,10 @@ $latlon = $converter->JTSKtoWGS84($sour_Y, $sour_X); // returns array ['lat', 'l
 $latitude  = $latlon['lat'];
 $longitude = $latlon['lon'];
 
-echo "<br />Okres název: <input type=\"text\" name=\"okresNazev\" value=\"$okresNazev\" readonly>";
+echo "<br />Okres název: <input type=\"text\" name=\"okresNazev\" value=\"$okresNazev\">";
 echo "<br/>Obec kód: <input type=\"text\" name=\"obecKod\" value=\"$obecKod\" readonly> Obec název: <input type=\"text\" name=\"obecNazev\" value=\"$obecNazev\" readonly>";
 echo "<br/>Část obce kód: <input type=\"text\" name=\"castObceKod\" value=\"$castObceKod\" readonly> Část obce název: <input type=\"text\" name=\"castObceNazev\" value=\"$castObceNazev\" readonly> ";
-echo "<br/>Ulice kód: <input type=\"text\" name=\"uliceKod\" value=\"$uliceKod\" readonly> Ulice název: <input type=\"text\" name=\"uliceNazev\" value=\"$uliceNazev\" readonly> ";
+echo "<br/>Ulice kód: <input type=\"text\" name=\"uliceKod\" value=\"$uliceKod\"> Ulice název: <input type=\"text\" name=\"uliceNazev\" value=\"$uliceNazev\"> ";
 echo "<br/>Kód objektu: <input type=\"text\" name=\"objektKod\" value=\"$objektKod\">";
 echo "Domovní: <input type=\"text\" name=\"adresaCisloDomovni\" size=\"4\" value=\"$adresaCisloDomovni\">";
 echo "<br/>Kód adresy: <input type=\"text\" name=\"adresaKod\" value=\"$adresaKod\">";

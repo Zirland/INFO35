@@ -209,8 +209,8 @@ function SmerNazev($silnice, $smer, $kilometr) {
             break;
 
         case 'D35':
-            if ($smer == "+" && $kilometr < 140) {
-                $smer_nazev = "Opatovice nad Labem";
+            if ($smer == "+" && $kilometr < 160) {
+                $smer_nazev = "Vysoké Mýto";
             } elseif ($smer == "+") {
                 $smer_nazev = "Lipník nad Bečvou";
             } elseif ($smer == "-" && $kilometr > 220) {
@@ -221,10 +221,14 @@ function SmerNazev($silnice, $smer, $kilometr) {
             break;
 
         case '35':
-            if ($smer == "+") {
-                $smer_nazev = "Valašské Meziříčí";
-            } else {
+            if ($smer == "+" && $kilometr < 210) {
+                $smer_nazev = "Mohelnice";
+            } elseif ($smer == "+") {
+      		$smer_nazev = "Valašské Meziříčí";
+            } elseif ($smer == "-" && $kilometr > 285) {
                 $smer_nazev = "Hranice";
+            } else {
+                $smer_nazev = "Vysoké Mýto";
             }
             break;
 
