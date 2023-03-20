@@ -1,10 +1,10 @@
 <?php
 require_once 'config.php';
 
-$tel_cislo = $_GET['tel_cislo'];
-$silnice   = $_GET['silnice'];
-$ssud      = $_GET['ssud'];
-$typ       = $_GET['typ'];
+$tel_cislo = @$_GET['tel_cislo'];
+$silnice = @$_GET['silnice'];
+$ssud = @$_GET['ssud'];
+$typ = @$_GET['typ'];
 
 $dotaz = "WHERE archiv = '0'";
 if ($tel_cislo != '') {
@@ -43,24 +43,24 @@ echo "<th width=\"100\">&nbsp;</th>";
 echo "<th width=\"10\">&nbsp;</th>";
 echo "</tr>";
 
-$i      = 0;
+$i = 0;
 $query5 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky $dotaz ORDER BY tel_cislo;";
 if ($result5 = mysqli_query($link, $query5)) {
     while ($row5 = mysqli_fetch_row($result5)) {
-        $id         = $row5[0];
-        $tel_cislo  = $row5[1];
-        $silnice    = $row5[2];
-        $kilometr   = $row5[3];
-        $smer       = $row5[4];
-        $longitude  = $row5[5];
-        $latitude   = $row5[6];
-        $platnost   = $row5[7];
-        $export     = $row5[8];
-        $edited     = $row5[9];
-        $ssud       = $row5[10];
+        $id = $row5[0];
+        $tel_cislo = $row5[1];
+        $silnice = $row5[2];
+        $kilometr = $row5[3];
+        $smer = $row5[4];
+        $longitude = $row5[5];
+        $latitude = $row5[6];
+        $platnost = $row5[7];
+        $export = $row5[8];
+        $edited = $row5[9];
+        $ssud = $row5[10];
         $ssud_nazev = "";
-        $typ        = $row5[11];
-        $typ_nazev  = "";
+        $typ = $row5[11];
+        $typ_nazev = "";
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
@@ -89,7 +89,7 @@ if ($result5 = mysqli_query($link, $query5)) {
         } else {
             echo "light";
         }
-        if ($platnost == 0) {
+        if ($platnost == 0 || $platnost == '') {
             echo "-strikeout";
         }
         echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";

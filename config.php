@@ -20,7 +20,7 @@ function PageHeader()
     echo "<table width=\"100%\">";
     echo "<tr>";
 
-    unset($opravneni);
+    $opravneni = [];
     $self = htmlspecialchars($_SERVER["PHP_SELF"]);
     $self = str_replace("/info35/", "", $self);
 
@@ -30,7 +30,7 @@ function PageHeader()
             echo "Aplikace není registrována!!<br/>";
         } else {
             while ($row33 = mysqli_fetch_row($result33)) {
-                $id_prev     = $row33[0];
+                $id_prev = $row33[0];
                 $up_app_code = $row33[1];
             }
         }
@@ -58,9 +58,6 @@ function PageHeader()
 
     echo "<td width=\"5%\"><a href=\"$up_app\" class=\"btn btn-secondry\">Návrat zpět</a></td>";
 
-    if (!$opravneni) {
-        $opravneni = [];
-    }
     $tlacitka = count($opravneni);
 
     if ($tlacitka == "0") {
@@ -72,8 +69,8 @@ function PageHeader()
             if ($result52 = mysqli_query($link, $query52)) {
                 while ($row52 = mysqli_fetch_row($result52)) {
                     $nazev_aplikace = $row52[0];
-                    $url_aplikace   = $row52[1];
-                    $newTarget      = 0;
+                    $url_aplikace = $row52[1];
+                    $newTarget = 0;
 
                     if ($tlacitka == "1" && $id_prev == "1") {
                         Redir($url_aplikace);
@@ -81,7 +78,7 @@ function PageHeader()
 
                     if (substr($url_aplikace, 0, 1) == "#") {
                         $url_aplikace = substr($url_aplikace, 1);
-                        $newTarget    = 1;
+                        $newTarget = 1;
                     }
 
                     echo "<td style=\"text-align:center;\" width=\"" . 75 / $tlacitka . "%\">";
@@ -106,7 +103,8 @@ function PageHeader()
     return $id_prev;
 }
 
-function SmerNazev($silnice, $smer, $kilometr) {
+function SmerNazev($silnice, $smer, $kilometr)
+{
     switch ($silnice) {
         case 'D0':
             if ($smer == "+" && $kilometr < 30) {
@@ -224,7 +222,7 @@ function SmerNazev($silnice, $smer, $kilometr) {
             if ($smer == "+" && $kilometr < 210) {
                 $smer_nazev = "Mohelnice";
             } elseif ($smer == "+") {
-      		$smer_nazev = "Valašské Meziříčí";
+                $smer_nazev = "Valašské Meziříčí";
             } elseif ($smer == "-" && $kilometr > 285) {
                 $smer_nazev = "Hranice";
             } else {

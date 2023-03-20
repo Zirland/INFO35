@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Europe/Prague');
-session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");

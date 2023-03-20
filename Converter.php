@@ -11,7 +11,8 @@ namespace JTSK;
  * http://www.geospeleos.com/Mapovani/WGS84toSJTSK/WGS84toSJTSK.htm
  * Original author: Jakub Kerhat
  */
-class Converter {
+class Converter
+{
 
     const EPS = 1e-4; // relative accuracy
 
@@ -142,16 +143,16 @@ class Converter {
      */
     public function BesseltoJTSK($latitude, $longitude)
     {
-        $a     = 6377397.15508;
-        $e     = 0.081696831215303;
-        $n     = 0.97992470462083;
+        $a = 6377397.15508;
+        $e = 0.081696831215303;
+        $n = 0.97992470462083;
         $rho_0 = 12310230.12797036;
         $sinUQ = 0.863499969506341;
         $cosUQ = 0.504348889819882;
         $sinVQ = 0.420215144586493;
         $cosVQ = 0.907424504992097;
-        $alfa  = 1.000597498371542;
-        $k_2   = 1.00685001861538;
+        $alfa = 1.000597498371542;
+        $k_2 = 1.00685001861538;
 
         $B = deg2rad($latitude);
         $L = deg2rad($longitude);
@@ -161,17 +162,17 @@ class Converter {
         $t = pow(1 + $sinB, 2) / (1 - pow($sinB, 2)) * exp($e * log($t));
         $t = $k_2 * exp($alfa * log($t));
 
-        $sinU  = ($t - 1) / ($t + 1);
-        $cosU  = sqrt(1 - $sinU * $sinU);
-        $V     = $alfa * $L;
-        $sinV  = sin($V);
-        $cosV  = cos($V);
+        $sinU = ($t - 1) / ($t + 1);
+        $cosU = sqrt(1 - $sinU * $sinU);
+        $V = $alfa * $L;
+        $sinV = sin($V);
+        $cosV = cos($V);
         $cosDV = $cosVQ * $cosV + $sinVQ * $sinV;
         $sinDV = $sinVQ * $cosV - $cosVQ * $sinV;
-        $sinS  = $sinUQ * $sinU + $cosUQ * $cosU * $cosDV;
-        $cosS  = sqrt(1 - $sinS * $sinS);
-        $sinD  = $sinDV * $cosU / $cosS;
-        $cosD  = sqrt(1 - $sinD * $sinD);
+        $sinS = $sinUQ * $sinU + $cosUQ * $cosU * $cosDV;
+        $cosS = sqrt(1 - $sinS * $sinS);
+        $sinD = $sinDV * $cosU / $cosS;
+        $cosD = sqrt(1 - $sinD * $sinD);
 
         $eps = $n * atan($sinD / $cosD);
         $rho = $rho_0 * exp(-$n * log((1 + $sinS) / $cosS));
@@ -190,9 +191,9 @@ class Converter {
     public function BLHToGeoCoords($B, $L, $H)
     {
         // WGS-84 ellipsoid parameters
-        $a   = 6378137.0;
+        $a = 6378137.0;
         $f_1 = 298.257223563;
-        $e2  = 1 - pow(1 - 1 / $f_1, 2);
+        $e2 = 1 - pow(1 - 1 / $f_1, 2);
         $rho = $a / sqrt(1 - $e2 * pow(sin($B), 2));
         $x = ($rho + $H) * cos($B) * cos($L);
         $y = ($rho + $H) * cos($B) * sin($L);
@@ -212,15 +213,15 @@ class Converter {
     public function geoCoordsToBLH($x, $y, $z)
     {
         // Bessel's ellipsoid parameters
-        $a   = 6377397.15508;
+        $a = 6377397.15508;
         $f_1 = 299.152812853;
-        $a_b = $f_1 / ($f_1-1);
-        $p   = sqrt(pow($x, 2) + pow($y, 2));
-        $e2  = 1 - pow(1 - 1 / $f_1, 2);
-        $th  = atan($z * $a_b / $p);
-        $st  = sin($th);
-        $ct  = cos($th);
-        $t   = ($z + $e2 * $a_b * $a * pow($st, 3)) / ($p - $e2 * $a * pow($ct, 3));
+        $a_b = $f_1 / ($f_1 - 1);
+        $p = sqrt(pow($x, 2) + pow($y, 2));
+        $e2 = 1 - pow(1 - 1 / $f_1, 2);
+        $th = atan($z * $a_b / $p);
+        $st = sin($th);
+        $ct = cos($th);
+        $t = ($z + $e2 * $a_b * $a * pow($st, 3)) / ($p - $e2 * $a * pow($ct, 3));
 
         $B = atan($t);
         $H = sqrt(1 + $t * $t) * ($p - $a / sqrt(1 + (1 - $e2) * $t * $t));
@@ -258,9 +259,13 @@ class Converter {
     private function transformCoords($xs, $ys, $zs)
     {
         // coeficients of transformation from WGS-84 to JTSK
-        $dx = -570.69; $dy = -85.69; $dz = -462.84; // shift
-        $wx = 4.99821/3600 * pi() / 180; $wy = 1.58676/3600 * pi() / 180; $wz = 5.2611/3600 * pi() / 180; // rotation
-        $m  = -3.543e-6; // scale
+        $dx = -570.69;
+        $dy = -85.69;
+        $dz = -462.84; // shift
+        $wx = 4.99821 / 3600 * pi() / 180;
+        $wy = 1.58676 / 3600 * pi() / 180;
+        $wz = 5.2611 / 3600 * pi() / 180; // rotation
+        $m = -3.543e-6; // scale
 
         $xn = $dx + (1 + $m) * (+$xs + $wz * $ys - $wy * $zs);
         $yn = $dy + (1 + $m) * (-$wz * $xs + $ys + $wx * $zs);

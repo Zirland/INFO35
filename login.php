@@ -1,5 +1,8 @@
 <?php
-session_start();
+date_default_timezone_set('Europe/Prague');
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     header("location: index.php");
@@ -8,7 +11,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 
 require_once "config.php";
 
-$username     = $password     = "";
+$username = $password = "";
 $username_err = $password_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -29,16 +32,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $query29 = "SELECT id, username, password FROM users WHERE username = '$username';";
         if ($result29 = mysqli_query($link, $query29)) {
             while ($row29 = mysqli_fetch_row($result29)) {
-                $id              = $row29[0];
-                $username        = $row29[1];
+                $id = $row29[0];
+                $username = $row29[1];
                 $hashed_password = $row29[2];
 
                 if (mysqli_num_rows($result29) == 1) {
                     if (password_verify($password, $hashed_password)) {
-                        session_start();
+                        if (!isset($_SESSION)) {
+                            session_start();
+                        }
 
                         $_SESSION["loggedin"] = true;
-                        $_SESSION["id"]       = $id;
+                        $_SESSION["id"] = $id;
                         $_SESSION["username"] = $username;
 
                         header("location: index.php");
@@ -60,15 +65,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
     <title>Přihlášení</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 350px; padding: 20px; }
+        body {
+            font: 14px sans-serif;
+        }
+
+        .wrapper {
+            width: 350px;
+            padding: 20px;
+        }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <h2>Přihlášení</h2>
@@ -77,12 +90,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                 <label>Uživatelské jméno</label>
                 <input type="text" name="username" class="form-control" value="<?php echo $username; ?>">
-                <span class="help-block"><?php echo $username_err; ?></span>
+                <span class="help-block">
+                    <?php echo $username_err; ?>
+                </span>
             </div>
             <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
                 <label>Heslo</label>
                 <input type="password" name="password" class="form-control">
-                <span class="help-block"><?php echo $password_err; ?></span>
+                <span class="help-block">
+                    <?php echo $password_err; ?>
+                </span>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Přihlásit">
@@ -91,4 +108,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </body>
+
 </html>
