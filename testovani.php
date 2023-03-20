@@ -188,7 +188,7 @@ echo "<table width=\"100%\">";
 echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
 $i = 0;
 
-$query81 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE finalni = 1 AND datum > '$today' ORDER BY datum, silnice;";
+$query81 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE (finalni = 1 AND datum > '$today') OR (finalni = 1 AND schvaleno = 0 AND odmitnuto = 0) ORDER BY datum, silnice;";
 if ($result81 = mysqli_query($link, $query81)) {
     while ($row81 = mysqli_fetch_row($result81)) {
         $sel_id      = $row81[0];

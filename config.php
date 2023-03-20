@@ -221,10 +221,14 @@ function SmerNazev($silnice, $smer, $kilometr) {
             break;
 
         case '35':
-            if ($smer == "+") {
-                $smer_nazev = "Valašské Meziříčí";
-            } else {
+            if ($smer == "+" && $kilometr < 210) {
+                $smer_nazev = "Mohelnice";
+            } elseif ($smer == "+") {
+      		$smer_nazev = "Valašské Meziříčí";
+            } elseif ($smer == "-" && $kilometr > 285) {
                 $smer_nazev = "Hranice";
+            } else {
+                $smer_nazev = "Vysoké Mýto";
             }
             break;
 

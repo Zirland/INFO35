@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $hlasky_array = explode("|", $old_hlasky);
             foreach ($hlasky_array as $id_hlaska) {
-                $query147 = "INSERT INTO test_result (id_test, id_hlaska) VALUES ('$id','$id_hlaska');";
+                $query147  = "INSERT INTO test_result (id_test, id_hlaska) VALUES ('$id','$id_hlaska');";
                 $prikaz147 = mysqli_query($link, $query147);
             }
         }
@@ -214,7 +214,14 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
 <table width="100%" style="text-align:center;">
 <tr><th>Datum</th><th>Silnice</th><th>Koordinátor</th><th>&nbsp;</th></tr>
 <tr>
-<td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control" value="<?php echo $old_datum; ?>"></td>
+<td><input type="date" name="datum"
+<?php
+echo " ";
+if ($id_user != "1") {
+    echo "min=\"$today\" ";
+}
+?>
+class="form-control" value="<?php echo $old_datum; ?>"></td>
 <td><select class="form-control" id="silnice" name="silnice" disabled>
 <?php
 $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
