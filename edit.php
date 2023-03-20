@@ -65,9 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kilometr = @$_POST["kilometr"];
     $kilometr_err = "";
     $smer = @$_POST["smer"];
-    $x = @$_POST["latitude"];
+    $x = @substr($_POST["latitude"],0,14);
     $x_err = "";
-    $y = @$_POST["longitude"];
+    $y = @substr($_POST["longitude"],0,14);
     $y_err = "";
     $platnost = @$_POST["platnost"];
     $ssud = @$_POST["ssud"];
