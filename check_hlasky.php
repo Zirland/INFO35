@@ -151,4 +151,4 @@ if ($result15 = mysqli_query($link, $query15)) {
 
 echo "Done...<br/>";
 echo $error;
-echo "<a href=\"check_hlasky.php?start=$end\">Další</a>";
+echo "<meta http-equiv=\"refresh\" content=\"5; url=check_hlasky.php?start=$end\">";

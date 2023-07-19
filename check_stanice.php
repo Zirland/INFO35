@@ -216,17 +216,8 @@ if ($result15 = mysqli_query($link, $query15)) {
             $del_check = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
             echo "$del_check<br/>";
             $prikaz_del = mysqli_query($link, $del_check);
+
+            echo "<meta http-equiv=\"refresh\" content=\"1\">";
         }
     }
 }
-
-/*
-echo "<a href=\"$url\" target=\"blank\">$url</a><br/>";
-echo "<a href=\"$url1\" target=\"blank\">$url1</a><br/>";
-echo "<a href=\"$url2\" target=\"blank\">$url2</a><br/>";
-echo "<a href=\"$url3\" target=\"blank\">$url3</a><br/>";
-echo "<a href=\"$url4\" target=\"blank\">$url4</a><br/>";
-echo "<a href=\"$url5\" target=\"blank\">$url5</a><br/>";
-echo "<a href=\"$url6\" target=\"blank\">$url6</a><br/>";
-echo "<a href=\"$url7\" target=\"blank\">$url7</a><br/>";
-*/
