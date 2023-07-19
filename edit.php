@@ -42,7 +42,7 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud, typ FROM hlasky WHERE id = $id;";
+$query16 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud, typ, techno, archiv FROM hlasky WHERE id = $id;";
 if ($result16 = mysqli_query($link, $query16)) {
     while ($row16 = mysqli_fetch_row($result16)) {
         $old_tel_cislo = $row16[0];
@@ -54,6 +54,8 @@ if ($result16 = mysqli_query($link, $query16)) {
         $old_platnost = $row16[6];
         $old_ssud = $row16[7];
         $old_typ = $row16[8];
+        $old_techno = $row16[9];
+        $old_archiv = $row16[10];
     }
 }
 
@@ -65,15 +67,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kilometr = @$_POST["kilometr"];
     $kilometr_err = "";
     $smer = @$_POST["smer"];
-    $x = @substr($_POST["latitude"],0,14);
+    $x = @substr($_POST["latitude"], 0, 14);
     $x_err = "";
-    $y = @substr($_POST["longitude"],0,14);
+    $y = @substr($_POST["longitude"], 0, 14);
     $y_err = "";
     $platnost = @$_POST["platnost"];
     $ssud = @$_POST["ssud"];
     $ssud_err = "";
     $typ = @$_POST["typ"];
     $typ_err = "";
+    $tech = @$_POST["tech"];
+    $arch = @$_POST["arch"];
     $up = @$_POST["up"];
 
     $x = trim($x);
@@ -121,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
-        $query79 = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud', typ = '$typ' WHERE id = $id;";
+        $query79 = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud', typ = '$typ', techno = '$tech', archiv = '$arch' WHERE id = $id;";
         $result79 = mysqli_query($link, $query79);
         if (!$result79) {
             $error .= mysqli_error($link) . "<br/>";
@@ -227,6 +231,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        if ($old_techno != $tech) {
+            $param_hlaska_id = $id;
+            $param_user = htmlspecialchars($_SESSION["username"]);
+            $param_cas = microtime(true);
+            $param_sloupec = "techno";
+            $param_new_value = $tech;
+
+            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result33 = mysqli_query($link, $query33);
+            if (!$result33) {
+                $error .= mysqli_error($link) . "<br/>";
+            }
+        }
+
+        if ($old_archiv != $arch) {
+            $param_hlaska_id = $id;
+            $param_user = htmlspecialchars($_SESSION["username"]);
+            $param_cas = microtime(true);
+            $param_sloupec = "archiv";
+            $param_new_value = $arch;
+
+            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result33 = mysqli_query($link, $query33);
+            if (!$result33) {
+                $error .= mysqli_error($link) . "<br/>";
+            }
+        }
+
         $query39 = "SELECT url FROM aplikace WHERE app_id = '$up';";
         if ($result39 = mysqli_query($link, $query39)) {
             while ($row39 = mysqli_fetch_row($result39)) {
@@ -262,8 +294,14 @@ $up_app = PageHeader();
             <th>Zeměpisná šířka</th>
             <th>Zeměpisná délka</th>
             <th>SSÚD</th>
+            <th>Techno</th>
             <th>Typ</th>
             <th>Platnost</th>
+            <?php
+            if ($old_platnost == "") {
+                echo "<th>Archiv</th>";
+            }
+            ?>
         </tr>
         <tr>
             <td></td>
@@ -328,6 +366,9 @@ $up_app = PageHeader();
                     mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
+            <td><input type="checkbox" name="tech" value="1" <?php if ($old_techno == 1) {
+                echo " CHECKED";
+            } ?>></td>
             <td><select class="form-control" id="typ" name="typ">
                     <option value="">---</option>
                     <?php
@@ -352,6 +393,16 @@ $up_app = PageHeader();
             <td><input type="checkbox" name="platnost" value="1" <?php if ($old_platnost == 1) {
                 echo " CHECKED";
             } ?>></td>
+            <?php
+            if ($old_platnost == "") {
+                echo "<td><input type=\"checkbox\" name=\"arch\" value=\"1\"";
+                if ($old_archiv == 1) {
+                    echo " CHECKED";
+                }
+                echo "></td>";
+            }
+            ?>
+
         </tr>
         <tr>
             <td colspan="3"></td>
