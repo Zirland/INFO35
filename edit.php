@@ -80,6 +80,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $arch = @$_POST["arch"];
     $up = @$_POST["up"];
 
+    if ($tech != 1) {
+        $tech = 0;
+    }
+    if ($arch != 1) {
+        $arch = 0;
+    }
+
     $x = trim($x);
     $x_pole = explode(" ", trim($x));
     if (count($x_pole) > 1) {

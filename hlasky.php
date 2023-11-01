@@ -30,8 +30,6 @@ $ssud = @$_POST["ssud"];
 $ssud_err = "";
 $typ = @$_POST["typ"];
 $typ_err = "";
-//$ico           = "65993390";
-//$OpID          = "777";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch ($format) {
@@ -186,10 +184,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
-        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, arch) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud, $param_typ);
+            mysqli_stmt_bind_param($stmt, "ssssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud, $param_typ, $param_techno, $param_arch);
 
             $param_tel_cislo = $tel_cislo;
             $param_silnice = $silnice;
@@ -199,6 +197,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_lon = $lon;
             $param_ssud = $ssud;
             $param_typ = $typ;
+            $param_techno = 0;
+            $param_arch = 0;
 
             if (mysqli_stmt_execute($stmt)) {
                 $param_id = mysqli_insert_id($link);
