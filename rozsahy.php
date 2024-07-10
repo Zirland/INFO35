@@ -30,7 +30,7 @@ require_once 'config.php';
     <?php
     PageHeader();
 
-    for ($i = 2; $i < 10; $i++) {
+    for ($i = 1; $i < 10; $i++) {
         $query26 = "SELECT tel_cislo FROM stanice WHERE tel_cislo LIKE '$i%' UNION SELECT tel_cislo FROM hlasky WHERE archiv = '0' AND tel_cislo LIKE '$i%';";
         if ($result26 = mysqli_query($link, $query26)) {
             $radky26 = mysqli_num_rows($result26);
