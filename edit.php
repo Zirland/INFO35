@@ -86,6 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($arch != 1) {
         $arch = 0;
     }
+    if ($platnost != 1) {
+        $platnost = 0;
+    }
 
     $x = trim($x);
     $x_pole = explode(" ", trim($x));
@@ -305,7 +308,7 @@ $up_app = PageHeader();
             <th>Typ</th>
             <th>Platnost</th>
             <?php
-            if ($old_platnost == "") {
+            if ($old_platnost == "0") {
                 echo "<th>Archiv</th>";
             }
             ?>
@@ -401,7 +404,7 @@ $up_app = PageHeader();
                 echo " CHECKED";
             } ?>></td>
             <?php
-            if ($old_platnost == "") {
+            if ($old_platnost == "0") {
                 echo "<td><input type=\"checkbox\" name=\"arch\" value=\"1\"";
                 if ($old_archiv == 1) {
                     echo " CHECKED";

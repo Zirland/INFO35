@@ -206,6 +206,14 @@ function SmerNazev($silnice, $smer, $kilometr)
             }
             break;
 
+        case '20':
+            if ($smer == "+") {
+                $smer_nazev = "České Budějovice";
+            } else {
+                $smer_nazev = "Plzeň";
+            }
+            break;
+
         case 'D35':
             if ($smer == "+" && $kilometr < 160) {
                 $smer_nazev = "Vysoké Mýto";
@@ -243,6 +251,14 @@ function SmerNazev($silnice, $smer, $kilometr)
                 $smer_nazev = "Český Těšín";
             } else {
                 $smer_nazev = "Bělotín";
+            }
+            break;
+
+        case 'D49':
+            if ($smer == "+") {
+                $smer_nazev = "Fryšták";
+            } else {
+                $smer_nazev = "Hulín";
             }
             break;
 

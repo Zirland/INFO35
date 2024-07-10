@@ -133,30 +133,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
     } else {
-        $sql = "SELECT tel_cislo FROM hlasky WHERE archiv='0' AND tel_cislo = ?";
-
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_tel_cislo);
-
-            $param_tel_cislo = trim($tel_cislo);
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1 && $override != "1") {
-                    $tel_cislo_err = "Telefonní číslo je již použito.";
+        $param_tel_cislo = trim($tel_cislo);
+        $sql = "SELECT id FROM hlasky WHERE tel_cislo = $param_tel_cislo";
+        if ($result = mysqli_query($link, $sql)) {
+            while ($row = mysqli_fetch_array($result)) {
+                $hlas_id = $row[0];
+                if (mysqli_num_rows($result) > 0 && $override != "1") {
+                    $tel_cislo_err = "Telefonní číslo je již použito.  ";
+                    $tel_cislo_err .= "<a href=\"edit.php?id=$hlas_id\" target=\"_blank\">Zobrazit záznam</a>.";
                     if ($_SESSION["id" == 1]) {
                         $tel_cislo_err .= "<input type=\"checkbox\" name=\"override\" value=\"1\"> Nahradit.";
+                    } else {
+                        $tel_cislo = trim($tel_cislo);
                     }
-                } else {
-                    $tel_cislo = trim($tel_cislo);
                 }
-            } else {
-                echo "Něco se nepovedlo. Zkuste to prosím znovu.";
             }
+        } else {
+            echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
-        mysqli_stmt_close($stmt);
     }
+
 
     if (empty(trim($silnice))) {
         $silnice_err = "Vyberte prosím silnici.";
@@ -184,10 +180,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
-        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, arch) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud, $param_typ, $param_techno, $param_arch);
+            mysqli_stmt_bind_param($stmt, "ssssssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud, $param_typ, $param_techno, $param_arch);
 
             $param_tel_cislo = $tel_cislo;
             $param_silnice = $silnice;
