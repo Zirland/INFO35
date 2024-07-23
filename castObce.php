@@ -9,23 +9,23 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
-$arrContextOptions = array(
-    "ssl" => array(
+$arrContextOptions = [
+    "ssl" => [
         "verify_peer" => false,
         "verify_peer_name" => false,
-    ),
-);
+    ],
+];
 
 require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$query15 = "SELECT id, latitude, longitude FROM hlasky WHERE edited = 1 ORDER BY id;";
-if ($result15 = mysqli_query($link, $query15)) {
-    while ($row15 = mysqli_fetch_row($result15)) {
-        $id = $row15[0];
-        $latitude = $row15[1];
-        $longitude = $row15[2];
+$query23 = "SELECT id, latitude, longitude FROM hlasky WHERE edited = 1 ORDER BY id;";
+if ($result23 = mysqli_query($link, $query23)) {
+    while ($row23 = mysqli_fetch_row($result23)) {
+        $id = $row23[0];
+        $latitude = $row23[1];
+        $longitude = $row23[2];
 
         $coord = $converter->WGS84toJTSK($latitude, $longitude);
 
@@ -63,20 +63,20 @@ if ($result15 = mysqli_query($link, $query15)) {
 
         $okresNazev = $items6['attributes']['nazev'];
 
-        $query16 = "SELECT okresNazev, obecNazev, obecKod, castObceNazev, castObceKod FROM hlasky WHERE id = $id;";
-        if ($result16 = mysqli_query($link, $query16)) {
-            while ($row16 = mysqli_fetch_row($result16)) {
-                $old_okresNazev = $row16[0];
-                $old_obecNazev = $row16[1];
-                $old_obecKod = $row16[2];
-                $old_castObceNazev = $row16[3];
-                $old_castObceKod = $row16[4];
+        $query66 = "SELECT okresNazev, obecNazev, obecKod, castObceNazev, castObceKod FROM hlasky WHERE id = $id;";
+        if ($result66 = mysqli_query($link, $query66)) {
+            while ($row66 = mysqli_fetch_row($result66)) {
+                $old_okresNazev = $row66[0];
+                $old_obecNazev = $row66[1];
+                $old_obecKod = $row66[2];
+                $old_castObceNazev = $row66[3];
+                $old_castObceKod = $row66[4];
             }
         }
 
-        $query27 = "UPDATE hlasky SET okresNazev = '$okresNazev', obecNazev = '$obecNazev', obecKod = '$obecKod', castObceNazev = '$castObceNazev', castObceKod = '$castObceKod', edited = 0 WHERE id = $id;";
-        $result27 = mysqli_query($link, $query27);
-        if (!$result27) {
+        $query77 = "UPDATE hlasky SET okresNazev = '$okresNazev', obecNazev = '$obecNazev', obecKod = '$obecKod', castObceNazev = '$castObceNazev', castObceKod = '$castObceKod', edited = 0 WHERE id = $id;";
+        $result77 = mysqli_query($link, $query77);
+        if (!$result77) {
             $error .= mysqli_error($link) . "<br/>";
         }
 
@@ -87,9 +87,9 @@ if ($result15 = mysqli_query($link, $query15)) {
             $param_sloupec = "okresNazev";
             $param_new_value = $okresNazev;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query90 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result90 = mysqli_query($link, $query90);
+            if (!$result90) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -100,9 +100,9 @@ if ($result15 = mysqli_query($link, $query15)) {
             $param_sloupec = "obecNazev";
             $param_new_value = $obecNazev;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query103 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result103 = mysqli_query($link, $query103);
+            if (!$result103) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -113,9 +113,9 @@ if ($result15 = mysqli_query($link, $query15)) {
             $param_sloupec = "obecKod";
             $param_new_value = $obecKod;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query116 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result116 = mysqli_query($link, $query116);
+            if (!$result116) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -126,9 +126,9 @@ if ($result15 = mysqli_query($link, $query15)) {
             $param_sloupec = "castObceNazev";
             $param_new_value = $castObceNazev;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query131 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result131 = mysqli_query($link, $query131);
+            if (!$result131) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -139,9 +139,9 @@ if ($result15 = mysqli_query($link, $query15)) {
             $param_sloupec = "castObceKod";
             $param_new_value = $castObceKod;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query142 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result142 = mysqli_query($link, $query142);
+            if (!$result142) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }

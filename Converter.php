@@ -26,7 +26,7 @@ class Converter
     public function JTSKtoWGS84($x, $y)
     {
         if (!($x && $y)) {
-            return array('lat' => 0, 'lon' => 0);
+            return ['lat' => 0, 'lon' => 0];
         }
 
         $delta = 5;
@@ -36,51 +36,35 @@ class Converter
 
         do {
             $jtsk = $this->WGS84toJTSK($latitude - $delta, $longitude - $delta);
-            if ($jtsk['x'] && $jtsk['y']) {
-                $v1 = $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y);
-            } else {
-                $v1 = 1e32;
-            }
+            $v1 = ($jtsk['x'] && $jtsk['y']) ? $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y) : 1e32;
 
             $jtsk = $this->WGS84toJTSK($latitude - $delta, $longitude + $delta);
-            if ($jtsk['x'] && $jtsk['y']) {
-                $v2 = $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y);
-            } else {
-                $v2 = 1e32;
-            }
+            $v2 = ($jtsk['x'] && $jtsk['y']) ? $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y) : 1e32;
 
             $jtsk = $this->WGS84toJTSK($latitude + $delta, $longitude - $delta);
-            if ($jtsk['x'] && $jtsk['y']) {
-                $v3 = $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y);
-            } else {
-                $v3 = 1e32;
-            }
+            $v3 = ($jtsk['x'] && $jtsk['y']) ? $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y) : 1e32;
 
             $jtsk = $this->WGS84toJTSK($latitude + $delta, $longitude + $delta);
-            if ($jtsk['x'] && $jtsk['y']) {
-                $v4 = $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y);
-            } else {
-                $v4 = 1e32;
-            }
+            $v4 = ($jtsk['x'] && $jtsk['y']) ? $this->distPoints($jtsk['x'], $jtsk['y'], $x, $y) : 1e32;
 
             if (($v1 <= $v2) && ($v1 <= $v3) && ($v1 <= $v4)) {
-                $latitude = $latitude - $delta / 2;
-                $longitude = $longitude - $delta / 2;
+                $latitude -= $delta / 2;
+                $longitude -= $delta / 2;
             }
 
             if (($v2 <= $v1) && ($v2 <= $v3) && ($v2 <= $v4)) {
-                $latitude = $latitude - $delta / 2;
-                $longitude = $longitude + $delta / 2;
+                $latitude -= $delta / 2;
+                $longitude += $delta / 2;
             }
 
             if (($v3 <= $v1) && ($v3 <= $v2) && ($v3 <= $v4)) {
-                $latitude = $latitude + $delta / 2;
-                $longitude = $longitude - $delta / 2;
+                $latitude += $delta / 2;
+                $longitude -= $delta / 2;
             }
 
             if (($v4 <= $v1) && ($v4 <= $v2) && ($v4 <= $v3)) {
-                $latitude = $latitude + $delta / 2;
-                $longitude = $longitude + $delta / 2;
+                $latitude += $delta / 2;
+                $longitude += $delta / 2;
             }
 
             $delta *= 0.55;
@@ -88,7 +72,7 @@ class Converter
 
         } while (!(($delta < 0.00001) || ($steps > 1000)));
 
-        return array('lat' => $latitude, 'lon' => $longitude);
+        return ['lat' => $latitude, 'lon' => $longitude];
 
     }
 
@@ -102,9 +86,9 @@ class Converter
     public function WGS84toJTSK($latitude, $longitude)
     {
         if (($latitude < 40) || ($latitude > 60) || ($longitude < 5) || ($longitude > 25)) {
-            return array('x' => 0, 'y' => 0);
+            return ['x' => 0, 'y' => 0];
         } else {
-            list($latitude, $longitude) = $this->WGS84toBessel($latitude, $longitude);
+            [$latitude, $longitude] = $this->WGS84toBessel($latitude, $longitude);
             return $this->BesseltoJTSK($latitude, $longitude);
         }
     }
@@ -123,13 +107,12 @@ class Converter
         $L = deg2rad($longitude);
         $H = $altitude;
 
-        list($x1, $y1, $z1) = $this->BLHToGeoCoords($B, $L, $H);
-        list($x2, $y2, $z2) = $this->transformCoords($x1, $y1, $z1);
-        list($B, $L, $H) = $this->geoCoordsToBLH($x2, $y2, $z2);
+        [$x1, $y1, $z1] = $this->BLHToGeoCoords($B, $L, $H);
+        [$x2, $y2, $z2] = $this->transformCoords($x1, $y1, $z1);
+        [$B, $L, $H] = $this->geoCoordsToBLH($x2, $y2, $z2);
 
         $latitude = rad2deg($B);
         $longitude = rad2deg($L);
-        //$Altitude = $H;
 
         return array($latitude, $longitude);
     }
@@ -143,7 +126,6 @@ class Converter
      */
     public function BesseltoJTSK($latitude, $longitude)
     {
-        $a = 6377397.15508;
         $e = 0.081696831215303;
         $n = 0.97992470462083;
         $rho_0 = 12310230.12797036;
@@ -177,7 +159,7 @@ class Converter
         $eps = $n * atan($sinD / $cosD);
         $rho = $rho_0 * exp(-$n * log((1 + $sinS) / $cosS));
 
-        return array('x' => $rho * cos($eps), 'y' => $rho * sin($eps));
+        return ['x' => $rho * cos($eps), 'y' => $rho * sin($eps)];
     }
 
     /**
@@ -199,7 +181,7 @@ class Converter
         $y = ($rho + $H) * cos($B) * sin($L);
         $z = ((1 - $e2) * $rho + $H) * sin($B);
 
-        return array($x, $y, $z);
+        return [$x, $y, $z];
     }
 
     /**
@@ -227,7 +209,7 @@ class Converter
         $H = sqrt(1 + $t * $t) * ($p - $a / sqrt(1 + (1 - $e2) * $t * $t));
         $L = 2 * atan($y / ($p + $x));
 
-        return array($B, $L, $H);
+        return [$B, $L, $H];
     }
 
     /**
@@ -271,6 +253,6 @@ class Converter
         $yn = $dy + (1 + $m) * (-$wz * $xs + $ys + $wx * $zs);
         $zn = $dz + (1 + $m) * (+$wy * $xs - $wx * $ys + $zs);
 
-        return array($xn, $yn, $zn);
+        return [$xn, $yn, $zn];
     }
 }

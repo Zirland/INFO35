@@ -37,21 +37,24 @@ require_once 'config.php';
 
     $action = @$_POST["action"];
     $app_id = $_GET["id"];
-    if ($app_id == "") {
-        $app_id = $_POST["app_id"];
-        $app_name = $_POST["app_name"];
-        $app_url = $_POST["app_url"];
-        $app_up = $_POST["app_up"];
-        $app_del = $_POST["app_del"];
-    } else {
-        $query42 = "SELECT nazev, url, up FROM aplikace WHERE app_id = '$app_id';";
-        if ($result42 = mysqli_query($link, $query42)) {
-            while ($row42 = mysqli_fetch_row($result42)) {
-                $app_name = $row42[0];
-                $app_url = $row42[1];
-                $app_up = $row42[2];
+    switch ($app_id) {
+        case "":
+            $app_id = $_POST["app_id"];
+            $app_name = $_POST["app_name"];
+            $app_url = $_POST["app_url"];
+            $app_up = $_POST["app_up"];
+            $app_del = $_POST["app_del"];
+            break;
+        default:
+            $query49 = "SELECT nazev, url, up FROM aplikace WHERE app_id = '$app_id';";
+            if ($result49 = mysqli_query($link, $query49)) {
+                while ($row49 = mysqli_fetch_row($result49)) {
+                    $app_name = $row49[0];
+                    $app_url = $row49[1];
+                    $app_up = $row49[2];
+                }
             }
-        }
+            break;
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -61,9 +64,9 @@ require_once 'config.php';
         if (empty(trim($app_url))) {
             $app_url_err = "Zadejte prosím URL aplikace";
         }
-        $query60 = "SELECT app_id FROM aplikace WHERE up = '$app_id';";
-        if ($result60 = mysqli_query($link, $query60)) {
-            $vazby = mysqli_num_rows($result60);
+        $query67 = "SELECT app_id FROM aplikace WHERE up = '$app_id';";
+        if ($result67 = mysqli_query($link, $query67)) {
+            $vazby = mysqli_num_rows($result67);
         }
         if ($app_del == "1" && $vazby > 0) {
             $app_del_err = "Aplikaci nelze smazat, protože na ni jsou závislé jiné aplikace.";
@@ -71,13 +74,13 @@ require_once 'config.php';
         }
 
         if ($app_name_err == "" && $app_url_err == "" && $app_del != "1") {
-            $query66 = "UPDATE aplikace SET nazev = '$app_name', `url` = '$app_url', up = '$app_up' WHERE app_id = '$app_id';";
-            $prikaz66 = mysqli_query($link, $query66);
+            $query77 = "UPDATE aplikace SET nazev = '$app_name', `url` = '$app_url', up = '$app_up' WHERE app_id = '$app_id';";
+            $prikaz77 = mysqli_query($link, $query77);
         } elseif ($app_del == "1" && $app_del_err == "") {
-            $query70 = "DELETE FROM aplikace WHERE app_id = '$app_id';";
-            $prikaz70 = mysqli_query($link, $query70);
-            $query72 = "DELETE FROM opravneni WHERE app_id = '$app_id';";
-            $prikaz72 = mysqli_query($link, $query72);
+            $query80 = "DELETE FROM aplikace WHERE app_id = '$app_id';";
+            $prikaz80 = mysqli_query($link, $query80);
+            $query82 = "DELETE FROM opravneni WHERE app_id = '$app_id';";
+            $prikaz82 = mysqli_query($link, $query82);
         }
     }
     ?>
@@ -104,22 +107,19 @@ require_once 'config.php';
             <select class="form-control" id="app_up" name="app_up">
                 <option value="">---</option>
                 <?php
-                $sql = "SELECT app_id,nazev FROM aplikace ORDER BY app_id";
+                $query110 = "SELECT app_id, nazev FROM aplikace ORDER BY app_id;";
+                if ($result110 = mysqli_query($link, $query110)) {
+                    while ($row110 = mysqli_fetch_row($result110)) {
+                        $up_app_id = $row110[0];
+                        $up_app_name = $row110[1];
 
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    if (mysqli_stmt_execute($stmt)) {
-                        mysqli_stmt_bind_result($stmt, $up_app_id, $up_app_name);
-
-                        while (mysqli_stmt_fetch($stmt)) {
-                            echo "<option value=\"$up_app_id\"";
-                            if ($up_app_id == $app_up) {
-                                echo " SELECTED";
-                            }
-                            echo ">$up_app_name</option>\n";
+                        echo "<option value=\"$up_app_id\"";
+                        if ($up_app_id == $app_up) {
+                            echo " SELECTED";
                         }
+                        echo ">$up_app_name</option>\n";
                     }
                 }
-                mysqli_stmt_close($stmt);
                 ?>
             </select>
             <span class="help-block">
