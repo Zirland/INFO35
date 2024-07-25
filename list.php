@@ -59,55 +59,55 @@ require_once 'config.php';
     echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th>Status</th><th></th></tr>";
     $i = 0;
 
-    $query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky WHERE archiv='0' ORDER BY tel_cislo";
-    if ($result60 = mysqli_query($link, $query60)) {
-        while ($row60 = mysqli_fetch_row($result60)) {
-            $id = $row60[0];
-            $tel_cislo = $row60[1];
-            $silnice = $row60[2];
-            $kilometr = $row60[3];
-            $smer = $row60[4];
-            $longitude = $row60[5];
-            $latitude = $row60[6];
-            $platnost = $row60[7];
-            $export = $row60[8];
-            $edited = $row60[9];
-            $ssud = $row60[10];
+    $query62 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky WHERE archiv='0' ORDER BY tel_cislo";
+    if ($result62 = mysqli_query($link, $query62)) {
+        while ($row62 = mysqli_fetch_row($result62)) {
+            $id = $row62[0];
+            $tel_cislo = $row62[1];
+            $silnice = $row62[2];
+            $kilometr = $row62[3];
+            $smer = $row62[4];
+            $longitude = $row62[5];
+            $latitude = $row62[6];
+            $platnost = $row62[7];
+            $export = $row62[8];
+            $edited = $row62[9];
+            $ssud = $row62[10];
             $ssud_nazev = "";
-            $typ = $row60[11];
+            $typ = $row62[11];
             $typ_nazev = "";
 
             $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
             if (substr($silnice, 0, 1) != "D") {
-                $silnice = "I/" . $silnice;
+                $silnice = "I/{$silnice}";
             }
             $kilometr = str_replace(".", ",", $kilometr);
 
-            $query237 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
-            if ($result237 = mysqli_query($link, $query237)) {
-                while ($row237 = mysqli_fetch_row($result237)) {
-                    $ssud_nazev = $row237[0];
+            $query87 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
+            if ($result87 = mysqli_query($link, $query87)) {
+                while ($row87 = mysqli_fetch_row($result87)) {
+                    $ssud_nazev = $row87[0];
                 }
             }
 
-            $query237 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
-            if ($result237 = mysqli_query($link, $query237)) {
-                while ($row237 = mysqli_fetch_row($result237)) {
-                    $typ_nazev = $row237[0];
+            $query94 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
+            if ($result94 = mysqli_query($link, $query94)) {
+                while ($row94 = mysqli_fetch_row($result94)) {
+                    $typ_nazev = $row94[0];
                 }
             }
 
             echo "<tr class=\"";
-            if ($i % 2 == 0) {
-                echo "dark";
-            } else {
-                echo "light";
-            }
+            echo ($i % 2 == 0) ? "dark" : "light";
             if ($platnost == 0) {
                 echo "-strikeout";
             }
-            echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";
+            echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>";
+            if ($techno == 1) {
+                echo "TECHNO ";
+            }
+            echo "$typ_nazev</td>";
 
             if ($export == "0") {
                 echo "<td>Připraveno k exportu</td>";
@@ -118,7 +118,7 @@ require_once 'config.php';
             }
 
             echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
-            $i = $i + 1;
+            $i++;
 
         }
     }

@@ -50,8 +50,8 @@ require_once 'config.php';
         }
 
         if ($app_name_err == "" || $app_url_err == "") {
-            $query44 = "INSERT INTO aplikace (nazev, url, up) VALUES ('$app_name','$app_url', '$app_up');";
-            $prikaz44 = mysqli_query($link, $query44);
+            $query53 = "INSERT INTO aplikace (nazev, url, up) VALUES ('$app_name','$app_url', '$app_up');";
+            $prikaz53 = mysqli_query($link, $query53);
             header("location: preferences.php");
         }
     }
@@ -78,19 +78,16 @@ require_once 'config.php';
             <select class="form-control" id="app_up" name="app_up">
                 <option value="">---</option>
                 <?php
-                $sql = "SELECT app_id,nazev FROM aplikace ORDER BY app_id";
+                $query81 = "SELECT app_id, nazev FROM aplikace ORDER BY app_id;";
+                if ($result81 = mysqli_query($link, $query81)) {
+                    while ($row81 = mysqli_fetch_row($result81)) {
+                        $up_app_id = $row81[0];
+                        $up_app_name = $row81[1];
 
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    if (mysqli_stmt_execute($stmt)) {
-                        mysqli_stmt_bind_result($stmt, $up_app_id, $up_app_name);
-
-                        while (mysqli_stmt_fetch($stmt)) {
-                            echo "<option value=\"$up_app_id\"";
-                            echo ">$up_app_name</option>\n";
-                        }
+                        echo "<option value=\"$up_app_id\"";
+                        echo ">$up_app_name</option>\n";
                     }
                 }
-                mysqli_stmt_close($stmt);
                 ?>
             </select>
             <span class="help-block">
@@ -104,13 +101,13 @@ require_once 'config.php';
 
     <?php
     echo "<table width=\"50%\" align=\"center\">";
-    $query79 = "SELECT app_id, nazev, url, up FROM aplikace ORDER BY app_id;";
-    if ($result79 = mysqli_query($link, $query79)) {
-        while ($row79 = mysqli_fetch_row($result79)) {
-            $apl_id = $row79[0];
-            $apl_nazev = $row79[1];
-            $apl_url = $row79[2];
-            $apl_up = $row79[3];
+    $query110 = "SELECT app_id, nazev, url, up FROM aplikace ORDER BY app_id;";
+    if ($result110 = mysqli_query($link, $query110)) {
+        while ($row110 = mysqli_fetch_row($result110)) {
+            $apl_id = $row110[0];
+            $apl_nazev = $row110[1];
+            $apl_url = $row110[2];
+            $apl_up = $row110[3];
 
             echo "<tr>";
             echo "<td>$apl_id</td>";
@@ -122,7 +119,6 @@ require_once 'config.php';
         }
     }
     echo "</table>";
-    ?>
-    <?php
+
     mysqli_close($link);
     ?>

@@ -13,34 +13,34 @@ require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$query14 = "SELECT tel_cislo FROM check_st;";
-if ($result14 = mysqli_query($link, $query14)) {
-    $rows = mysqli_num_rows($result14);
+$query16 = "SELECT tel_cislo FROM check_st;";
+if ($result16 = mysqli_query($link, $query16)) {
+    $rows = mysqli_num_rows($result16);
     echo "Zbývá zkontrolovat $rows záznamů<br/>";
-    $row14 = mysqli_fetch_row($result14);
-    $check_id = $row14[0];
+    $row16 = mysqli_fetch_row($result16);
+    $check_id = $row16[0];
 }
 
 echo "$check_id<br/>";
 $error = 0;
 
-$query15 = "SELECT nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, nazev_okresu, longitude, latitude, kod_objektu, kod_adresy, kod_obce, kod_casti_obce, kod_ulice FROM stanice WHERE tel_cislo = '$check_id';";
-echo "$query15<br/>";
-if ($result15 = mysqli_query($link, $query15)) {
-    while ($row15 = mysqli_fetch_row($result15)) {
-        $nazev_ulice = $row15[0];
-        $cislo_popisne = $row15[1];
-        $cislo_orientacni = $row15[2];
-        $nazev_obce = $row15[3];
-        $nazev_casti_obce = $row15[4];
-        $nazev_okresu = $row15[5];
-        $longitude = $row15[6];
-        $latitude = $row15[7];
-        $kod_objektu = $row15[8];
-        $kod_adresy = $row15[9];
-        $kod_obce = $row15[10];
-        $kod_casti_obce = $row15[11];
-        $kod_ulice = $row15[12];
+$query27 = "SELECT nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, nazev_okresu, longitude, latitude, kod_objektu, kod_adresy, kod_obce, kod_casti_obce, kod_ulice FROM stanice WHERE tel_cislo = '$check_id';";
+echo "$query27<br/>";
+if ($result27 = mysqli_query($link, $query27)) {
+    while ($row27 = mysqli_fetch_row($result27)) {
+        $nazev_ulice = $row27[0];
+        $cislo_popisne = $row27[1];
+        $cislo_orientacni = $row27[2];
+        $nazev_obce = $row27[3];
+        $nazev_casti_obce = $row27[4];
+        $nazev_okresu = $row27[5];
+        $longitude = $row27[6];
+        $latitude = $row27[7];
+        $kod_objektu = $row27[8];
+        $kod_adresy = $row27[9];
+        $kod_obce = $row27[10];
+        $kod_casti_obce = $row27[11];
+        $kod_ulice = $row27[12];
 
         if ($kod_adresy != '') {
             $url = "http://ags.cuzk.cz/arcgis/rest/services/RUIAN/Vyhledavaci_sluzba_nad_daty_RUIAN/MapServer/1/query?where=kod%3D$kod_adresy&outFields=*&f=pjson";
@@ -154,68 +154,68 @@ if ($result15 = mysqli_query($link, $query15)) {
         if ($error == 0) {
             if ($nazev_ulice != $new_nazev_ulice) {
                 echo "$nazev_ulice = $new_nazev_ulice<br/>";
-                $update = "UPDATE stanice SET nazev_ulice = '$new_nazev_ulice' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update157 = "UPDATE stanice SET nazev_ulice = '$new_nazev_ulice' WHERE tel_cislo = '$check_id';";
+                $prikaz157 = mysqli_query($link, $update157);
             }
             if ($cislo_popisne != $new_cislo_popisne) {
                 echo "$cislo_popisne = $new_cislo_popisne<br/>";
-                $update = "UPDATE stanice SET cislo_popisne = '$new_cislo_popisne' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update162 = "UPDATE stanice SET cislo_popisne = '$new_cislo_popisne' WHERE tel_cislo = '$check_id';";
+                $prikaz162 = mysqli_query($link, $update162);
             }
             if ($cislo_orientacni != $new_cislo_orientacni) {
                 echo "$cislo_orientacni = $new_cislo_orientacni<br/>";
-                $update = "UPDATE stanice SET cislo_orientacni = '$new_cislo_orientacni' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update167 = "UPDATE stanice SET cislo_orientacni = '$new_cislo_orientacni' WHERE tel_cislo = '$check_id';";
+                $prikaz167 = mysqli_query($link, $update167);
             }
             if ($nazev_obce != $new_nazev_obce) {
                 echo "$nazev_obce = $new_nazev_obce<br/>";
-                $update = "UPDATE stanice SET nazev_obce = '$new_nazev_obce' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update172 = "UPDATE stanice SET nazev_obce = '$new_nazev_obce' WHERE tel_cislo = '$check_id';";
+                $prikaz172 = mysqli_query($link, $update172);
             }
             if ($nazev_casti_obce != $new_nazev_casti_obce) {
                 echo "$nazev_casti_obce = $new_nazev_casti_obce<br/>";
-                $update = "UPDATE stanice SET nazev_casti_obce = '$new_nazev_casti_obce' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update177 = "UPDATE stanice SET nazev_casti_obce = '$new_nazev_casti_obce' WHERE tel_cislo = '$check_id';";
+                $prikaz177 = mysqli_query($link, $update177);
             }
             if ($nazev_okresu != $new_nazev_okresu) {
                 echo "$nazev_okresu = $new_nazev_okresu<br/>";
-                $update = "UPDATE stanice SET nazev_okresu = '$new_nazev_okresu' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update182 = "UPDATE stanice SET nazev_okresu = '$new_nazev_okresu' WHERE tel_cislo = '$check_id';";
+                $prikaz182 = mysqli_query($link, $update182);
             }
             if ($longitude != $new_longitude) {
                 echo "$longitude = $new_longitude<br/>";
-                $update = "UPDATE stanice SET longitude = '$new_longitude' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update187 = "UPDATE stanice SET longitude = '$new_longitude' WHERE tel_cislo = '$check_id';";
+                $prikaz187 = mysqli_query($link, $update187);
             }
             if ($latitude != $new_latitude) {
                 echo "$latitude = $new_latitude<br/>";
-                $update = "UPDATE stanice SET latitude = '$new_latitude' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update192 = "UPDATE stanice SET latitude = '$new_latitude' WHERE tel_cislo = '$check_id';";
+                $prikaz192 = mysqli_query($link, $update192);
             }
             if ($kod_objektu != $new_kod_objektu) {
                 echo "$kod_objektu = $new_kod_objektu<br/>";
-                $update = "UPDATE stanice SET kod_objektu = '$new_kod_objektu' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update197 = "UPDATE stanice SET kod_objektu = '$new_kod_objektu' WHERE tel_cislo = '$check_id';";
+                $prikaz197 = mysqli_query($link, $update197);
             }
             if ($kod_obce != $new_kod_obce) {
                 echo "$kod_obce = $new_kod_obce<br/>";
-                $update = "UPDATE stanice SET kod_obce = '$new_kod_obce' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update202 = "UPDATE stanice SET kod_obce = '$new_kod_obce' WHERE tel_cislo = '$check_id';";
+                $prikaz202 = mysqli_query($link, $update202);
             }
             if ($kod_casti_obce != $new_kod_casti_obce) {
                 echo "$kod_casti_obce = $new_kod_casti_obce<br/>";
-                $update = "UPDATE stanice SET kod_casti_obce = '$new_kod_casti_obce' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update207 = "UPDATE stanice SET kod_casti_obce = '$new_kod_casti_obce' WHERE tel_cislo = '$check_id';";
+                $prikaz207 = mysqli_query($link, $update207);
             }
             if ($kod_ulice != $new_kod_ulice) {
                 echo "$kod_ulice = $new_kod_ulice<br/>";
-                $update = "UPDATE stanice SET kod_ulice = '$new_kod_ulice' WHERE tel_cislo = '$check_id';";
-                $prikaz_up = mysqli_query($link, $update);
+                $update212 = "UPDATE stanice SET kod_ulice = '$new_kod_ulice' WHERE tel_cislo = '$check_id';";
+                $prikaz212 = mysqli_query($link, $update212);
             }
 
-            $del_check = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
-            echo "$del_check<br/>";
-            $prikaz_del = mysqli_query($link, $del_check);
+            $check216 = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
+            echo "$check216<br/>";
+            $prikaz216 = mysqli_query($link, $check216);
 
             echo "<meta http-equiv=\"refresh\" content=\"1\">";
         }

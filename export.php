@@ -54,7 +54,7 @@ if ($result29 = mysqli_query($link, $query29)) {
         $lat_deg = ($lat_deg < 10) ? "0{$lat_deg}" : $lat_deg;
         $lat_min = ($lat_min < 10) ? "0{$lat_min}" : $lat_min;
         $lat_sec = ($lat_rest < 10) ? "0{$lat_rest}" : $lat_rest;
-        $lat_sec = substr(($lat_sec), 0, 6);
+        $lat_sec = substr($lat_sec, 0, 6);
         $latitude = "N{$lat_deg}°{$lat_min}'{$lat_sec}";
 
         $lon_deg = floor($longitude);
@@ -65,7 +65,7 @@ if ($result29 = mysqli_query($link, $query29)) {
         $lon_deg = ($lon_deg < 10) ? "0{$lon_deg}" : $lon_deg;
         $lon_min = ($lon_min < 10) ? "0{$lon_min}" : $lon_min;
         $lon_sec = ($lon_rest < 10) ? "0{$lon_rest}" : $lon_rest;
-        $lon_sec = substr(($lon_sec), 0, 6);
+        $lon_sec = substr($lon_sec, 0, 6);
         $longitude = "E{$lon_deg}°{$lon_min}'{$lon_sec}";
 
         $current .= "$prijmeni;$jmeno;;$tel_cislo;$OpID;$nazev_ulice;$cislo_popisne;$cislo_orientacni;$nazev_obce;$nazev_casti_obce;;$nazev_okresu;$longitude;$latitude;$kod_objektu;$kod_adresy;$kod_ulice;$kod_obce;$kod_casti_obce;\n";

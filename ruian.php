@@ -13,14 +13,14 @@ require_once 'config.php';
 
 $error = "";
 
-$query15 = "SELECT id, longitude, latitude FROM hlasky WHERE export = 0 ORDER BY id;";
-if ($result15 = mysqli_query($link, $query15)) {
-    while ($row15 = mysqli_fetch_row($result15)) {
-        $id = $row15[0];
+$query16 = "SELECT id, longitude, latitude FROM hlasky WHERE export = 0 ORDER BY id;";
+if ($result16 = mysqli_query($link, $query16)) {
+    while ($row16 = mysqli_fetch_row($result16)) {
+        $id = $row16[0];
 
-        $query24 = "UPDATE hlasky SET export = 1 WHERE id = $id;";
-        $result24 = mysqli_query($link, $query24);
-        if (!$result24) {
+        $query21 = "UPDATE hlasky SET export = 1 WHERE id = $id;";
+        $result21 = mysqli_query($link, $query21);
+        if (!$result21) {
             $error .= mysqli_error($link) . "<br/>";
         }
 

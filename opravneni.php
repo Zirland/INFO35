@@ -47,31 +47,31 @@ require_once 'config.php';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($prava);
-        $query72 = "SELECT `user_id`, app_id FROM opravneni;";
-        if ($result72 = mysqli_query($link, $query72)) {
-            while ($row72 = mysqli_fetch_row($result72)) {
-                $usr = $row72[0];
-                $app = $row72[1];
+        $query50 = "SELECT `user_id`, app_id FROM opravneni;";
+        if ($result50 = mysqli_query($link, $query50)) {
+            while ($row50 = mysqli_fetch_row($result50)) {
+                $usr = $row50[0];
+                $app = $row50[1];
 
-                $prava[] = "access_" . $usr . "_" . $app;
+                $prava[] = "access_$usr_$app";
             }
         }
 
         unset($uzivatele);
-        $query28 = "SELECT id from users ORDER BY id;";
-        if ($result28 = mysqli_query($link, $query28)) {
-            while ($row28 = mysqli_fetch_row($result28)) {
-                $userid = $row28[0];
+        $query61 = "SELECT id from users ORDER BY id;";
+        if ($result61 = mysqli_query($link, $query61)) {
+            while ($row61 = mysqli_fetch_row($result61)) {
+                $userid = $row61[0];
 
                 $uzivatele[] = $userid;
             }
         }
 
         unset($aplikace);
-        $query28 = "SELECT app_id from aplikace ORDER BY app_id;";
-        if ($result28 = mysqli_query($link, $query28)) {
-            while ($row28 = mysqli_fetch_row($result28)) {
-                $appid = $row28[0];
+        $query71 = "SELECT app_id from aplikace ORDER BY app_id;";
+        if ($result71 = mysqli_query($link, $query71)) {
+            while ($row71 = mysqli_fetch_row($result71)) {
+                $appid = $row71[0];
 
                 $aplikace[] = $appid;
             }
@@ -79,12 +79,12 @@ require_once 'config.php';
 
         foreach ($uzivatele as $user) {
             foreach ($aplikace as $app) {
-                $index = "U" . $user . "A" . $app;
+                $index = "U{$user}A{$app}";
 
                 $opravneni = $_POST[$index];
 
                 if ($opravneni == "1") {
-                    $new_prava[] = "access_" . $user . "_" . $app;
+                    $new_prava[] = "access_$usr_$app";
                 }
             }
         }
@@ -95,8 +95,8 @@ require_once 'config.php';
             $usr = $split[1];
             $app = $split[2];
 
-            $query91 = "DELETE FROM opravneni WHERE user_id = '$usr' AND app_id = '$app';";
-            $prikaz91 = mysqli_query($link, $query91);
+            $query98 = "DELETE FROM opravneni WHERE user_id = '$usr' AND app_id = '$app';";
+            $prikaz98 = mysqli_query($link, $query98);
         }
 
         $add = array_diff($new_prava, $prava);
@@ -105,8 +105,8 @@ require_once 'config.php';
             $usr = $split[1];
             $app = $split[2];
 
-            $query91 = "INSERT INTO opravneni (user_id, app_id) VALUES ('$usr', '$app');";
-            $prikaz91 = mysqli_query($link, $query91);
+            $query108 = "INSERT INTO opravneni (user_id, app_id) VALUES ('$usr', '$app');";
+            $prikaz108 = mysqli_query($link, $query108);
         }
     }
 
@@ -115,12 +115,12 @@ require_once 'config.php';
     echo "<form action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\" method=\"post\">";
     echo "<table>";
     echo "<tr><th></th>";
-    $query28 = "SELECT id, username from users ORDER BY id;";
-    if ($result28 = mysqli_query($link, $query28)) {
-        $num_users = mysqli_num_rows($result28);
-        while ($row28 = mysqli_fetch_row($result28)) {
-            $userid = $row28[0];
-            $username = $row28[1];
+    $query118 = "SELECT id, username FROM users ORDER BY id;";
+    if ($result118 = mysqli_query($link, $query118)) {
+        $num_users = mysqli_num_rows($result118);
+        while ($row118 = mysqli_fetch_row($result118)) {
+            $userid = $row118[0];
+            $username = $row118[1];
 
             $uzivatele[] = $userid;
             echo "<th>$username</th>";
@@ -128,31 +128,22 @@ require_once 'config.php';
     }
     echo "</tr>";
     $i = 0;
-    $query40 = "SELECT app_id, nazev from aplikace ORDER BY app_id;";
-    if ($result40 = mysqli_query($link, $query40)) {
-        while ($row40 = mysqli_fetch_row($result40)) {
-            $appid = $row40[0];
-            $nazev = $row40[1];
+    $query131 = "SELECT app_id, nazev FROM aplikace ORDER BY app_id;";
+    if ($result131 = mysqli_query($link, $query131)) {
+        while ($row131 = mysqli_fetch_row($result131)) {
+            $appid = $row131[0];
+            $nazev = $row131[1];
             echo "<tr class=\"";
-            if ($i % 2 == 0) {
-                echo "dark";
-            } else {
-                echo "light";
-            }
-            echo "\">";
-            echo "<td>$nazev</td>";
+            echo ($i % 2 == 0) ? "dark" : "light";
+            echo "\"><td>$nazev</td>";
 
             foreach ($uzivatele as $user) {
                 echo "<td style=\"text-align:center;\">";
+                echo "<input type=\"checkbox\" name=\"U{$user}A{$appid}\" value=\"1\"";
 
-                echo "<input type=\"checkbox\" name=\"U";
-                echo $user;
-                echo "A";
-                echo "$appid\" value=\"1\"";
-
-                $query55 = "SELECT id FROM opravneni WHERE `user_id` = '$user' AND `app_id` = '$appid';";
-                if ($result55 = mysqli_query($link, $query55)) {
-                    $num_users = mysqli_num_rows($result55);
+                $query144 = "SELECT id FROM opravneni WHERE `user_id` = '$user' AND `app_id` = '$appid';";
+                if ($result144 = mysqli_query($link, $query144)) {
+                    $num_users = mysqli_num_rows($result144);
 
                     if ($num_users != 0) {
                         echo " CHECKED";
@@ -160,7 +151,7 @@ require_once 'config.php';
                 }
                 echo "></td>";
             }
-            $i = $i + 1;
+            $i++;
             echo " </tr>";
         }
     }

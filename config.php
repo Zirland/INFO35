@@ -216,6 +216,10 @@ function SmerNazev($silnice, $smer, $kilometr)
             $smer_nazev = ($smer == "+") ? "Znojmo" : "Havlíčkův Brod";
             break;
 
+        case 'D46':
+            $smer_nazev = ($smer == "+") ? "Olomouc" : "Vyškov";
+            break;
+
         case 'D48':
             $smer_nazev = ($smer == "+") ? "Český Těšín" : "Bělotín";
             break;
