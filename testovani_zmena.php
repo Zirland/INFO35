@@ -59,14 +59,14 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, osoba, silnice, hlasky, zadatel FROM testovani WHERE id = $id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $old_datum = $row16[0];
-        $old_osoba = $row16[1];
-        $old_silnice = $row16[2];
-        $old_hlasky = $row16[3];
-        $zadatel = $row16[4];
+$query62 = "SELECT datum, osoba, silnice, hlasky, zadatel FROM testovani WHERE id = $id;";
+if ($result62 = mysqli_query($link, $query62)) {
+    while ($row62 = mysqli_fetch_row($result62)) {
+        $old_datum = $row62[0];
+        $old_osoba = $row62[1];
+        $old_silnice = $row62[2];
+        $old_hlasky = $row62[3];
+        $zadatel = $row62[4];
     }
 }
 
@@ -90,16 +90,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($datum_err) && empty($osoba_err) && empty($komentar_err)) {
-        $query72 = "SELECT email FROM users WHERE id = '$zadatel';";
-        if ($result72 = mysqli_query($link, $query72)) {
-            while ($row72 = mysqli_fetch_row($result72)) {
-                $koordinator = $row72[0];
+        $query93 = "SELECT email FROM users WHERE id = '$zadatel';";
+        if ($result93 = mysqli_query($link, $query93)) {
+            while ($row93 = mysqli_fetch_row($result93)) {
+                $koordinator = $row93[0];
             }
         }
 
         if ($odvolat == "1") {
-            $query88 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
-            $prikaz88 = mysqli_query($link, $query88);
+            $query101 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
+            $prikaz101 = mysqli_query($link, $query101);
 
             $datumformat = date("d.m.Y", strtotime($datum));
             $to = 'Testování hlásek <hlasky@zirland.org>';
@@ -127,8 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($schvalit == "1") {
-            $query93 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
-            $prikaz93 = mysqli_query($link, $query93);
+            $query130 = "UPDATE testovani SET schvaleno = '1' WHERE id = $id;";
+            $prikaz130 = mysqli_query($link, $query130);
 
             $datumformat = date("d.m.Y", strtotime($datum));
             $to = 'Testování hlásek <hlasky@zirland.org>';
@@ -155,13 +155,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $hlasky_array = explode("|", $old_hlasky);
             foreach ($hlasky_array as $id_hlaska) {
-                $query147 = "INSERT INTO test_result (id_test, id_hlaska) VALUES ('$id','$id_hlaska');";
-                $prikaz147 = mysqli_query($link, $query147);
+                $query158 = "INSERT INTO test_result (id_test, id_hlaska) VALUES ('$id','$id_hlaska');";
+                $prikaz158 = mysqli_query($link, $query158);
             }
         }
 
-        $query79 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
-        $prikaz79 = mysqli_query($link, $query79);
+        $query163 = "UPDATE testovani SET datum = '$datum', osoba = '$osoba', komentar = '$komentar' WHERE id = $id;";
+        $prikaz163 = mysqli_query($link, $query163);
 
         if ($old_datum != $datum) {
             $olddatumformat = date("d.m.Y", strtotime($old_datum));
@@ -195,16 +195,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $old_datum = $row16[0];
-        $old_silnice = $row16[1];
-        $old_osoba = $row16[2];
-        $old_hlasky = $row16[3];
-        $old_schvaleno = $row16[4];
-        $old_odmitnuto = $row16[5];
-        $old_komentar = $row16[6];
+$query198 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE id = $id;";
+if ($result198 = mysqli_query($link, $query198)) {
+    while ($row198 = mysqli_fetch_row($result198)) {
+        $old_datum = $row198[0];
+        $old_silnice = $row198[1];
+        $old_osoba = $row198[2];
+        $old_hlasky = $row198[3];
+        $old_schvaleno = $row198[4];
+        $old_odmitnuto = $row198[5];
+        $old_komentar = $row198[6];
 
     }
 }
@@ -231,42 +231,37 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
                     class="form-control" value="<?php echo $old_datum; ?>"></td>
             <td><select class="form-control" id="silnice" name="silnice" disabled>
                     <?php
-                    $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+                    $query234 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    if ($result234 = mysqli_query($link, $query234)) {
+                        while ($row234 = mysqli_fetch_row($result234)) {
+                            $sil_id = $row234[0];
+                            $sil_name = $row234[1];
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
-
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$sil_id\"";
-                                if ($sil_id == $old_silnice) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$sil_name</option>\n";
+                            echo "<option value=\"$sil_id\"";
+                            if ($sil_id == $old_silnice) {
+                                echo " SELECTED";
                             }
+                            echo ">$sil_name</option>\n";
                         }
                     }
-                    mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
             <td><select class="form-control" id="osoba" name="osoba">
                     <?php
-                    $sql = "SELECT id, jmeno,tel_cislo FROM test_osoby ORDER BY jmeno";
+                    $query251 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+                    if ($result251 = mysqli_query($link, $query251)) {
+                        while ($row251 = mysqli_fetch_row($result251)) {
+                            $os_id = $row251[0];
+                            $os_jmeno = $row251[1];
+                            $os_cislo = $row251[2];
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $os_id, $os_jmeno, $os_cislo);
-
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$os_id\"";
-                                if ($os_id == $old_osoba) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$os_jmeno | $os_cislo</option>\n";
+                            echo "<option value=\"$os_id\"";
+                            if ($os_id == $old_osoba) {
+                                echo " SELECTED";
                             }
+                            echo ">$os_jmeno | $os_cislo</option>\n";
                         }
                     }
-                    mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
             <td></td>
@@ -299,10 +294,10 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
         $hlasky_list = implode(",", $hlasky_array);
         unset($strediska);
 
-        $query179 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS decimal), smer;";
-        if ($result179 = mysqli_query($link, $query179)) {
-            while ($row179 = mysqli_fetch_row($result179)) {
-                $strediska[] = $row179[0];
+        $query297 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS decimal), smer;";
+        if ($result297 = mysqli_query($link, $query297)) {
+            while ($row297 = mysqli_fetch_row($result297)) {
+                $strediska[] = $row297[0];
             }
         }
         if ($strediska) {
@@ -313,36 +308,32 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
             foreach ($strediska as $stredisko) {
                 $ssud_nazev = "";
                 echo "<td style=\"padding:10px\"><table>";
-                $query237 = "SELECT popis FROM enum_ssud WHERE id = '$stredisko';";
-                if ($result237 = mysqli_query($link, $query237)) {
-                    while ($row237 = mysqli_fetch_row($result237)) {
-                        $ssud_nazev = $row237[0];
+                $query311 = "SELECT popis FROM enum_ssud WHERE id = '$stredisko';";
+                if ($result311 = mysqli_query($link, $query311)) {
+                    while ($row311 = mysqli_fetch_row($result311)) {
+                        $ssud_nazev = $row311[0];
                     }
                 }
                 echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
                 $i = 0;
-                $query193 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
-                if ($result193 = mysqli_query($link, $query193)) {
-                    while ($row193 = mysqli_fetch_row($result193)) {
-                        $hl_id = $row193[0];
-                        $hl_telcislo = $row193[1];
-                        $hl_kilometr = $row193[2];
-                        $hl_smer = $row193[3];
-                        $hl_smoke = $row193[4];
+                $query319 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
+                if ($result319 = mysqli_query($link, $query319)) {
+                    while ($row319 = mysqli_fetch_row($result319)) {
+                        $hl_id = $row319[0];
+                        $hl_telcislo = $row319[1];
+                        $hl_kilometr = $row319[2];
+                        $hl_smer = $row319[3];
+                        $hl_smoke = $row319[4];
 
                         echo "<tr class=\"";
-                        if ($i % 2 == 0) {
-                            echo "dark";
-                        } else {
-                            echo "light";
-                        }
+                        echo ($i % 2 == 0) ? "dark" : "light";
                         if ($hl_smoke == 0) {
                             echo "-smoke";
                         }
                         echo "\"><td></td>";
                         echo "<td>$hl_telcislo | km $hl_kilometr směr $hl_smer</td></tr>\n";
-                        $z = $z + 1;
-                        $i = $i + 1;
+                        $z++;
+                        $i++;
                     }
                 }
                 echo "</table></td>";
