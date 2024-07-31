@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Europe/Prague');
-session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
@@ -12,16 +14,10 @@ require_once 'config.php';
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
+
 <head>
-	<meta content="text/html; charset=utf-8" http-equiv="content-type">
-	<title>Editace testu hlásek</title>
-	<script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
-	<script type="text/javascript">
-		Loader.lang = "cs";
-		Loader.load(null, {
-			poi: true
-		});
-	</script>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>Editace testu hlásek</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
         body {
@@ -41,13 +37,13 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky FROM testovani WHERE id = $id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $datum   = $row16[0];
-        $silnice = $row16[1];
-        $osoba   = $row16[2];
-        $hlasky  = $row16[3];
+$query40 = "SELECT datum, silnice, osoba, hlasky FROM testovani WHERE id = $id;";
+if ($result40 = mysqli_query($link, $query40)) {
+    while ($row40 = mysqli_fetch_row($result40)) {
+        $datum = $row40[0];
+        $silnice = $row40[1];
+        $osoba = $row40[2];
+        $hlasky = $row40[3];
     }
 }
 
@@ -66,23 +62,22 @@ if ($hlasky == "") {
 }
 
 if ($error == 0) {
-
     $datumformat = date("d.m.Y", strtotime($datum));
-    $logID       = $_SESSION["id"];
+    $logID = $_SESSION["id"];
 
-    $query72 = "SELECT email FROM users WHERE id = '$logID';";
-    if ($result72 = mysqli_query($link, $query72)) {
-        while ($row72 = mysqli_fetch_row($result72)) {
-            $koordinator = $row72[0];
+    $query68 = "SELECT email FROM users WHERE id = '$logID';";
+    if ($result68 = mysqli_query($link, $query68)) {
+        while ($row68 = mysqli_fetch_row($result68)) {
+            $koordinator = $row68[0];
         }
     }
 
-    $to      = 'Testování hlásek <hlasky@zirland.org>';
+    $to = 'Testování hlásek <hlasky@zirland.org>';
     $subject = 'Požadavek na schválení testu';
     $message = '
 <html>
 <head>
-  <title>Požadavek na schválení testu</title>
+<title>Požadavek na schválení testu</title>
 </head>
 <body>
 <p>Byl zadán požadavek na schválení testu hlásek:</p>
@@ -96,11 +91,12 @@ if ($error == 0) {
     $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
     $headers[] = 'Bcc: zirland@gmail.com';
     $headers[] = 'To: ' . $koordinator;
-    mail($to, $subject, $message, implode("\r\n", $headers));
+    //    mail($to, $subject, $message, implode("\r\n", $headers));
 
-    $query96  = "UPDATE testovani SET finalni = 1, zadatel = '$logID' WHERE id = '$id';";
-    $prikaz96 = mysqli_query($link, $query96);
+    $query97 = "UPDATE testovani SET finalni = 1, zadatel = '$logID' WHERE id = '$id';";
+    if ($prikaz97 = mysqli_query($link, $query97)) {
+        echo "Požadavek na schválení odeslán.";
+    }
+    ;
 }
 ?>
-
-

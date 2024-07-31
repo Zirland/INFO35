@@ -1,10 +1,12 @@
 <?php
 date_default_timezone_set('Europe/Prague');
-session_start();
+if (!isset($_SESSION)) {
+	session_start();
+}
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
+	header("location: login.php");
+	exit;
 }
 
 require_once 'config.php';
@@ -55,41 +57,41 @@ require_once 'config.php';
 		var t_yp = '';
 
 		function telcislo(num) {
-			tel_cislo=num;
+			tel_cislo = num;
 			filtr();
 		}
 
 		function silnice(sil) {
-			sil_nice=sil;
+			sil_nice = sil;
 			filtr();
 		}
 
 		function ssud(sud) {
-			ss_ud=sud;
+			ss_ud = sud;
 			filtr();
 		}
 
 		function typ(tp) {
-			t_yp=tp;
+			t_yp = tp;
 			filtr();
 		}
 		function search(str) {
 			var xmlhttp;
 
-			xmlhttp=new XMLHttpRequest();
+			xmlhttp = new XMLHttpRequest();
 
-			xmlhttp.onreadystatechange = function() {
-				if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			xmlhttp.onreadystatechange = function () {
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 					document.getElementById("data").innerHTML = xmlhttp.responseText;
 				}
 			}
 
-			xmlhttp.open("GET",'vypis_filtr.php?'+str, true);
+			xmlhttp.open("GET", 'vypis_filtr.php?' + str, true);
 			xmlhttp.send();
 		}
 
 		function filtr() {
-			var qry='';
+			var qry = '';
 			if (tel_cislo != '') {
 				qry += 'tel_cislo=' + tel_cislo;
 			}
@@ -118,86 +120,78 @@ require_once 'config.php';
 
 <body onLoad="telcislo('')">
 	<?php
-$app_up = PageHeader();
+	$app_up = PageHeader();
 
-echo "<table width=\"100%\">
+	echo "<table width=\"100%\">
 <tr>
 <td width=\"10\">&nbsp;</td>
 <td width=\"150\"><input id=\"telcislo\" onChange=\"telcislo(this.value)\" style=\"width:140px;\"></td>
 <td width=\"100\"><select id=\"silnice\" name=\"silnice\" onChange=\"silnice(this.value)\" style=\"width:90px;\"><option value=\"\">---</option>";
 
-$sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+	$query131 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+	if ($result131 = mysqli_query($link, $query131)) {
+		while ($row131 = mysqli_fetch_row($result131)) {
+			$sil_id = $row131[0];
+			$sil_name = $row131[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
+			echo "<option value=\"$sil_id\"";
+			if ($sil_id == $silnice) {
+				echo " SELECTED";
+			}
+			echo ">$sil_name</option>\n";
+		}
+	}
 
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$sil_id\"";
-            if ($sil_id == $silnice) {
-                echo " SELECTED";
-            }
-            echo ">$sil_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-
-echo "</select></td>
+	echo "</select></td>
 <td width=\"100\"></td>
 <td width=\"300\"></td>
 <td width=\"300\"></td>
 <td width=\"300\"></td>
 <td width=\"200\"><select id=\"ssud\" name=\"ssud\" onChange=\"ssud(this.value)\" style=\"width:190px;\"><option value=\"\">---</option>";
 
-$sql = "SELECT id,popis FROM enum_ssud ORDER BY popis";
+	$query152 = "SELECT id, popis FROM enum_ssud ORDER BY popis;";
+	if ($result152 = mysqli_query($link, $query152)) {
+		while ($row152 = mysqli_fetch_row($result152)) {
+			$ssud_id = $row152[0];
+			$ssud_name = $row152[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $ssud_id, $ssud_name);
+			echo "<option value=\"$ssud_id\"";
+			if ($ssud_id == $ssud) {
+				echo " SELECTED";
+			}
+			echo ">$ssud_name</option>\n";
+		}
+	}
 
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$ssud_id\"";
-            if ($ssud_id == $ssud) {
-                echo " SELECTED";
-            }
-            echo ">$ssud_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-
-echo "</select></td>
+	echo "</select></td>
 <td width=\"150\"><select id=\"typ\" name=\"typ\" onChange=\"typ(this.value)\" style=\"width:140px;\"><option value=\"\">---</option>";
 
-$sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
+	$query169 = "SELECT id, popis FROM enum_typ ORDER BY popis;";
+	if ($result169 = mysqli_query($link, $query169)) {
+		while ($row169 = mysqli_fetch_row($result169)) {
+			$typ_id = $row169[0];
+			$typ_name = $row169[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $typ_id, $typ_name);
+			echo "<option value=\"$typ_id\"";
+			if ($typ_id == $typ) {
+				echo " SELECTED";
+			}
+			echo ">$typ_name</option>\n";
+		}
+	}
 
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$typ_id\"";
-            if ($typ_id == $typ) {
-                echo " SELECTED";
-            }
-            echo ">$typ_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-
-echo "</select></td>
+	echo "</select></td>
 <td></td>
 <td width=\"100\"></td>
 <td width=\"10\"></td>
 </tr>
 </table>";
 
-echo "<div id=\"data\">";
-echo "</div>";
+	echo "<div id=\"data\">";
+	echo "</div>";
 
-mysqli_close($link);
-?>
+	mysqli_close($link);
+	?>
 </body>
+
 </html>

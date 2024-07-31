@@ -1,122 +1,126 @@
 <?php
 date_default_timezone_set('Europe/Prague');
-session_start();
+if (!isset($_SESSION)) {
+	session_start();
+}
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
+	header("location: login.php");
+	exit;
 }
 
 require_once 'config.php';
 ?>
 
-<!doctype html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
 <head>
-	<meta charset="utf-8" />
-	<script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
-	<script type="text/javascript">
-		Loader.lang = "cs";
-		Loader.load();
-	</script>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<title>Mapa hlásek</title>
+
+	<script type="text/javascript" src="apikey.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<style>
+		#map {
+			width: 1200px;
+			height: 800px;
+		}
+	</style>
 </head>
 
 <body>
-
-	<div id="mapa" style="width:1300px; height:800px;"></div>
+	<div id="map"></div>
 
 	<script type="text/javascript">
-		function addMarker(cislo, x, y) {
-			var card = new SMap.Card();
-			card.getBody().innerHTML = cislo;
+		function addMarker(latlon, cislo) {
+			let marker = L.marker(latlon, {
+				draggable: true
+			})
+				.bindTooltip(cislo.toString(),
+					{
+						permanent: false,
+						direction: 'right'
+					}
+				)
 
-			var options = {
-				title: cislo
-			};
-
-			var pozice = SMap.Coords.fromWGS84(Number(x), Number(y));
-			var marker = new SMap.Marker(pozice, cislo, options);
-			marker.decorate(SMap.Marker.Feature.Card, card);
-			layer.addMarker(marker);
-			markers.push(pozice);
+				.addTo(map);
+			points.push(latlon);
 		}
 
-		var stred = SMap.Coords.fromWGS84(14.41, 50.08);
-		var mapa = new SMap(JAK.gel("mapa"));
-		mapa.addDefaultLayer(SMap.DEF_BASE).enable();
-		mapa.addDefaultLayer(SMap.DEF_OPHOTO);
-
-		var layerSwitch = new SMap.Control.Layer({
-			width: 65,
-			items: 2,
-			page: 2
-		});
-		layerSwitch.addDefaultLayer(SMap.DEF_BASE);
-		layerSwitch.addDefaultLayer(SMap.DEF_OPHOTO);
-		mapa.addControl(layerSwitch, {
-			left: "8px",
-			top: "9px"
-		});
-
-		mapa.addControl(new SMap.Control.Sync());
-		var mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
-		mapa.addControl(mouse);
-
-		var MujCluster = JAK.ClassMaker.makeClass({
-			NAME: "MujCluster",
-			VERSION: "1.0",
-			EXTEND: SMap.Marker.Cluster
-		});
-
-
-		MujCluster.prototype.click = function(e, elm) {
-
-			var max_zoom = 18;
-			var map = this.getMap();
-
-
-			if (map.getZoom() >= max_zoom) {
-				var card = new SMap.Card();
-				var infos = "";
-
-				for (i = 0; i < this._markers.length; i++) {
-					infos += this._markers[i]._card.getBody().innerHTML + "<br>";
+		const init_pos = [50.08, 14.41];
+		let points = [];
+		const map = L.map('map').setView(init_pos, 16);
+		const tileLayers = {
+			'Základní': L.tileLayer(
+				`https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${API_KEY}`,
+				{
+					minZoom: 0,
+					maxZoom: 19,
+					attribution:
+						'<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
 				}
+			),
+			'Letecká': L.tileLayer(
+				`https://api.mapy.cz/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${API_KEY}`,
+				{
+					minZoom: 0,
+					maxZoom: 20,
+					attribution:
+						'<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
+				}
+			),
+			'OpenStreetMap': L.tileLayer(
+				'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+				{
+					maxZoom: 19,
+					attribution:
+						'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				}
+			),
+		};
 
-				card.getBody().innerHTML = infos;
-				map.addCard(card, this.getCoords());
+		tileLayers['OpenStreetMap'].addTo(map);
+		L.control.layers(tileLayers).addTo(map);
 
-			} else {
-				this.$super(e, elm);
-			}
+		const LogoControl = L.Control.extend({
+			options: {
+				position: 'bottomleft',
+			},
 
-		}
+			onAdd: function (map) {
+				const container = L.DomUtil.create('div');
+				const link = L.DomUtil.create('a', '', container);
 
+				link.setAttribute('href', 'http://mapy.cz/');
+				link.setAttribute('target', '_blank');
+				link.innerHTML =
+					'<img src="https://api.mapy.cz/img/api/logo.svg" />';
+				L.DomEvent.disableClickPropagation(link);
 
-		var layer = new SMap.Layer.Marker();
-		var clusterer = new SMap.Marker.Clusterer(mapa, 20, MujCluster);
-		layer.setClusterer(clusterer);
-		mapa.addLayer(layer);
-		layer.enable();
-		var markers = [];
+				return container;
+			},
+		});
+
+		new LogoControl().addTo(map);
 
 		<?php
-		$query30 = "SELECT tel_cislo, latitude, longitude FROM hlasky WHERE platnost = 1 ORDER BY tel_cislo;";
-		if ($result30 = mysqli_query($link, $query30)) {
-			while ($row30 = mysqli_fetch_row($result30)) {
-				$tel_cislo = $row30[0];
-				$longitude = $row30[1];
-				$latitude = $row30[2];
+		$query111 = "SELECT tel_cislo, latitude, longitude FROM hlasky WHERE platnost = 1 ORDER BY tel_cislo;";
+		if ($result111 = mysqli_query($link, $query111)) {
+			while ($row111 = mysqli_fetch_row($result111)) {
+				$tel_cislo = $row111[0];
+				$latitude = $row111[1];
+				$longitude = $row111[2];
 
-				echo "addMarker('$tel_cislo', $latitude, $longitude);\n";
+				echo "addMarker([$latitude, $longitude], '$tel_cislo');\n";
 			}
 		}
-
 		?>
-
-		var cz = mapa.computeCenterZoom(markers);
-		mapa.setCenterZoom(cz[0], cz[1]);
+		let pointLine = L.polyline(points);
+		map.fitBounds(pointLine.getBounds());
 	</script>
 
 </body>

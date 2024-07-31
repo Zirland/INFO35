@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Europe/Prague');
-session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
@@ -11,30 +13,28 @@ require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$tel_cislo     = @$_POST["tel_cislo"];
+$tel_cislo = @$_POST["tel_cislo"];
 $tel_cislo_err = "";
-$silnice       = @$_POST["silnice"];
-$silnice_err   = "";
-$kilometr      = @$_POST["kilometr"];
-$kilometr_err  = "";
-$smer          = @$_POST["smer"];
-$format        = @$_POST["format"];
-$x             = @$_POST["x"];
-$x_err         = "";
-$y             = @$_POST["y"];
-$y_err         = "";
-$override      = @$_POST["override"];
-$ssud          = @$_POST["ssud"];
-$ssud_err      = "";
-$typ           = @$_POST["typ"];
-$typ_err       = "";
-//$ico           = "65993390";
-//$OpID          = "777";
+$silnice = @$_POST["silnice"];
+$silnice_err = "";
+$kilometr = @$_POST["kilometr"];
+$kilometr_err = "";
+$smer = @$_POST["smer"];
+$format = @$_POST["format"];
+$x = @$_POST["x"];
+$x_err = "";
+$y = @$_POST["y"];
+$y_err = "";
+$override = @$_POST["override"];
+$ssud = @$_POST["ssud"];
+$ssud_err = "";
+$typ = @$_POST["typ"];
+$typ_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch ($format) {
         case '1':
-            $x      = trim($x);
+            $x = trim($x);
             $x_pole = explode(" ", trim($x));
             if (count($x_pole) > 1) {
                 $x_err .= "Souřadnice X není ve správném formátu (DD.DDDDD)<br/>";
@@ -53,8 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $y_err .= "Souřadnice Y je mimo území ČR.<br/>";
             }
             break;
+
         case '2':
-            $x      = trim($x);
+            $x = trim($x);
             $x_pole = explode(" ", trim($x));
             $lat_dd = str_replace(",", ".", $x_pole[0]);
             $lat_mm = str_replace(",", ".", $x_pole[1]);
@@ -69,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $x_err .= "Souřadnice X je mimo území ČR.<br/>";
             }
 
-            $y      = trim($y);
+            $y = trim($y);
             $y_pole = explode(" ", trim($y));
             $lon_dd = str_replace(",", ".", $y_pole[0]);
             $lon_mm = str_replace(",", ".", $y_pole[1]);
@@ -83,8 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $y_err .= "Souřadnice Y je mimo území ČR.<br/>";
             }
             break;
+
         case '3':
-            $x      = trim($x);
+            $x = trim($x);
             $x_pole = explode(" ", trim($x));
             $lat_dd = str_replace(",", ".", $x_pole[0]);
             $lat_mm = str_replace(",", ".", $x_pole[1]);
@@ -100,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $x_err .= "Souřadnice X je mimo území ČR.<br/>";
             }
 
-            $y      = trim($y);
+            $y = trim($y);
             $y_pole = explode(" ", trim($y));
             $lon_dd = str_replace(",", ".", $y_pole[0]);
             $lon_mm = str_replace(",", ".", $y_pole[1]);
@@ -115,6 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $y_err .= "Souřadnice Y je mimo území ČR.<br/>";
             }
             break;
+
         case '4':
         default:
             if ($y < 431700 || $y > 904600) {
@@ -133,30 +136,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
     } else {
-        $sql = "SELECT tel_cislo FROM hlasky WHERE archiv='0' AND tel_cislo = ?";
-
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ss", $param_tel_cislo, $param_tel_cislo);
-
-            $param_tel_cislo = trim($tel_cislo);
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1 && $override != "1") {
-                    $tel_cislo_err = "Telefonní číslo je již použito.";
+        $param_tel_cislo = trim($tel_cislo);
+        $query140 = "SELECT id FROM hlasky WHERE tel_cislo = $param_tel_cislo;";
+        if ($result140 = mysqli_query($link, $query140)) {
+            while ($row140 = mysqli_fetch_row($result140)) {
+                $hlas_id = $row140[0];
+                if (mysqli_num_rows($result) > 0 && $override != "1") {
+                    $tel_cislo_err = "Telefonní číslo je již použito.  ";
+                    $tel_cislo_err .= "<a href=\"edit.php?id=$hlas_id\" target=\"_blank\">Zobrazit záznam</a>.";
                     if ($_SESSION["id" == 1]) {
                         $tel_cislo_err .= "<input type=\"checkbox\" name=\"override\" value=\"1\"> Nahradit.";
+                    } else {
+                        $tel_cislo = trim($tel_cislo);
                     }
-                } else {
-                    $tel_cislo = trim($tel_cislo);
                 }
-            } else {
-                echo "Něco se nepovedlo. Zkuste to prosím znovu.";
             }
+        } else {
+            echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
-        mysqli_stmt_close($stmt);
     }
+
 
     if (empty(trim($silnice))) {
         $silnice_err = "Vyberte prosím silnici.";
@@ -184,136 +183,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
-        $sql = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $query186 = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv) VALUES ($tel_cislo, $silnice, $kilometr, $smer, $lat, $lon, '$ssud', $typ, 0, 0);";
+        if ($result186 = mysqli_query($link, $query186)) {
+            $param_id = mysqli_insert_id($link);
+            $param_hlaska_id = $param_id;
+            $param_user = htmlspecialchars($_SESSION["username"]);
+            $param_cas = microtime(true);
 
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssssssss", $param_tel_cislo, $param_silnice, $param_kilometr, $param_smer, $param_lat, $param_lon, $param_ssud, $param_typ);
+            $param_sloupec = "tel_cislo";
+            $param_new_value = $tel_cislo;
+            $query195 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz195 = mysqli_query($link, $query195);
 
-            $param_tel_cislo = $tel_cislo;
-            $param_silnice   = $silnice;
-            $param_kilometr  = $kilometr;
-            $param_smer      = $smer;
-            $param_lat       = $lat;
-            $param_lon       = $lon;
-            $param_ssud      = $ssud;
-            $param_typ       = $typ;
+            $param_sloupec = "silnice";
+            $param_new_value = $silnice;
+            $query200 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz200 = mysqli_query($link, $query200);
 
-            if (mysqli_stmt_execute($stmt)) {
-                $param_id = mysqli_insert_id($link);
+            $param_sloupec = "kilometr";
+            $param_new_value = $kilometr;
+            $query205 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz205 = mysqli_query($link, $query205);
 
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
+            $param_sloupec = "smer";
+            $param_new_value = $smer;
+            $query210 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz210 = mysqli_query($link, $query210);
 
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "tel_cislo";
-                    $param_new_value = $param_tel_cislo;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "silnice";
-                    $param_new_value = $param_silnice;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "kilometr";
-                    $param_new_value = $param_kilometr;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "smer";
-                    $param_new_value = $param_smer;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "longitude";
-                    $param_new_value = $param_lon;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "latitude";
-                    $param_new_value = $param_lat;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "platnost";
-                    $param_new_value = "1";
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "ssud";
-                    $param_new_value = $param_ssud;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-                $sql = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES (?, ?, ?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sssss", $param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);
-                    $param_hlaska_id = $param_id;
-                    $param_user      = htmlspecialchars($_SESSION["username"]);
-                    $param_cas       = microtime(true);
-                    $param_sloupec   = "typ";
-                    $param_new_value = $param_typ;
-                    if (!mysqli_stmt_execute($stmt)) {
-                        echo "";
-                    }
-                }
-            }
-            mysqli_stmt_close($stmt);
+            $param_sloupec = "longitude";
+            $param_new_value = $lon;
+            $query215 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz215 = mysqli_query($link, $query215);
+
+            $param_sloupec = "latitude";
+            $param_new_value = $lat;
+            $query220 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz220 = mysqli_query($link, $query220);
+
+            $param_sloupec = "platnost";
+            $param_new_value = "1";
+            $query225 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz225 = mysqli_query($link, $query225);
+
+            $param_sloupec = "ssud";
+            $param_new_value = $ssud;
+            $query230 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz230 = mysqli_query($link, $query230);
+
+            $param_sloupec = "typ";
+            $param_new_value = $typ;
+            $query235 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $prikaz235 = mysqli_query($link, $query235);
         }
-        header("location: index.php");
+        header("location: hlasky.php");
     }
 }
 ?>
@@ -359,14 +281,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <?php
-$app_up = PageHeader();
-?>
+    $app_up = PageHeader();
+    ?>
     <div class="wrapper">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($tel_cislo_err)) ? 'has-error' : ''; ?>">
                 <label>Telefonní číslo</label>
                 <input type="text" name="tel_cislo" class="form-control" value="<?php echo $tel_cislo; ?>" autofocus>
-                <span class="help-block"><?php echo $tel_cislo_err; ?></span>
+                <span class="help-block">
+                    <?php echo $tel_cislo_err; ?>
+                </span>
             </div>
 
             <div class="form-group <?php echo (!empty($silnice_err)) ? 'has-error' : ''; ?>">
@@ -374,46 +298,46 @@ $app_up = PageHeader();
                 <select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-$sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+                    $query301 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    if ($result301 = mysqli_query($link, $query301)) {
+                        while ($row301 = mysqli_fetch_row($result301)) {
+                            $sil_name = $row301[0];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
-
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$sil_id\"";
-            if ($sil_id == $silnice) {
-                echo " SELECTED";
-            }
-            echo ">$sil_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-?>
+                            echo "<option value=\"$sil_id\"";
+                            if ($sil_id == $silnice) {
+                                echo " SELECTED";
+                            }
+                            echo ">$sil_name</option>\n";
+                        }
+                    }
+                    ?>
                 </select>
-                <span class="help-block"><?php echo $silnice_err; ?></span>
+                <span class="help-block">
+                    <?php echo $silnice_err; ?>
+                </span>
             </div>
 
             <div class="form-group <?php echo (!empty($kilometr_err)) ? 'has-error' : ''; ?>">
                 <label>Kilometr</label>
                 <input type="text" name="kilometr" class="form-control" value="<?php echo $kilometr; ?>">
-                <span class="help-block"><?php echo $kilometr_err; ?></span>
+                <span class="help-block">
+                    <?php echo $kilometr_err; ?>
+                </span>
             </div>
 
             <div class="form-group">
                 <label for="smer">Směr:</label>
                 <select class="form-control" id="smer" name="smer">
                     <option value="+" <?php
-if ($smer == "+") {
-    echo " SELECTED";
-}
-?>>rostoucí</option>
+                    if ($smer == "+") {
+                        echo " SELECTED";
+                    }
+                    ?>>rostoucí</option>
                     <option value="-" <?php
-if ($smer == "-") {
-    echo " SELECTED";
-}
-?>>klesající</option>
+                    if ($smer == "-") {
+                        echo " SELECTED";
+                    }
+                    ?>>klesající</option>
                 </select>
             </div>
 
@@ -421,36 +345,37 @@ if ($smer == "-") {
                 <label for="format">Formát souřadnice:</label>
                 <select class="form-control" id="format" name="format">
                     <?php
-$sql = "SELECT `id`,`name` FROM enum_srid ORDER BY `name`";
+                    $query348 = "SELECT id, `name` FROM enum_srid ORDER BY `name`;";
+                    if ($result348 = mysqli_query($link, $query348)) {
+                        while ($row348 = mysqli_fetch_row($result348)) {
+                            $srid_id = $row348[0];
+                            $srid_name = $row348[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $srid_id, $srid_name);
-
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$srid_id\"";
-            if ($srid_id == $format) {
-                echo " SELECTED";
-            }
-            echo ">$srid_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-?>
+                            echo "<option value=\"$srid_id\"";
+                            if ($srid_id == $format) {
+                                echo " SELECTED";
+                            }
+                            echo ">$srid_name</option>\n";
+                        }
+                    }
+                    ?>
                 </select>
             </div>
 
             <div class="form-group <?php echo (!empty($x_err)) ? 'has-error' : ''; ?>">
                 <label>Souřadnice X (JTSK cca 1 000 000 | WGS cca 49):</label>
                 <input type="text" name="x" class="form-control" value="<?php echo $x; ?>">
-                <span class="help-block"><?php echo $x_err; ?></span>
+                <span class="help-block">
+                    <?php echo $x_err; ?>
+                </span>
             </div>
 
             <div class="form-group <?php echo (!empty($y_err)) ? 'has-error' : ''; ?>">
                 <label>Souřadnice Y (JTSK cca 700 000 | WGS cca 15):</label>
                 <input type="text" name="y" class="form-control" value="<?php echo $y; ?>">
-                <span class="help-block"><?php echo $y_err; ?></span>
+                <span class="help-block">
+                    <?php echo $y_err; ?>
+                </span>
             </div>
 
             <div class="form-group <?php echo (!empty($ssud_err)) ? 'has-error' : ''; ?>">
@@ -458,25 +383,24 @@ mysqli_stmt_close($stmt);
                 <select class="form-control" id="ssud" name="ssud">
                     <option value="">---</option>
                     <?php
-$sql = "SELECT id,popis FROM enum_ssud ORDER BY popis";
+                    $query386 = "SELECT id, popis FROM enum_ssud ORDER BY popis;";
+                    if ($result386 = mysqli_query($link, $query386)) {
+                        while ($row386 = mysqli_fetch_row($result386)) {
+                            $ssud_id = $row386[0];
+                            $ssud_name = $row386[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $ssud_id, $ssud_name);
-
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$ssud_id\"";
-            if ($ssud_id == $ssud) {
-                echo " SELECTED";
-            }
-            echo ">$ssud_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-?>
+                            echo "<option value=\"$ssud_id\"";
+                            if ($ssud_id == $ssud) {
+                                echo " SELECTED";
+                            }
+                            echo ">$ssud_name</option>\n";
+                        }
+                    }
+                    ?>
                 </select>
-                <span class="help-block"><?php echo $ssud_err; ?></span>
+                <span class="help-block">
+                    <?php echo $ssud_err; ?>
+                </span>
             </div>
 
             <div class="form-group <?php echo (!empty($typ_err)) ? 'has-error' : ''; ?>">
@@ -484,25 +408,24 @@ mysqli_stmt_close($stmt);
                 <select class="form-control" id="typ" name="typ">
                     <option value="">---</option>
                     <?php
-$sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
+                    $query411 = "SELECT id, popis FROM enum_typ ORDER BY popis;";
+                    if ($result411 = mysqli_query($link, $query411)) {
+                        while ($row411 = mysqli_fetch_row($result411)) {
+                            $typ_id = $row411[0];
+                            $typ_name = $row411[1];
 
-if ($stmt = mysqli_prepare($link, $sql)) {
-    if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_bind_result($stmt, $typ_id, $typ_name);
-
-        while (mysqli_stmt_fetch($stmt)) {
-            echo "<option value=\"$typ_id\"";
-            if ($typ_id == $typ) {
-                echo " SELECTED";
-            }
-            echo ">$typ_name</option>\n";
-        }
-    }
-}
-mysqli_stmt_close($stmt);
-?>
+                            echo "<option value=\"$typ_id\"";
+                            if ($typ_id == $typ) {
+                                echo " SELECTED";
+                            }
+                            echo ">$typ_name</option>\n";
+                        }
+                    }
+                    ?>
                 </select>
-                <span class="help-block"><?php echo $typ_err; ?></span>
+                <span class="help-block">
+                    <?php echo $typ_err; ?>
+                </span>
             </div>
 
             <div class="form-group">
@@ -513,63 +436,64 @@ mysqli_stmt_close($stmt);
 
     <hr>
     <?php
-echo "<table width=\"100%\">";
-echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th></th></tr>";
-$i = 0;
+    echo "<table width=\"100%\">";
+    echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th></th></tr>";
+    $i = 0;
 
-$query60 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud, typ FROM hlasky WHERE export = 0 ORDER BY tel_cislo";
-if ($result60 = mysqli_query($link, $query60)) {
-    while ($row60 = mysqli_fetch_row($result60)) {
-        $id         = $row60[0];
-        $tel_cislo  = $row60[1];
-        $silnice    = $row60[2];
-        $kilometr   = $row60[3];
-        $smer       = $row60[4];
-        $longitude  = $row60[5];
-        $latitude   = $row60[6];
-        $platnost   = $row60[7];
-        $ssud       = $row60[8];
-        $ssud_nazev = "";
-        $typ        = $row60[9];
-        $typ_nazev  = "";
+    $query443 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud, typ, techno FROM hlasky WHERE export = 0 ORDER BY tel_cislo";
+    if ($result443 = mysqli_query($link, $query443)) {
+        while ($row443 = mysqli_fetch_row($result443)) {
+            $id = $row443[0];
+            $tel_cislo = $row443[1];
+            $silnice = $row443[2];
+            $kilometr = $row443[3];
+            $smer = $row443[4];
+            $longitude = $row443[5];
+            $latitude = $row443[6];
+            $platnost = $row443[7];
+            $ssud = $row443[8];
+            $ssud_nazev = "";
+            $typ = $row443[9];
+            $typ_nazev = "";
+            $techno = $row443[10];
 
-        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
+            $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
-        if (substr($silnice, 0, 1) != "D") {
-            $silnice = "I/" . $silnice;
-        }
-        $kilometr = str_replace(".", ",", $kilometr);
-
-        $query237 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
-        if ($result237 = mysqli_query($link, $query237)) {
-            while ($row237 = mysqli_fetch_row($result237)) {
-                $ssud_nazev = $row237[0];
+            if (substr($silnice, 0, 1) != "D") {
+                $silnice = "I/{$silnice}";
             }
-        }
+            $kilometr = str_replace(".", ",", $kilometr);
 
-        $query237 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
-        if ($result237 = mysqli_query($link, $query237)) {
-            while ($row237 = mysqli_fetch_row($result237)) {
-                $typ_nazev = $row237[0];
+            $query467 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
+            if ($result467 = mysqli_query($link, $query467)) {
+                while ($row467 = mysqli_fetch_row($result467)) {
+                    $ssud_nazev = $row467[0];
+                }
             }
-        }
 
-        echo "<tr class=\"";
-        if ($i % 2 == 0) {
-            echo "dark";
-        } else {
-            echo "light";
-        }
-        if ($platnost == 0) {
-            echo "-strikeout";
-        }
-        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";
-        echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
-        $i = $i + 1;
+            $query474 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
+            if ($result474 = mysqli_query($link, $query474)) {
+                while ($row474 = mysqli_fetch_row($result474)) {
+                    $typ_nazev = $row474[0];
+                }
+            }
 
+            echo "<tr class=\"";
+            echo ($i % 2 == 0) ? "dark" : "light";
+            if ($platnost == 0) {
+                echo "-strikeout";
+            }
+            echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>";
+            if ($techno == 1) {
+                echo "TECHNO ";
+            }
+            echo "$typ_nazev</td>";
+            echo "<td><a href=\"edit.php?id=$id&up=$app_up\">Edit</a></td></tr>";
+            $i++;
+
+        }
     }
-}
-echo "</table>";
+    echo "</table>";
 
-mysqli_close($link);
-?>
+    mysqli_close($link);
+    ?>
