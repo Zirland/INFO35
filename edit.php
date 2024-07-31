@@ -16,17 +16,22 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <title>Editace hlásky</title>
-    <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
-    <script type="text/javascript">
-        Loader.lang = "cs";
-        Loader.load(null, {
-            poi: true
-        });
-    </script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
         body {
             font: 14px sans-serif;
+        }
+    </style>
+
+    <script type="text/javascript" src="apikey.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        #map {
+            width: 1200px;
+            height: 800px;
         }
     </style>
 </head>
@@ -42,20 +47,20 @@ if ($id == "") {
     $id = @$_POST["id"];
 }
 
-$query16 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud, typ, techno, archiv FROM hlasky WHERE id = $id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $old_tel_cislo = $row16[0];
-        $old_silnice = $row16[1];
-        $old_kilometr = $row16[2];
-        $old_smer = $row16[3];
-        $old_latitude = $row16[4];
-        $old_longitude = $row16[5];
-        $old_platnost = $row16[6];
-        $old_ssud = $row16[7];
-        $old_typ = $row16[8];
-        $old_techno = $row16[9];
-        $old_archiv = $row16[10];
+$query50 = "SELECT tel_cislo, silnice, kilometr, smer, latitude, longitude, platnost, ssud, typ, techno, archiv FROM hlasky WHERE id = $id;";
+if ($result50 = mysqli_query($link, $query50)) {
+    while ($row50 = mysqli_fetch_row($result50)) {
+        $old_tel_cislo = $row50[0];
+        $old_silnice = $row50[1];
+        $old_kilometr = $row50[2];
+        $old_smer = $row50[3];
+        $old_latitude = $row50[4];
+        $old_longitude = $row50[5];
+        $old_platnost = $row50[6];
+        $old_ssud = $row50[7];
+        $old_typ = $row50[8];
+        $old_techno = $row50[9];
+        $old_archiv = $row50[10];
     }
 }
 
@@ -135,9 +140,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($silnice_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
-        $query79 = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud', typ = '$typ', techno = '$tech', archiv = '$arch' WHERE id = $id;";
-        $result79 = mysqli_query($link, $query79);
-        if (!$result79) {
+        $query143 = "UPDATE hlasky SET silnice = '$silnice', smer= '$smer', kilometr = '$kilometr', latitude = '$lat', longitude = '$lon', platnost = '$platnost', export = 0, edited = 1, ssud = '$ssud', typ = '$typ', techno = '$tech', archiv = '$arch' WHERE id = $id;";
+        $result143 = mysqli_query($link, $query143);
+        if (!$result143) {
             $error .= mysqli_error($link) . "<br/>";
         }
 
@@ -148,9 +153,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "silnice";
             $param_new_value = $silnice;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query156 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result156 = mysqli_query($link, $query156);
+            if (!$result156) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -161,9 +166,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "kilometr";
             $param_new_value = $kilometr;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query164 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result164 = mysqli_query($link, $query164);
+            if (!$result164) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -174,9 +179,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "latitude";
             $param_new_value = $lat;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query182 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result182 = mysqli_query($link, $query182);
+            if (!$result182) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -187,9 +192,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "smer";
             $param_new_value = $smer;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query190 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result190 = mysqli_query($link, $query190);
+            if (!$result190) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -200,9 +205,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "longitude";
             $param_new_value = $lon;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query208 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result208 = mysqli_query($link, $query208);
+            if (!$result208) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -213,9 +218,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "platnost";
             $param_new_value = $platnost;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query221 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result221 = mysqli_query($link, $query221);
+            if (!$result221) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -225,6 +230,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_cas = microtime(true);
             $param_sloupec = "ssud";
             $param_new_value = $ssud;
+
+            $query234 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result234 = mysqli_query($link, $query234);
+            if (!$result234) {
+                $error .= mysqli_error($link) . "<br/>";
+            }
         }
 
         if ($old_typ != $typ) {
@@ -234,9 +245,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "typ";
             $param_new_value = $typ;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query248 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result248 = mysqli_query($link, $query248);
+            if (!$result248) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -248,9 +259,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "techno";
             $param_new_value = $tech;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query262 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result262 = mysqli_query($link, $query262);
+            if (!$result262) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -262,24 +273,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_sloupec = "archiv";
             $param_new_value = $arch;
 
-            $query33 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
-            $result33 = mysqli_query($link, $query33);
-            if (!$result33) {
+            $query267 = "INSERT INTO log (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
+            $result267 = mysqli_query($link, $query267);
+            if (!$result267) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
 
-        $query39 = "SELECT url FROM aplikace WHERE app_id = '$up';";
-        if ($result39 = mysqli_query($link, $query39)) {
-            while ($row39 = mysqli_fetch_row($result39)) {
-                $up_app = $row39[0];
+        $query283 = "SELECT url FROM aplikace WHERE app_id = '$up';";
+        if ($result283 = mysqli_query($link, $query283)) {
+            while ($row283 = mysqli_fetch_row($result283)) {
+                $up_app = $row283[0];
             }
-            if (mysqli_num_rows($result39) == 0) {
+            if (mysqli_num_rows($result283) == 0) {
                 $up_app = "index.php";
             }
         }
 
-        Redir("$up_app");
+        Redir($up_app);
     } else {
         echo "$silnice_err $kilometr_err $x_err $y_err $ssud_err $typ_err<br/>";
     }
@@ -321,22 +332,19 @@ $up_app = PageHeader();
             <td><select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-                    $sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+                    $query335 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    if ($result335 = mysqli_query($link, $query335)) {
+                        while ($row335 = mysqli_fetch_row($result335)) {
+                            $sil_id = $row335[0];
+                            $sil_name = $row335[1];
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
-
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$sil_id\"";
-                                if ($sil_id == $old_silnice) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$sil_name</option>\n";
+                            echo "<option value=\"$sil_id\"";
+                            if ($sil_id == $old_silnice) {
+                                echo " SELECTED";
                             }
+                            echo ">$sil_name</option>\n";
                         }
                     }
-                    mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
             <td><input type="text" name="kilometr" value="<?php echo $old_kilometr; ?>"></td>
@@ -358,22 +366,19 @@ $up_app = PageHeader();
             <td><select class="form-control" id="ssud" name="ssud">
                     <option value="">---</option>
                     <?php
-                    $sql = "SELECT id,popis FROM enum_ssud ORDER BY popis";
+                    $query369 = "SELECT id,popis FROM enum_ssud ORDER BY popis;";
+                    if ($result369 = mysqli_query($link, $query369)) {
+                        while ($row369 = mysqli_fetch_row($result369)) {
+                            $ssud_id = $row369[0];
+                            $ssud_name = $row369[1];
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $ssud_id, $ssud_name);
-
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$ssud_id\"";
-                                if ($ssud_id == $old_ssud) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$ssud_name</option>\n";
+                            echo "<option value=\"$ssud_id\"";
+                            if ($ssud_id == $old_ssud) {
+                                echo " SELECTED";
                             }
+                            echo ">$ssud_name</option>\n";
                         }
                     }
-                    mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
             <td><input type="checkbox" name="tech" value="1" <?php if ($old_techno == 1) {
@@ -382,27 +387,25 @@ $up_app = PageHeader();
             <td><select class="form-control" id="typ" name="typ">
                     <option value="">---</option>
                     <?php
-                    $sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
+                    $query390 = "SELECT id, popis FROM enum_typ ORDER BY popis;";
+                    if ($result390 = mysqli_query($link, $query390)) {
+                        while ($row390 = mysqli_fetch_row($result390)) {
+                            $typ_id = $row390[0];
+                            $typ_name = $row390[1];
 
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_bind_result($stmt, $typ_id, $typ_name);
-
-                            while (mysqli_stmt_fetch($stmt)) {
-                                echo "<option value=\"$typ_id\"";
-                                if ($typ_id == $old_typ) {
-                                    echo " SELECTED";
-                                }
-                                echo ">$typ_name</option>\n";
+                            echo "<option value=\"$typ_id\"";
+                            if ($typ_id == $old_typ) {
+                                echo " SELECTED";
                             }
+                            echo ">$typ_name</option>\n";
                         }
                     }
-                    mysqli_stmt_close($stmt);
                     ?>
                 </select></td>
             <td><input type="checkbox" name="platnost" value="1" <?php if ($old_platnost == 1) {
                 echo " CHECKED";
-            } ?>></td>
+            } ?>>
+            </td>
             <?php
             if ($old_platnost == "0") {
                 echo "<td><input type=\"checkbox\" name=\"arch\" value=\"1\"";
@@ -422,36 +425,36 @@ $up_app = PageHeader();
 </tr>
 </table>
 
-<div id="mapa" style="width:1200px; height:800px;"></div>
+<div id="map"></div>
 
 <?php
 echo "Log změn:<br/>";
 echo "<table width=\"50%\"><tr><th></th><th></th><th></th><th></th></tr>";
-$query220 = "SELECT sloupec, new_value, user, cas FROM log WHERE hlaska_id = $id;";
-if ($result220 = mysqli_query($link, $query220)) {
-    while ($row220 = mysqli_fetch_row($result220)) {
-        $log_sloupec = $row220[0];
-        $log_new_value = $row220[1];
-        $log_user = $row220[2];
-        $log_cas = $row220[3];
+$query433 = "SELECT sloupec, new_value, user, cas FROM log WHERE hlaska_id = $id;";
+if ($result433 = mysqli_query($link, $query433)) {
+    while ($row433 = mysqli_fetch_row($result433)) {
+        $log_sloupec = $row433[0];
+        $log_new_value = $row433[1];
+        $log_user = $row433[2];
+        $log_cas = $row433[3];
 
         $log_cas_format = date("d.m.Y H:i:s", $log_cas);
 
         if ($log_sloupec == "ssud") {
-            $query633 = "SELECT popis FROM enum_ssud WHERE id = $log_new_value;";
-            if ($result633 = mysqli_query($link, $query633)) {
-                while ($row633 = mysqli_fetch_row($result633)) {
-                    $log_new_value = $row633[0];
+            $query444 = "SELECT popis FROM enum_ssud WHERE id = $log_new_value;";
+            if ($result444 = mysqli_query($link, $query444)) {
+                while ($row444 = mysqli_fetch_row($result444)) {
+                    $log_new_value = $row444[0];
 
                 }
             }
         }
 
         if ($log_sloupec == "typ") {
-            $query633 = "SELECT popis FROM enum_typ WHERE id = $log_new_value;";
-            if ($result633 = mysqli_query($link, $query633)) {
-                while ($row633 = mysqli_fetch_row($result633)) {
-                    $log_new_value = $row633[0];
+            $query454 = "SELECT popis FROM enum_typ WHERE id = $log_new_value;";
+            if ($result454 = mysqli_query($link, $query454)) {
+                while ($row454 = mysqli_fetch_row($result454)) {
+                    $log_new_value = $row454[0];
 
                 }
             }
@@ -464,81 +467,86 @@ echo "</table>";
 ?>
 
 <script type="text/javascript">
-    function SelectElement(id, valueToSelect) {
-        var element = document.getElementById(id);
-        element.value = valueToSelect;
-    }
+    function moveMarker(e) {
+        let coords = e.target.getLatLng();
+        let souradnice = coords.toString().split(', ');
+        let souradnice_x = souradnice[0].replace(/LatLng\(/g, '');
+        let souradnice_y = souradnice[1].replace(/\)/g, '');
 
-    function start(e) {
         var node = e.target.getContainer();
         node[SMap.LAYER_MARKER].style.cursor = "pointer";
-    }
 
-    function stop(e) {
-        var node = e.target.getContainer();
-        node[SMap.LAYER_MARKER].style.cursor = "";
-        var coords = e.target.getCoords();
-        var souradnice = coords.toString().split(",");
-        var souradnice_x = souradnice[0].replace(/\(/g, "");
-        var souradnice_y = souradnice[1].replace(/\)/g, "");
+        document.getElementById("latitude").value = souradnice_x;
+        document.getElementById("longitude").value = souradnice_y;
 
-        document.getElementById("latitude").value = souradnice_y;
-        document.getElementById("longitude").value = souradnice_x;
-
-        var pozice = SMap.Coords.fromWGS84(souradnice_x, souradnice_y);
-        mapa.setCenter(pozice);
+        map.panTo([souradnice_x, souradnice_y]);
     }
 
     <?php
     if (isset($old_latitude) && isset($old_longitude)) {
-        echo "var stred = SMap.Coords.fromWGS84($old_longitude, $old_latitude);\n";
+        echo "const init_pos = [$old_latitude, $old_longitude];";
     } else {
-        echo "var stred = SMap.Coords.fromWGS84(14.41, 50.08);\n";
+        echo "const init_pos = [50.08, 14.41];";
     }
     ?>
-    var mapa = new SMap(document.querySelector("#mapa"), stred, 20);
-
-    mapa.addDefaultLayer(SMap.DEF_OPHOTO).enable();
-    mapa.addDefaultLayer(SMap.DEF_BASE);
-
-    var layerSwitch = new SMap.Control.Layer({
-        width: 65,
-        items: 2,
-        page: 2
-    });
-    layerSwitch.addDefaultLayer(SMap.DEF_BASE);
-    layerSwitch.addDefaultLayer(SMap.DEF_OPHOTO);
-    mapa.addControl(layerSwitch, { left: "8px", top: "9px" });
-
-    mapa.addControl(new SMap.Control.Sync());
-    var mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
-    mapa.addControl(mouse);
-
-    var layer = new SMap.Layer.Marker();
-    mapa.addLayer(layer);
-    layer.enable();
-
-    var options = {
-        title: ""
+    const map = L.map('map').setView(init_pos, 19);
+    const tileLayers = {
+        'Základní': L.tileLayer(
+            `https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${API_KEY}`,
+            {
+                minZoom: 0,
+                maxZoom: 19,
+                attribution:
+                    '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
+            }
+        ),
+        'Letecká': L.tileLayer(
+            `https://api.mapy.cz/v1/maptiles/aerial/256/{z}/{x}/{y}?apikey=${API_KEY}`,
+            {
+                minZoom: 0,
+                maxZoom: 20,
+                attribution:
+                    '<a href="https://api.mapy.cz/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>',
+            }
+        ),
+        'OpenStreetMap': L.tileLayer(
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                maxZoom: 19,
+                attribution:
+                    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            }
+        ),
     };
-    var marker = new SMap.Marker(stred, "myMarker", options);
-    marker.decorate(SMap.Marker.Feature.Draggable);
-    layer.addMarker(marker);
 
-    var layer2 = new SMap.Layer.Marker(undefined, {
-        poiTooltip: true
+    tileLayers['OpenStreetMap'].addTo(map);
+    L.control.layers(tileLayers).addTo(map);
+
+    const LogoControl = L.Control.extend({
+        options: {
+            position: 'bottomleft',
+        },
+
+        onAdd: function (map) {
+            const container = L.DomUtil.create('div');
+            const link = L.DomUtil.create('a', '', container);
+
+            link.setAttribute('href', 'http://mapy.cz/');
+            link.setAttribute('target', '_blank');
+            link.innerHTML =
+                '<img src="https://api.mapy.cz/img/api/logo.svg" />';
+            L.DomEvent.disableClickPropagation(link);
+
+            return container;
+        },
     });
-    mapa.addLayer(layer2).enable();
 
-    var dataProvider = mapa.createDefaultDataProvider();
-    dataProvider.setOwner(mapa);
-    dataProvider.addLayer(layer2);
-    dataProvider.setMapSet(SMap.MAPSET_BASE);
-    // dataProvider.enable();
+    new LogoControl().addTo(map);
 
-    var signals = mapa.getSignals();
-    signals.addListener(window, "marker-drag-stop", stop);
-    signals.addListener(window, "marker-drag-start", start);
+    let marker = L.marker(init_pos, {
+        draggable: true,
+    }).addTo(map);
 
+    marker.on('dragend', moveMarker);
 
 </script>

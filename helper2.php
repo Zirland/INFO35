@@ -21,7 +21,7 @@ switch ($classId) {
         $adresaCisloDomovni = $items['attributes']['cislodomovni'];
         $adresaOrientacniCislo = $items['attributes']['cisloorientacni'];
         $adresaOrientacniPismeno = $items['attributes']['cisloorientacnipismeno'];
-        $adresaCisloOrientacni = $adresaOrientacniCislo . $adresaOrientacniPismeno;
+        $adresaCisloOrientacni = "{$adresaOrientacniCislo}{$adresaOrientacniPismeno}";
         $objektKod = $items['attributes']['stavebniobjekt'];
         $uliceKod = $items['attributes']['ulice'];
 
@@ -112,7 +112,6 @@ switch ($classId) {
         $items6 = $vysledek6['features'][0];
 
         $okresNazev = $items6['attributes']['nazev'];
-
         break;
 
     case "CastObce": // CastObce
@@ -150,7 +149,6 @@ switch ($classId) {
         $items6 = $vysledek6['features'][0];
 
         $okresNazev = $items6['attributes']['nazev'];
-
         break;
 
     default:

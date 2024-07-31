@@ -74,25 +74,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $test_id = @$_POST["id"];
 
     $projekt = $_POST["projekt"];
-    $query63 = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";
-    $prikaz63 = mysqli_query($link, $query63);
+    $query77 = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";
+    $prikaz77 = mysqli_query($link, $query77);
 
-    $query66 = "SELECT hlasky FROM testovani WHERE id = $test_id;";
-    if ($result66 = mysqli_query($link, $query66)) {
-        while ($row66 = mysqli_fetch_row($result66)) {
-            $old_hlasky = $row66[0];
+    $query80 = "SELECT hlasky FROM testovani WHERE id = $test_id;";
+    if ($result80 = mysqli_query($link, $query80)) {
+        while ($row80 = mysqli_fetch_row($result80)) {
+            $old_hlasky = $row80[0];
         }
     }
     $hlasky_array = explode("|", $old_hlasky);
 
     foreach ($hlasky_array as $hl_id) {
-        $Zindex = "H" . $hl_id . "Z";
-        $Oindex = "H" . $hl_id . "O";
-        $Iindex = "H" . $hl_id . "I";
-        $LSindex = "H" . $hl_id . "LS";
-        $L1index = "H" . $hl_id . "L1";
-        $Pindex = "H" . $hl_id . "P";
-        $Rindex = "H" . $hl_id . "R";
+        $Zindex = "H{$hl_id}Z";
+        $Oindex = "H{$hl_id}O";
+        $Iindex = "H{$hl_id}I";
+        $LSindex = "H{$hl_id}LS";
+        $L1index = "H{$hl_id}L1";
+        $Pindex = "H{$hl_id}P";
+        $Rindex = "H{$hl_id}R";
 
         $newZkouska = $_POST[$Zindex];
         $newHovorOut = $_POST[$Oindex];
@@ -102,12 +102,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $newPoznamka = $_POST[$Pindex];
         $newStatus = $_POST[$Rindex];
 
-        $query81 = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokaceSPEL = '$newLokaceS', lokace112 = '$newLokace1', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
-        $prikaz81 = mysqli_query($link, $query81);
+        $query105 = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokaceSPEL = '$newLokaceS', lokace112 = '$newLokace1', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+        $prikaz105 = mysqli_query($link, $query105);
 
         if ($newStatus == "0") {
-            $query81 = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";
-            $prikaz81 = mysqli_query($link, $query81);
+            $query109 = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";
+            $prikaz109 = mysqli_query($link, $query109);
         }
     }
 
@@ -115,19 +115,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<span style=\"background-color:yellow;\">Data uložena v $time.</span>";
 }
 
-$query16 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar, projekt, archiv, overeno FROM testovani WHERE id = $test_id;";
-if ($result16 = mysqli_query($link, $query16)) {
-    while ($row16 = mysqli_fetch_row($result16)) {
-        $old_datum = $row16[0];
-        $old_silnice = $row16[1];
-        $old_osoba = $row16[2];
-        $old_hlasky = $row16[3];
-        $old_schvaleno = $row16[4];
-        $old_odmitnuto = $row16[5];
-        $old_komentar = $row16[6];
-        $old_projekt = $row16[7];
-        $archiv = $row16[8];
-        $overeno = $row16[9];
+$query118 = "SELECT datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar, projekt, archiv, overeno FROM testovani WHERE id = $test_id;";
+if ($result118 = mysqli_query($link, $query118)) {
+    while ($row118 = mysqli_fetch_row($result118)) {
+        $old_datum = $row118[0];
+        $old_silnice = $row118[1];
+        $old_osoba = $row118[2];
+        $old_hlasky = $row118[3];
+        $old_schvaleno = $row118[4];
+        $old_odmitnuto = $row118[5];
+        $old_komentar = $row118[6];
+        $old_projekt = $row118[7];
+        $archiv = $row118[8];
+        $overeno = $row118[9];
     }
 }
 PageHeader();
@@ -148,20 +148,20 @@ PageHeader();
         $datumtestu = date("d.m.Y", strtotime($old_datum));
         echo "<td>$datumtestu</td>";
 
-        $query89 = "SELECT nazev FROM enum_silnice WHERE id = '$old_silnice';";
-        if ($result89 = mysqli_query($link, $query89)) {
-            while ($row89 = mysqli_fetch_row($result89)) {
-                $sil_name = $row89[0];
+        $query151 = "SELECT nazev FROM enum_silnice WHERE id = '$old_silnice';";
+        if ($result151 = mysqli_query($link, $query151)) {
+            while ($row151 = mysqli_fetch_row($result151)) {
+                $sil_name = $row151[0];
             }
         }
 
         echo "<td>$sil_name</td>";
 
-        $query98 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id = '$old_osoba';";
-        if ($result98 = mysqli_query($link, $query98)) {
-            while ($row98 = mysqli_fetch_row($result98)) {
-                $os_jmeno = $row98[0];
-                $os_cislo = $row98[1];
+        $query160 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id = '$old_osoba';";
+        if ($result160 = mysqli_query($link, $query160)) {
+            while ($row160 = mysqli_fetch_row($result160)) {
+                $os_jmeno = $row160[0];
+                $os_cislo = $row160[1];
             }
         }
 
@@ -210,44 +210,38 @@ PageHeader();
 
         echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha SPEL</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
         $i = 0;
-        $query193 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
-        if ($result193 = mysqli_query($link, $query193)) {
-            while ($row193 = mysqli_fetch_row($result193)) {
-                $hl_id = $row193[0];
-                $hl_silnice = $row193[1];
-                $hl_kilometr = $row193[2];
-                $hl_smer = $row193[3];
-                $hl_smoke = $row193[4];
-                $hl_typ = $row193[5];
+        $query213 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
+        if ($result213 = mysqli_query($link, $query213)) {
+            while ($row213 = mysqli_fetch_row($result213)) {
+                $hl_id = $row213[0];
+                $hl_silnice = $row213[1];
+                $hl_kilometr = $row213[2];
+                $hl_smer = $row213[3];
+                $hl_smoke = $row213[4];
+                $hl_typ = $row213[5];
 
                 $smer_nazev = SmerNazev($hl_silnice, $hl_smer, $hl_kilometr);
 
-                $query174 = "SELECT zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
-                if ($result174 = mysqli_query($link, $query174)) {
-                    while ($row174 = mysqli_fetch_row($result174)) {
-                        $zkouska = $row174[0];
-                        $hovor_out = $row174[1];
-                        $hovor_in = $row174[2];
-                        $lokaceSPEL = $row174[3];
-                        $lokace112 = $row174[4];
-                        $poznamka = $row174[5];
-                        $status = $row174[6];
+                $query225 = "SELECT zkouska, hovorOUT, hovorIN, lokaceSPEL, lokace112, poznamka, `status` FROM test_result WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
+                if ($result225 = mysqli_query($link, $query225)) {
+                    while ($row225 = mysqli_fetch_row($result225)) {
+                        $zkouska = $row225[0];
+                        $hovor_out = $row225[1];
+                        $hovor_in = $row225[2];
+                        $lokaceSPEL = $row225[3];
+                        $lokace112 = $row225[4];
+                        $poznamka = $row225[5];
+                        $status = $row225[6];
                     }
                 }
                 echo "<tr class=\"";
-                if ($i % 2 == 0) {
-                    echo "dark";
-                } else {
-                    echo "light";
-                }
+                echo ($i % 2 == 0) ? "dark" : "light";
                 if ($hl_smoke == 0) {
                     echo "-smoke";
                 }
                 echo "\"><td>";
 
-                echo "<select name=\"H";
-                echo $hl_id;
-                echo "R\">";
+                echo "<select name=\"H{$hl_id}R\">";
                 echo "<option value=\"1\">Chyba</option>";
                 echo "<option value=\"0\"";
                 if ($status == "0") {
@@ -257,10 +251,10 @@ PageHeader();
                 echo "</select>";
                 echo "</td><td style=\"text-align:center;\">";
 
-                $query146 = "SELECT popis FROM enum_typ WHERE id = '$hl_typ';";
-                if ($result146 = mysqli_query($link, $query146)) {
-                    while ($row146 = mysqli_fetch_row($result146)) {
-                        $nazev_typu = $row146[0];
+                $query254 = "SELECT popis FROM enum_typ WHERE id = '$hl_typ';";
+                if ($result254 = mysqli_query($link, $query254)) {
+                    while ($row254 = mysqli_fetch_row($result254)) {
+                        $nazev_typu = $row254[0];
                     }
                 }
 
@@ -269,52 +263,40 @@ PageHeader();
                 echo "</td>";
                 echo "<td style=\"text-align:center;\">$hl_kilometr</td>";
                 echo "<td>$smer_nazev</td>";
-                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
-                echo $hl_id;
-                echo "Z\" value=\"1\"";
+                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H{$hl_id}Z\" value=\"1\"";
                 if ($zkouska == "1") {
                     echo " CHECKED";
                 }
                 echo "></td>";
 
-                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
-                echo $hl_id;
-                echo "O\" value=\"1\"";
+                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H{$hl_id}O\" value=\"1\"";
                 if ($hovor_out == "1") {
                     echo " CHECKED";
                 }
                 echo "></td>";
 
-                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
-                echo $hl_id;
-                echo "I\" value=\"1\"";
+                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H{$hl_id}I\" value=\"1\"";
                 if ($hovor_in == "1") {
                     echo " CHECKED";
                 }
                 echo "></td>";
 
-                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
-                echo $hl_id;
-                echo "LS\" value=\"1\"";
+                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H{$hl_id}LS\" value=\"1\"";
                 if ($lokaceSPEL == "1") {
                     echo " CHECKED";
                 }
                 echo "></td>";
 
-                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H";
-                echo $hl_id;
-                echo "L1\" value=\"1\"";
+                echo "<td style=\"text-align:center;\"><input type=\"checkbox\" name=\"H{$hl_id}L1\" value=\"1\"";
                 if ($lokace112 == "1") {
                     echo " CHECKED";
                 }
                 echo "></td>";
 
-                echo "<td><input type=\"text\" name=\"H";
-                echo $hl_id;
-                echo "P\" value=\"$poznamka\"></td>";
+                echo "<td><input type=\"text\" name=\"H{$hl_id}P\" value=\"$poznamka\"></td>";
                 echo "</tr>";
-                $z = $z + 1;
-                $i = $i + 1;
+                $z++;
+                $i++;
             }
         }
 

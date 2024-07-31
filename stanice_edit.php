@@ -36,9 +36,9 @@ $uliceKod = @$_POST["uliceKod"];
 $OpID = @$_POST["OpID"];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $query106 = "UPDATE stanice SET prijmeni='$prijmeni', jmeno='$jmeno', nazev_ulice='$uliceNazev', cislo_popisne='$adresaCisloDomovni', cislo_orientacni='$adresaCisloOrientacni', nazev_obce='$obecNazev', nazev_casti_obce='$castObceNazev', nazev_okresu='$okresNazev', longitude='$longitude', latitude='$latitude', kod_objektu='$objektKod', kod_adresy='$adresaKod', kod_obce='$obecKod', kod_casti_obce='$castObceKod', kod_ulice='$uliceKod' WHERE tel_cislo='$tel_cislo';";
-    $prikaz106 = mysqli_query($link, $query106);
-    if ($prikaz106 === false) {
+    $query39 = "UPDATE stanice SET prijmeni='$prijmeni', jmeno='$jmeno', nazev_ulice='$uliceNazev', cislo_popisne='$adresaCisloDomovni', cislo_orientacni='$adresaCisloOrientacni', nazev_obce='$obecNazev', nazev_casti_obce='$castObceNazev', nazev_okresu='$okresNazev', longitude='$longitude', latitude='$latitude', kod_objektu='$objektKod', kod_adresy='$adresaKod', kod_obce='$obecKod', kod_casti_obce='$castObceKod', kod_ulice='$uliceKod' WHERE tel_cislo='$tel_cislo';";
+    $prikaz39 = mysqli_query($link, $query39);
+    if ($prikaz39 === false) {
         echo "CHYBA: " . mysqli_error($link);
     }
 
@@ -120,28 +120,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php
     PageHeader();
 
-    $query110 = "SELECT * FROM stanice WHERE tel_cislo = $id_cislo;";
-    if ($result110 = mysqli_query($link, $query110)) {
-        while ($row110 = mysqli_fetch_row($result110)) {
-            $prijmeni = $row110[0];
-            $jmeno = $row110[1];
-            $tel_cislo = $row110[2];
-            $ico = $row110[3];
-            $uliceNazev = $row110[4];
-            $adresaCisloDomovni = $row110[5];
-            $adresaCisloOrientacni = $row110[6];
+    $query123 = "SELECT * FROM stanice WHERE tel_cislo = $id_cislo;";
+    if ($result123 = mysqli_query($link, $query123)) {
+        while ($row123 = mysqli_fetch_row($result123)) {
+            $prijmeni = $row123[0];
+            $jmeno = $row123[1];
+            $tel_cislo = $row123[2];
+            $ico = $row123[3];
+            $uliceNazev = $row123[4];
+            $adresaCisloDomovni = $row123[5];
+            $adresaCisloOrientacni = $row123[6];
 
-            $obecNazev = $row110[9];
-            $castObceNazev = $row110[10];
-            $okresNazev = $row110[11];
-            $longitude = $row110[12];
-            $latitude = $row110[13];
-            $objektKod = $row110[14];
-            $adresaKod = $row110[15];
-            $obecKod = $row110[16];
-            $castObceKod = $row110[17];
-            $uliceKod = $row110[18];
-            $OpID = $row110[19];
+            $obecNazev = $row123[9];
+            $castObceNazev = $row123[10];
+            $okresNazev = $row123[11];
+            $longitude = $row123[12];
+            $latitude = $row123[13];
+            $objektKod = $row123[14];
+            $adresaKod = $row123[15];
+            $obecKod = $row123[16];
+            $castObceKod = $row123[17];
+            $uliceKod = $row123[18];
+            $OpID = $row123[19];
         }
     }
     ?>

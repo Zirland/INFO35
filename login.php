@@ -15,7 +15,6 @@ $username = $password = "";
 $username_err = $password_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     if (empty(trim($_POST["username"]))) {
         $username_err = "Zadejte prosím uživatelské jméno.";
     } else {
@@ -29,15 +28,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($username_err) && empty($password_err)) {
-        $query29 = "SELECT id, username, password FROM users WHERE username = '$username';";
-        if ($result29 = mysqli_query($link, $query29)) {
-            while ($row29 = mysqli_fetch_row($result29)) {
-                $id = $row29[0];
-                $username = $row29[1];
-                $hashed_password = $row29[2];
+        $query31 = "SELECT id, username, `password` FROM users WHERE username = '$username';";
+        if ($result31 = mysqli_query($link, $query31)) {
+            while ($row31 = mysqli_fetch_row($result31)) {
+                $id = $row31[0];
+                $username = $row31[1];
+                $hashed_password = $row31[2];
 
-                if (mysqli_num_rows($result29) == 1) {
-                    if (password_verify($password, $hashed_password)) {
+                switch (true) {
+                    case (mysqli_num_rows($result31) == 1 && password_verify($password, $hashed_password)):
                         if (!isset($_SESSION)) {
                             session_start();
                         }
@@ -47,11 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["username"] = $username;
 
                         header("location: index.php");
-                    } else {
+                        break;
+
+                    case mysqli_num_rows($result29) != 1:
+                        $username_err = "Zadaný uživatel neexistuje.";
+                        break;
+
+                    default:
                         $password_err = "Zadané heslo není správné.";
-                    }
-                } else {
-                    $username_err = "Zadaný uživatel neexistuje.";
                 }
             }
         } else {

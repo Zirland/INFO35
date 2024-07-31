@@ -84,22 +84,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th>&nbsp;</th><th>Jméno</th><th>Telefonní číslo</th><th></th></tr>";
     $i = 0;
 
-    $query81 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
-    if ($result81 = mysqli_query($link, $query81)) {
-        while ($row81 = mysqli_fetch_row($result81)) {
-            $sel_id = $row81[0];
-            $sel_jmeno = $row81[1];
-            $sel_tel_cislo = $row81[2];
+    $query87 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+    if ($result87 = mysqli_query($link, $query87)) {
+        while ($row87 = mysqli_fetch_row($result87)) {
+            $sel_id = $row87[0];
+            $sel_jmeno = $row87[1];
+            $sel_tel_cislo = $row87[2];
 
             echo "<tr style=\"";
-            if ($i % 2 == 0) {
-                echo "background-color:#ddd;";
-            } else {
-                echo "background-color:#fff;";
-            }
+            echo ($i % 2 == 0) ? "background-color:#ddd;" : "background-color:#fff";
             echo "\"><td>&nbsp;</td><td>$sel_jmeno</td><td>$sel_tel_cislo</td>";
             echo "<td><a href=\"test_osoba_edit.php?id=$sel_id\">Edit</a></td></tr>";
-            $i = $i + 1;
+            $i++;
 
         }
     }

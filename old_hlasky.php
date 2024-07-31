@@ -35,16 +35,16 @@ require_once 'config.php';
     <?php
     PageHeader();
 
-    $query36 = "SELECT hlaska_id, new_value, cas FROM log WHERE sloupec = 'platnost' AND hlaska_id IN (SELECT hlaska_id FROM log WHERE sloupec = 'platnost' AND new_value = '' AND cas < 1577836800) ORDER BY cas;";
-    if ($result36 = mysqli_query($link, $query36)) {
-        while ($row36 = mysqli_fetch_row($result36)) {
-            $hlaska_id = $row36[0];
-            $hodnota = $row36[1];
-            $cas = $row36[2];
+    $query38 = "SELECT hlaska_id, new_value, cas FROM `log` WHERE sloupec = 'platnost' AND hlaska_id IN (SELECT hlaska_id FROM `log` WHERE sloupec = 'platnost' AND new_value = '0' AND cas < 1577838800) ORDER BY cas;";
+    if ($result38 = mysqli_query($link, $query38)) {
+        while ($row38 = mysqli_fetch_row($result38)) {
+            $hlaska_id = $row38[0];
+            $hodnota = $row38[1];
+            $cas = $row38[2];
 
             $cas_show = date("d.m.Y H:i:s", $cas);
 
-            echo "$hlaska_id > $hodnota > $cas_show > <a href=\"hlaska_delete.php?id=$hlaska_id\">Smazat</a><br/>";
+            echo "$hlaska_id > $hodnota > $cas_show > <a href=\"hlaska_delete.php?id=$hlaska_id\">Smazat</a><br/>";
         }
     }
 

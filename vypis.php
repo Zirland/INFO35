@@ -128,22 +128,19 @@ require_once 'config.php';
 <td width=\"150\"><input id=\"telcislo\" onChange=\"telcislo(this.value)\" style=\"width:140px;\"></td>
 <td width=\"100\"><select id=\"silnice\" name=\"silnice\" onChange=\"silnice(this.value)\" style=\"width:90px;\"><option value=\"\">---</option>";
 
-	$sql = "SELECT id,nazev FROM enum_silnice ORDER BY nazev";
+	$query131 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+	if ($result131 = mysqli_query($link, $query131)) {
+		while ($row131 = mysqli_fetch_row($result131)) {
+			$sil_id = $row131[0];
+			$sil_name = $row131[1];
 
-	if ($stmt = mysqli_prepare($link, $sql)) {
-		if (mysqli_stmt_execute($stmt)) {
-			mysqli_stmt_bind_result($stmt, $sil_id, $sil_name);
-
-			while (mysqli_stmt_fetch($stmt)) {
-				echo "<option value=\"$sil_id\"";
-				if ($sil_id == $silnice) {
-					echo " SELECTED";
-				}
-				echo ">$sil_name</option>\n";
+			echo "<option value=\"$sil_id\"";
+			if ($sil_id == $silnice) {
+				echo " SELECTED";
 			}
+			echo ">$sil_name</option>\n";
 		}
 	}
-	mysqli_stmt_close($stmt);
 
 	echo "</select></td>
 <td width=\"100\"></td>
@@ -152,42 +149,36 @@ require_once 'config.php';
 <td width=\"300\"></td>
 <td width=\"200\"><select id=\"ssud\" name=\"ssud\" onChange=\"ssud(this.value)\" style=\"width:190px;\"><option value=\"\">---</option>";
 
-	$sql = "SELECT id,popis FROM enum_ssud ORDER BY popis";
+	$query152 = "SELECT id, popis FROM enum_ssud ORDER BY popis;";
+	if ($result152 = mysqli_query($link, $query152)) {
+		while ($row152 = mysqli_fetch_row($result152)) {
+			$ssud_id = $row152[0];
+			$ssud_name = $row152[1];
 
-	if ($stmt = mysqli_prepare($link, $sql)) {
-		if (mysqli_stmt_execute($stmt)) {
-			mysqli_stmt_bind_result($stmt, $ssud_id, $ssud_name);
-
-			while (mysqli_stmt_fetch($stmt)) {
-				echo "<option value=\"$ssud_id\"";
-				if ($ssud_id == $ssud) {
-					echo " SELECTED";
-				}
-				echo ">$ssud_name</option>\n";
+			echo "<option value=\"$ssud_id\"";
+			if ($ssud_id == $ssud) {
+				echo " SELECTED";
 			}
+			echo ">$ssud_name</option>\n";
 		}
 	}
-	mysqli_stmt_close($stmt);
 
 	echo "</select></td>
 <td width=\"150\"><select id=\"typ\" name=\"typ\" onChange=\"typ(this.value)\" style=\"width:140px;\"><option value=\"\">---</option>";
 
-	$sql = "SELECT id,popis FROM enum_typ ORDER BY popis";
+	$query169 = "SELECT id, popis FROM enum_typ ORDER BY popis;";
+	if ($result169 = mysqli_query($link, $query169)) {
+		while ($row169 = mysqli_fetch_row($result169)) {
+			$typ_id = $row169[0];
+			$typ_name = $row169[1];
 
-	if ($stmt = mysqli_prepare($link, $sql)) {
-		if (mysqli_stmt_execute($stmt)) {
-			mysqli_stmt_bind_result($stmt, $typ_id, $typ_name);
-
-			while (mysqli_stmt_fetch($stmt)) {
-				echo "<option value=\"$typ_id\"";
-				if ($typ_id == $typ) {
-					echo " SELECTED";
-				}
-				echo ">$typ_name</option>\n";
+			echo "<option value=\"$typ_id\"";
+			if ($typ_id == $typ) {
+				echo " SELECTED";
 			}
+			echo ">$typ_name</option>\n";
 		}
 	}
-	mysqli_stmt_close($stmt);
 
 	echo "</select></td>
 <td></td>

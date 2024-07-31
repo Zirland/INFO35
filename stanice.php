@@ -38,21 +38,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
     } else {
-        $query39 = "SELECT tel_cislo FROM stanice WHERE tel_cislo = '$tel_cislo';";
-        if ($result39 = mysqli_query($link, $query39)) {
-            $count_dupes = mysqli_num_rows($result39);
-            if ($count_dupes == 1) {
-                $tel_cislo_err = "Telefonní číslo je již použito.";
-            } else {
-                $tel_cislo = trim($tel_cislo);
+        $query41 = "SELECT tel_cislo FROM stanice WHERE tel_cislo = '$tel_cislo';";
+        if ($result41 = mysqli_query($link, $query41)) {
+            $count_dupes = mysqli_num_rows($result41);
+            switch ($count_dupes == 1) {
+                case true:
+                    $tel_cislo_err = "Telefonní číslo je již použito.";
+                    break;
+                default:
+                    $tel_cislo = trim($tel_cislo);
+                    break;
             }
         } else {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
     }
 
-    $query106 = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
-    $prikaz106 = mysqli_query($link, $query106);
+    $query57 = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
+    $prikaz57 = mysqli_query($link, $query57);
 }
 
 ?>
@@ -171,35 +174,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<table width=\"100%\">";
     echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
     $i = 0;
-    $query110 = "SELECT * FROM stanice ORDER BY tel_cislo;";
-    if ($result110 = mysqli_query($link, $query110)) {
-        while ($row110 = mysqli_fetch_row($result110)) {
-            $prijmeni = $row110[0];
-            $jmeno = $row110[1];
-            $tel_cislo = $row110[2];
-            $ico = $row110[3];
-            $uliceNazev = $row110[4];
-            $adresaCisloDomovni = $row110[5];
-            $adresaCisloOrientacni = $row110[6];
+    $query177 = "SELECT * FROM stanice ORDER BY tel_cislo;";
+    if ($result177 = mysqli_query($link, $query177)) {
+        while ($row177 = mysqli_fetch_row($result177)) {
+            $prijmeni = $row177[0];
+            $jmeno = $row177[1];
+            $tel_cislo = $row177[2];
+            $ico = $row177[3];
+            $uliceNazev = $row177[4];
+            $adresaCisloDomovni = $row177[5];
+            $adresaCisloOrientacni = $row177[6];
 
-            $obecNazev = $row110[9];
-            $castObceNazev = $row110[10];
-            $okresNazev = $row110[11];
-            $longitude = $row110[12];
-            $latitude = $row110[13];
-            $objektKod = $row110[14];
-            $adresaKod = $row110[15];
-            $obecKod = $row110[16];
-            $castObceKod = $row110[17];
-            $uliceKod = $row110[18];
-            $OpID = $row110[19];
+            $obecNazev = $row177[9];
+            $castObceNazev = $row177[10];
+            $okresNazev = $row177[11];
+            $longitude = $row177[12];
+            $latitude = $row177[13];
+            $objektKod = $row177[14];
+            $adresaKod = $row177[15];
+            $obecKod = $row177[16];
+            $castObceKod = $row177[17];
+            $uliceKod = $row177[18];
+            $OpID = $row177[19];
 
             echo "<tr";
             if ($i % 2 == 0) {
                 echo " bgcolor=\"#ddd\"";
             }
             echo "><td><a href=\"stanice_edit.php?cislo=$tel_cislo\">$prijmeni</a></td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
-            $i = $i + 1;
+            $i++;
         }
     }
 

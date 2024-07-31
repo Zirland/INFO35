@@ -10,12 +10,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username_err = "Zadejte prosím uživatelské jméno.";
     } else {
         $input = trim($_POST["username"]);
-        $query12 = "SELECT id FROM users WHERE username = '$input';";
-        if ($result12 = mysqli_query($link, $query12)) {
-            if (mysqli_num_rows($result12) == 1) {
-                $username_err = "Uživatelské jméno je již obsazeno.";
-            } else {
-                $username = trim($_POST["username"]);
+        $query13 = "SELECT id FROM users WHERE username = '$input';";
+        if ($result13 = mysqli_query($link, $query13)) {
+            switch (mysqli_num_rows($result13)) {
+                case 1:
+                    $username_err = "Uživatelské jméno je již obsazeno.";
+                    break;
+                default:
+                    $username = trim($_POST["username"]);
+                    break;
             }
         } else {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
@@ -54,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $param_password = password_hash($password, PASSWORD_DEFAULT);
         $param_email = $email;
 
-        $query57 = "INSERT INTO users (username, password, email) VALUES ('$param_username', '$param_password', '$param_email')";
-        if ($prikaz57 = mysqli_query($link, $query57)) {
+        $query60 = "INSERT INTO users (username, password, email) VALUES ('$param_username', '$param_password', '$param_email')";
+        if ($prikaz60 = mysqli_query($link, $query60)) {
             header("location: login.php");
         } else {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
