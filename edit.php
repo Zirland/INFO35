@@ -473,9 +473,6 @@ echo "</table>";
         let souradnice_x = souradnice[0].replace(/LatLng\(/g, '');
         let souradnice_y = souradnice[1].replace(/\)/g, '');
 
-        var node = e.target.getContainer();
-        node[SMap.LAYER_MARKER].style.cursor = "pointer";
-
         document.getElementById("latitude").value = souradnice_x;
         document.getElementById("longitude").value = souradnice_y;
 
