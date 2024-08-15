@@ -234,14 +234,14 @@ require_once 'config.php';
                         <th class="inline">Stav</th>
                     </tr>
                     <?php
-                    $query237 = "SELECT smer, typ, count(*) FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' GROUP BY smer, typ ORDER BY smer DESC;";
+                    $query237 = "SELECT hlavni, typ, count(*) FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' GROUP BY hlavni, typ ORDER BY hlavni DESC;";
                     if ($result237 = mysqli_query($link, $query237)) {
                         while ($row237 = mysqli_fetch_row($result237)) {
-                            $smer_hlasky = $row237[0];
+                            $hlavni_hlasky = $row237[0];
                             $typ_hlasky = $row237[1];
                             $pocet_hlasek = $row237[2];
 
-                            $hlavni = ($smer_hlasky == "+") ? "Hláska hlavní" : "Hláska vedlejší";
+                            $hlavni = ($hlavni_hlasky == "1") ? "Hláska hlavní" : "Hláska vedlejší";
 
                             $query246 = "SELECT popis FROM enum_typ WHERE id = '$typ_hlasky';";
                             if ($result246 = mysqli_query($link, $query246)) {
@@ -251,14 +251,14 @@ require_once 'config.php';
                             }
 
                             $stav = 0;
-                            $query254 = "SELECT typ, smer, SUM(`status`) FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' GROUP BY typ, smer ORDER BY typ, smer DESC;";
+                            $query254 = "SELECT typ, hlavni, SUM(`status`) FROM hlasky JOIN test_result ON hlasky.id = test_result.id_hlaska WHERE silnice = '$silnice' AND id_test = '$id' GROUP BY typ, hlavni ORDER BY typ, hlavni DESC;";
                             if ($result254 = mysqli_query($link, $query254)) {
                                 while ($row254 = mysqli_fetch_row($result254)) {
                                     $typ_kontrola = $row254[0];
-                                    $smer_kontrola = $row254[1];
+                                    $hlavni_kontrola = $row254[1];
                                     $status_kontrola = $row254[2];
 
-                                    if ($typ_hlasky == $typ_kontrola && $smer_kontrola == $smer_hlasky) {
+                                    if ($typ_hlasky == $typ_kontrola && $hlavni_kontrola == $hlavni_hlasky) {
                                         $stav += $status_kontrola;
                                     }
                                 }
