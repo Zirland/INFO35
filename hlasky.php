@@ -141,14 +141,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result140 = mysqli_query($link, $query140)) {
             while ($row140 = mysqli_fetch_row($result140)) {
                 $hlas_id = $row140[0];
-                if (mysqli_num_rows($result) > 0 && $override != "1") {
+                if (mysqli_num_rows($result140) > 0 && $override != "1") {
                     $tel_cislo_err = "Telefonní číslo je již použito.  ";
                     $tel_cislo_err .= "<a href=\"edit.php?id=$hlas_id\" target=\"_blank\">Zobrazit záznam</a>.";
-                    if ($_SESSION["id" == 1]) {
-                        $tel_cislo_err .= "<input type=\"checkbox\" name=\"override\" value=\"1\"> Nahradit.";
-                    } else {
-                        $tel_cislo = trim($tel_cislo);
-                    }
+                    $tel_cislo = trim($tel_cislo);
                 }
             }
         } else {
@@ -184,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
         $hlavni = ($smer == "+") ? 1 : 0;
-        $query187 = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv, hlavni) VALUES ($tel_cislo, $silnice, $kilometr, $smer, $lat, $lon, '$ssud', $typ, 0, 0, $hlavni);";
+        $query187 = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv, hlavni) VALUES ('$tel_cislo', '$silnice', '$kilometr', '$smer', '$lat', '$lon', '$ssud', '$typ', '0', '0', '$hlavni');";
         if ($result187 = mysqli_query($link, $query187)) {
             $param_id = mysqli_insert_id($link);
             $param_hlaska_id = $param_id;
@@ -193,52 +189,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $param_sloupec = "tel_cislo";
             $param_new_value = $tel_cislo;
-            $query196 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query196 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz196 = mysqli_query($link, $query196);
 
             $param_sloupec = "silnice";
             $param_new_value = $silnice;
-            $query201 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query201 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz201 = mysqli_query($link, $query201);
 
             $param_sloupec = "kilometr";
             $param_new_value = $kilometr;
-            $query206 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query206 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz206 = mysqli_query($link, $query206);
 
             $param_sloupec = "smer";
             $param_new_value = $smer;
-            $query211 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query211 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz211 = mysqli_query($link, $query211);
 
             $param_sloupec = "longitude";
             $param_new_value = $lon;
-            $query216 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query216 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz216 = mysqli_query($link, $query216);
 
             $param_sloupec = "latitude";
             $param_new_value = $lat;
-            $query221 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query221 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz221 = mysqli_query($link, $query221);
 
             $param_sloupec = "platnost";
             $param_new_value = "1";
-            $query226 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query226 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz226 = mysqli_query($link, $query226);
 
             $param_sloupec = "ssud";
             $param_new_value = $ssud;
-            $query231 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query231 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz231 = mysqli_query($link, $query231);
 
             $param_sloupec = "typ";
             $param_new_value = $typ;
-            $query236 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query236 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz236 = mysqli_query($link, $query236);
 
             $param_sloupec = "hlavni";
             $param_new_value = $hlavni;
-            $query241 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query241 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ('$param_hlaska_id', '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $prikaz241 = mysqli_query($link, $query241);
 
         }
