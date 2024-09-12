@@ -100,6 +100,7 @@ function PageHeader()
     }
 
     $userName = htmlspecialchars($_SESSION['username']);
+    $provozovatel = $_SESSION['provozovatel'];
 
     echo "<td width=\"15%\">Přihlášený uživatel:<br/>$userName</td>";
     echo "<td width=\"5%\"><a href=\"logout.php\" class=\"btn btn-danger\">Odhlásit se</a></td>";

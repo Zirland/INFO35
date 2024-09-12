@@ -209,7 +209,7 @@ if ($result198 = mysqli_query($link, $query198)) {
     }
 }
 PageHeader();
-$today = date("Y-m-d", strtotime("+ 1 day"));
+$tomorrow = date("Y-m-d", strtotime("+ 1 day"));
 ?>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -225,7 +225,7 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
             <td><input type="date" name="datum" <?php
             echo " ";
             if ($id_user != "1") {
-                echo "min=\"$today\" ";
+                echo "min=\"$tomorrow\" ";
             }
             ?>
                     class="form-control" value="<?php echo $old_datum; ?>"></td>

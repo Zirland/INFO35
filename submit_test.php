@@ -48,10 +48,10 @@ if ($result40 = mysqli_query($link, $query40)) {
 }
 
 PageHeader();
-$today = date("Y-m-d", strtotime("+ 1 day"));
+$tomorrow = date("Y-m-d", strtotime("+ 1 day"));
 $error = 0;
 
-if ($datum < $today) {
+if ($datum < $tomorrow) {
     echo "Testování je možno schválit nejpozději den před jeho uskutečněním.";
     $error = 1;
 }

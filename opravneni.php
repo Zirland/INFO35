@@ -53,7 +53,7 @@ require_once 'config.php';
                 $usr = $row50[0];
                 $app = $row50[1];
 
-                $prava[] = "access_$usr_$app";
+                $prava[] = "access_{$usr}_{$app}";
             }
         }
 
@@ -84,7 +84,7 @@ require_once 'config.php';
                 $opravneni = $_POST[$index];
 
                 if ($opravneni == "1") {
-                    $new_prava[] = "access_$usr_$app";
+                    $new_prava[] = "access_{$user}_{$app}";
                 }
             }
         }

@@ -141,7 +141,7 @@ if ($result134 = mysqli_query($link, $query134)) {
     }
 }
 PageHeader();
-$today = date("Y-m-d", strtotime("+ 1 day"));
+$tomorrow = date("Y-m-d", strtotime("+ 1 day"));
 ?>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -157,7 +157,7 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
         </tr>
         <tr>
             <td></td>
-            <td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control"
+            <td><input type="date" name="datum" min="<?php echo $tomorrow; ?>" class="form-control"
                     value="<?php echo $old_datum; ?>"></td>
             <td><select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
