@@ -310,7 +310,7 @@ PageHeader();
         echo "</table>";
         echo "<p>&nbsp;</p>";
 
-        echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
+        echo "<a href=\"protokol_pdf.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
 
         if ($archiv == "0" && $overeno == "1") {
             echo "<p>&nbsp;</p>";
