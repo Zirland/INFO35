@@ -162,7 +162,7 @@ $tomorrow = date("Y-m-d", strtotime("+ 1 day"));
             <td><select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-                    $query165 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    $query165 = "SELECT id, nazev FROM enum_silnice WHERE id IN (SELECT DISTINCT silnice FROM hlasky WHERE provozovatel = '$provozovatel') ORDER BY nazev;";
                     if ($result165 = mysqli_query($link, $query165)) {
                         while ($row165 = mysqli_fetch_row($result165)) {
                             $sil_id = $row165[0];
@@ -180,7 +180,7 @@ $tomorrow = date("Y-m-d", strtotime("+ 1 day"));
             <td><select class="form-control" id="osoba" name="osoba">
                     <option value="">---</option>
                     <?php
-                    $query183 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+                    $query183 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
                     if ($result183 = mysqli_query($link, $query183)) {
                         while ($row183 = mysqli_fetch_row($result183)) {
                             $os_id = $row183[0];
@@ -218,7 +218,7 @@ $hlasky_array = explode("|", $old_hlasky);
 
 $strediska = [];
 
-$query221 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND archiv = '0' ORDER BY CAST(kilometr AS decimal), smer;";
+$query221 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND archiv = '0' AND provozovatel = '$provozovatel' ORDER BY CAST(kilometr AS decimal), smer;";
 if ($result221 = mysqli_query($link, $query221)) {
     while ($row221 = mysqli_fetch_row($result221)) {
         $strediska[] = $row221[0];

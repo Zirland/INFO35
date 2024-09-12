@@ -180,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($tel_cislo_err) && empty($sil_err) && empty($kilometr_err) && empty($x_err) && empty($y_err) && empty($ssud_err) && empty($typ_err)) {
         $hlavni = ($smer == "+") ? 1 : 0;
-        $query187 = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv, hlavni) VALUES ('$tel_cislo', '$silnice', '$kilometr', '$smer', '$lat', '$lon', '$ssud', '$typ', '0', '0', '$hlavni');";
+        $query187 = "INSERT INTO hlasky (tel_cislo, silnice, kilometr, smer, latitude, longitude, ssud, typ, techno, archiv, hlavni, provozovatel) VALUES ('$tel_cislo', '$silnice', '$kilometr', '$smer', '$lat', '$lon', '$ssud', '$typ', '0', '0', '$hlavni', '$provozovatel');";
         if ($result187 = mysqli_query($link, $query187)) {
             $param_id = mysqli_insert_id($link);
             $param_hlaska_id = $param_id;

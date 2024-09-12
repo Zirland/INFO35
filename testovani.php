@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-                    $query81 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    $query81 = "SELECT id, nazev FROM enum_silnice WHERE id IN (SELECT DISTINCT silnice FROM hlasky WHERE provozovatel = '$provozovatel') ORDER BY nazev;";
                     if ($result81 = mysqli_query($link, $query81)) {
                         while ($row81 = mysqli_fetch_row($result81)) {
                             $sil_id = $row81[0];
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-control" id="osoba" name="osoba">
                     <option value="">---</option>
                     <?php
-                    $query106 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+                    $query106 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
                     if ($result106 = mysqli_query($link, $query106)) {
                         while ($row106 = mysqli_fetch_row($result106)) {
                             $os_id = $row106[0];
@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query141 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE schvaleno = 1 and odmitnuto = 0 and archiv = 0 and datum <= '$today' ORDER BY datum, silnice;";
+    $query141 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE schvaleno = '1' AND odmitnuto = '0' AND archiv = '0' AND datum <= '$today' AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
     if ($result141 = mysqli_query($link, $query141)) {
         while ($row141 = mysqli_fetch_row($result141)) {
             $sel_id = $row141[0];
@@ -192,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query195 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE (finalni = 1 AND datum > '$today') OR (finalni = 1 AND schvaleno = 0 AND odmitnuto = 0) ORDER BY datum, silnice;";
+    $query195 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE ((finalni = '1' AND datum > '$today') OR (finalni = '1' AND schvaleno = '0' AND odmitnuto = '0')) AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel')  ORDER BY datum, silnice;";
     if ($result195 = mysqli_query($link, $query195)) {
         while ($row195 = mysqli_fetch_row($result195)) {
             $sel_id = $row195[0];
@@ -213,7 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $tel_cislo = $row209[1];
                 }
             }
-            $koordinator = $jmeno . " | " . $tel_cislo;
+            $koordinator = "$jmeno | $tel_cislo";
 
             $hlasky_arr = explode("|", $sel_hlasky);
             $hlasky_arr = array_filter($hlasky_arr);
@@ -258,7 +258,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query261 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani WHERE finalni = 0 ORDER BY datum, silnice;";
+    $query261 = "SELECT id, datum, silnice, osoba, hlasky FROM testovani WHERE finalni = '0' AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
     if ($result261 = mysqli_query($link, $query261)) {
         while ($row261 = mysqli_fetch_row($result261)) {
             $sel_id = $row261[0];
@@ -276,7 +276,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $tel_cislo = $row272[1];
                 }
             }
-            $koordinator = $jmeno . " | " . $tel_cislo;
+            $koordinator = "$jmeno | $tel_cislo";
 
             $hlasky_arr = explode("|", $sel_hlasky);
             $hlasky_arr = array_filter($hlasky_arr);

@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($jmeno_err) && empty($tel_cislo_err)) {
-        $query28 = "INSERT INTO test_osoby (jmeno, tel_cislo) VALUES ('$jmeno', '$tel_cislo')";
+        $query28 = "INSERT INTO test_osoby (jmeno, tel_cislo, provozovatel) VALUES ('$jmeno', '$tel_cislo', '$provozovatel');";
         $prikaz28 = mysqli_query($link, $query28);
     }
 }
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th>&nbsp;</th><th>Jméno</th><th>Telefonní číslo</th><th></th></tr>";
     $i = 0;
 
-    $query87 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+    $query87 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
     if ($result87 = mysqli_query($link, $query87)) {
         while ($row87 = mysqli_fetch_row($result87)) {
             $sel_id = $row87[0];

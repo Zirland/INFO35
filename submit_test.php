@@ -93,7 +93,7 @@ if ($error == 0) {
     $headers[] = 'To: ' . $koordinator;
     //    mail($to, $subject, $message, implode("\r\n", $headers));
 
-    $query97 = "UPDATE testovani SET finalni = 1, zadatel = '$logID' WHERE id = '$id';";
+    $query97 = "UPDATE testovani SET finalni = '1', zadatel = '$logID' WHERE id = '$id';";
     if ($prikaz97 = mysqli_query($link, $query97)) {
         echo "Požadavek na schválení odeslán.";
     }

@@ -248,7 +248,7 @@ $tomorrow = date("Y-m-d", strtotime("+ 1 day"));
                 </select></td>
             <td><select class="form-control" id="osoba" name="osoba">
                     <?php
-                    $query251 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+                    $query251 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
                     if ($result251 = mysqli_query($link, $query251)) {
                         while ($row251 = mysqli_fetch_row($result251)) {
                             $os_id = $row251[0];

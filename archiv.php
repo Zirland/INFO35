@@ -40,7 +40,7 @@ require_once 'config.php';
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query43 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE archiv = 1 ORDER BY datum, silnice;";
+    $query43 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE archiv = '1' AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
     if ($result43 = mysqli_query($link, $query43)) {
         while ($row43 = mysqli_fetch_row($result43)) {
             $sel_id = $row43[0];
