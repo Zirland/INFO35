@@ -40,7 +40,7 @@ require_once 'config.php';
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query43 = "SELECT id, datum, silnice, osoba, hlasky, overeno FROM testovani WHERE archiv = '1' AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
+    $query43 = "SELECT id, datum, silnice, osoba, hlasky, overeno, odmitnuto FROM testovani WHERE (odmitnuto = '1' OR archiv = '1') AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
     if ($result43 = mysqli_query($link, $query43)) {
         while ($row43 = mysqli_fetch_row($result43)) {
             $sel_id = $row43[0];
@@ -49,6 +49,7 @@ require_once 'config.php';
             $sel_osoba = $row43[3];
             $sel_hlasky = $row43[4];
             $overeno = $row43[5];
+            $odmitnuto = $row43[6];
 
             $datum_format = date("d.m.Y", strtotime($sel_datum));
 
@@ -75,10 +76,14 @@ require_once 'config.php';
                 $stav_schvaleni = "Provedeno vyhodnocení";
                 $bg_col = "#0f0";
             }
+            if ($odmitnuto == 1) {
+                $stav_schvaleni = "Odmitnuto";
+                $bg_col = "#f00";
+            }
             echo "<td style=\"background-color:$bg_col;\">";
             echo (string) $stav_schvaleni;
             echo "</td>";
-            echo "<td><a href=\"testovani_finish.php?id=$sel_id&up=24\">Edit</a></td></tr>";
+            echo "<td><a href=\"testovani_finish.php?id=$sel_id&up=24\">Zobrazit detail</a></td></tr>";
             $i++;
         }
 

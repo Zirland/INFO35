@@ -192,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th width=\"15\">&nbsp;</th><th width=\"10%\">Datum</th><th width=\"10%\">Silnice</th><th width=\"40%\">Koordinátor</th><th width=\"10%\">Počet hlásek</th><th width=\"20%\"></th><th></th></tr>";
     $i = 0;
 
-    $query195 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE ((finalni = '1' AND datum > '$today') OR (finalni = '1' AND schvaleno = '0' AND odmitnuto = '0')) AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel')  ORDER BY datum, silnice;";
+    $query195 = "SELECT id, datum, silnice, osoba, hlasky, schvaleno, odmitnuto, komentar FROM testovani WHERE (finalni = '1' AND ((datum > '$today') OR (schvaleno = '0' AND odmitnuto = '0'))) AND osoba IN (SELECT id FROM test_osoby WHERE provozovatel = '$provozovatel') ORDER BY datum, silnice;";
     if ($result195 = mysqli_query($link, $query195)) {
         while ($row195 = mysqli_fetch_row($result195)) {
             $sel_id = $row195[0];

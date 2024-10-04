@@ -303,7 +303,7 @@ PageHeader();
         $pom = $z - 1;
         echo "<tr><td colspan=\"2\"><input type=\"hidden\" name=\"pocet\" value=\"$pom\"></td></tr>";
 
-        if ($archiv == "0") {
+        if ($archiv == "0" && $old_odmitnuto != "1") {
             echo "<tr><td><input type=\"submit\" value=\"Uložit změny\"></form></td></tr>";
         }
 
