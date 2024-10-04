@@ -212,6 +212,9 @@ if ($result160 = mysqli_query($link, $query160)) {
         $lokace112 = $row160[7];
         $poznamka = $row160[8];
 
+        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
+        $kilometr = str_replace(".", ",", $kilometr);
+
         $x = $w[0] + $w[1] + $w[2] + $w[3] + 10;
         $y = floor($pdf->GetY());
 
@@ -232,11 +235,14 @@ if ($result160 = mysqli_query($link, $query160)) {
             $pdf->SetFont('DejaVu', '', 8);
         }
 
-        $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
-        $smer_vyska = floor($pdf->GetStringWidth($smer_nazev) / 20);
-        $pozn_vyska = floor($pdf->GetStringWidth($poznamka) / 30);
-        $h = (max($smer_vyska, $pozn_vyska) + 1) * 5;
-        $pozn_row = ($pozn_vyska > 0) ? 5 : $h;
+        $smer_delka = $pdf->GetStringWidth($smer_nazev);
+        $pozn_delka = $pdf->GetStringWidth($poznamka);
+        $smer_vyska = floor($smer_delka / 20);
+        $pozn_vyska = floor($pozn_delka / 22);
+        $h = ($smer_vyska > 0 || $pozn_vyska > 0) ? (max($smer_vyska, $pozn_vyska) + 1) * 4 : 5;
+
+        $smer_radek = $h / ($smer_vyska + 1);
+        $pozn_radek = $h / ($pozn_vyska + 1);
 
         $kilometr = str_replace(".", ",", $kilometr);
 
@@ -250,14 +256,15 @@ if ($result160 = mysqli_query($link, $query160)) {
         $pdf->Cell($w[0], $h, '', 0, 0, 'C');
         $pdf->Cell($w[1], $h, $nazev_typu, 1, 0, 'C');
         $pdf->Cell($w[2], $h, $kilometr, 1, 0, 'C');
-        $pdf->MultiCell($w[3], 5, $smer_nazev, 1, 'C');
+        $pdf->MultiCell($w[3], $smer_radek, $smer_nazev, 1, 'C');
         $pdf->SetXY($x, $y);
         $pdf->Cell($w[4], $h, ($zkouska == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
         $pdf->Cell($w[5], $h, ($hovor_out == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
         $pdf->Cell($w[6], $h, ($hovor_in == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
         $pdf->Cell($w[7], $h, ($lokaceSPEL == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
         $pdf->Cell($w[8], $h, ($lokace112 == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
-        $pdf->Cell($w[9], $h, $poznamka, 1, 1, 'L');
+        $pdf->MultiCell($w[9], $pozn_radek, $poznamka, 1, 'L');
+        $pdf->SetXY(10, $y + $h);
     }
 }
 $pdf->SetFont('DejaVu', 'I', 8);
@@ -331,4 +338,4 @@ $pdf->Cell(0, 6, "V $mesto dne $dnes_datum", 0, 1, 'L');
 
 $pdf->Output();
 
-unlink("QRcode.png");
+// unlink("QRcode.png");

@@ -16,7 +16,7 @@ function Redir($url_aplikace)
 
 function PageHeader()
 {
-    global $link, $up;
+    global $link, $up, $id_user;
     echo "<table width=\"100%\">";
     echo "<tr>";
 
@@ -51,7 +51,6 @@ function PageHeader()
         }
     }
 
-    $id_user = $_SESSION["id"];
     $query55 = "SELECT app_id FROM opravneni WHERE user_id = $id_user AND app_id IN (SELECT app_id FROM aplikace WHERE up = $id_prev);";
     if ($result55 = mysqli_query($link, $query55)) {
         while ($row55 = mysqli_fetch_row($result55)) {
@@ -110,3 +109,4 @@ function PageHeader()
 }
 
 $provozovatel = $_SESSION['provozovatel'];
+$id_user = $_SESSION["id"];
