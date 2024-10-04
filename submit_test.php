@@ -72,10 +72,9 @@ if ($error == 0) {
         }
     }
 
-    $to = 'Testování hlásek <hlasky@zirland.org>';
-    $subject = 'Požadavek na schválení testu';
-    $message = '
-<html>
+    $mail->addAddress($koordinator);
+    $mail->Subject = 'Požadavek na schválení testu';
+    $mail->Body = '<html>
 <head>
 <title>Požadavek na schválení testu</title>
 </head>
@@ -84,19 +83,15 @@ if ($error == 0) {
 <p><b>Datum: </b>' . $datumformat . '<br/>
 <b>Silnice: </b>' . $silnice . '</p>
 </body>
-</html>
-';
-    $headers[] = 'MIME-Version: 1.0';
-    $headers[] = 'Content-type: text/html; charset=utf-8';
-    $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-    $headers[] = 'Bcc: zirland@gmail.com';
-    $headers[] = 'To: ' . $koordinator;
-    //    mail($to, $subject, $message, implode("\r\n", $headers));
+</html>';
 
     $query97 = "UPDATE testovani SET finalni = '1', zadatel = '$logID' WHERE id = '$id';";
-    if ($prikaz97 = mysqli_query($link, $query97)) {
-        echo "Požadavek na schválení odeslán.";
+    $prikaz97 = mysqli_query($link, $query97);
+    echo "Požadavek na schválení odeslán.";
+
+    try {
+        $mail->send();
+    } catch (Exception $e) {
     }
-    ;
 }
 ?>

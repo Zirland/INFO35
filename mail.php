@@ -15,16 +15,16 @@ try {
   //Server settings
   $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
   $mail->isSMTP();                                            //Send using SMTP
-  $mail->Host = 'posta.ceskymail.cz';                     //Set the SMTP server to send through
+  $mail->Host = $mail_host;                     //Set the SMTP server to send through
   $mail->SMTPAuth = true;                                   //Enable SMTP authentication
-  $mail->Username = 'hlasky@zirland.org';                     //SMTP username
-  $mail->Password = 'www.MojeMalaZeme-14.zz';                               //SMTP password
+  $mail->Username = $mail_username;                     //SMTP username
+  $mail->Password = $mail_password;                               //SMTP password
   $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
   $mail->Port = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
   $mail->CharSet = "UTF-8";
 
   //Recipients
-  $mail->setFrom('hlasky@zirland.org', 'Testování hlásek');
+  $mail->setFrom($mail_username, 'Testování hlásek');
   $mail->addAddress('zirland@zirland.org');     //Add a recipient
   $mail->addBCC('zirland@gmail.com');               //Name is optional
 //    $mail->addCC('cc@example.com');

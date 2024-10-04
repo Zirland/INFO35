@@ -96,16 +96,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $koordinator = $row93[0];
             }
         }
+        $mail->addAddress($koordinator);
 
         if ($odvolat == "1") {
             $query101 = "UPDATE testovani SET odmitnuto = '1' WHERE id = $id;";
             $prikaz101 = mysqli_query($link, $query101);
 
             $datumformat = date("d.m.Y", strtotime($datum));
-            $to = 'Testování hlásek <hlasky@zirland.org>';
-            $subject = 'Zrušení termínu testu';
-            $message = '
-<html>
+            $mail->Subject = 'Zrušení termínu testu';
+            $mail->Body = '<html>
 <head>
 <title>Zrušení termínu testu</title>
 </head>
@@ -114,16 +113,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <p><b>Datum: </b>' . $datumformat . '<br/>
 <b>Silnice: </b>' . $old_silnice . '<br/>
 <b>Komentář: </b>' . $komentar . '</p>
-
 </body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            $headers[] = 'Bcc: zirland@gmail.com';
-            $headers[] = 'To: ' . $koordinator;
-            //            mail($to, $subject, $message, implode("\r\n", $headers));
+</html>';
+
+            try {
+                $mail->send();
+            } catch (Exception $e) {
+            }
         }
 
         if ($schvalit == "1") {
@@ -131,10 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $prikaz130 = mysqli_query($link, $query130);
 
             $datumformat = date("d.m.Y", strtotime($datum));
-            $to = 'Testování hlásek <hlasky@zirland.org>';
-            $subject = 'Schválení termínu testu';
-            $message = '
-<html>
+            $mail->Subject = 'Schválení termínu testu';
+            $mail->Body = '<html>
 <head>
 <title>Schválení termínu testu</title>
 </head>
@@ -142,16 +136,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <p>Plánovaný termín testu byl schválen:</p>
 <p><b>Datum: </b>' . $datumformat . '<br/>
 <b>Silnice: </b>' . $old_silnice . '</p>
-
 </body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            $headers[] = 'Bcc: zirland@gmail.com';
-            $headers[] = 'To: ' . $koordinator;
-            //            mail($to, $subject, $message, implode("\r\n", $headers));
+</html>';
+
+            try {
+                $mail->send();
+            } catch (Exception $e) {
+            }
 
             $hlasky_array = explode("|", $old_hlasky);
             foreach ($hlasky_array as $id_hlaska) {
@@ -167,10 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $olddatumformat = date("d.m.Y", strtotime($old_datum));
             $datumformat = date("d.m.Y", strtotime($datum));
 
-            $to = 'Testování hlásek <hlasky@zirland.org>';
-            $subject = 'Změna data testu';
-            $message = '
-<html>
+            $mail->Subject = 'Změna data testu';
+            $mail->Body = '<html>
 <head>
 <title>Změna data testu</title>
 </head>
@@ -179,16 +168,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <p><b>Původní datum: </b>' . $olddatumformat . '<br/>
 <b>Nové datum: </b>' . $datumformat . '<br/>
 <b>Silnice: </b>' . $old_silnice . '</p>
-
 </body>
-</html>
-';
-            $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-type: text/html; charset=utf-8';
-            $headers[] = 'From: Testování hlásek <hlasky@zirland.org>';
-            $headers[] = 'Bcc: zirland@gmail.com';
-            $headers[] = 'To: ' . $koordinator;
-            //            mail($to, $subject, $message, implode("\r\n", $headers));
+</html>';
+
+            try {
+                $mail->send();
+            } catch (Exception $e) {
+            }
         }
 
         Redir("testovani.php");

@@ -2,11 +2,28 @@
 require_once 'dbconnect.php';
 
 $link = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
-
 if ($link === false) {
     die("CHYBA: Nepovedlo se připojit. " . mysqli_connect_error());
 }
 mysqli_set_charset($link, "utf8");
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+require 'vendor/autoload.php';
+$mail = new PHPMailer(true);
+$mail->SMTPDebug = SMTP::DEBUG_OFF;
+$mail->isSMTP();
+$mail->Host = $mail_host;
+$mail->SMTPAuth = true;
+$mail->Username = $mail_username;
+$mail->Password = $mail_password;
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+$mail->Port = 465;
+$mail->CharSet = "UTF-8";
+$mail->setFrom($mail_username, 'Testování hlásek');
+$mail->addBCC($mail_bcc);
+$mail->isHTML(true);
 
 function Redir($url_aplikace)
 {
