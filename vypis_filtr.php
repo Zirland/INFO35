@@ -5,8 +5,9 @@ $tel_cislo = @$_GET['tel_cislo'];
 $silnice = @$_GET['silnice'];
 $ssud = @$_GET['ssud'];
 $typ = @$_GET['typ'];
+$provozovatel = @$_GET['provozovatel'];
 
-$dotaz = "WHERE archiv = '0'";
+$dotaz = "WHERE archiv = '0' AND provozovatel = '$provozovatel'";
 if ($tel_cislo != '') {
     $dotaz .= " AND tel_cislo LIKE '$tel_cislo%'";
 }
