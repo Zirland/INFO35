@@ -208,7 +208,7 @@ PageHeader();
         $hlasky_array = explode("|", $old_hlasky);
         $hlasky_list = implode(",", $hlasky_array);
 
-        echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha SPEL</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
+        echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha $provozovatel</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
         $i = 0;
         $query213 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
         if ($result213 = mysqli_query($link, $query213)) {
@@ -308,11 +308,12 @@ PageHeader();
         }
 
         echo "</table>";
-        echo "<p>&nbsp;</p>";
+        if ($old_odmitnuto != "1") {
+            echo "<p>&nbsp;</p>";
+            echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
+        }
 
-        echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
-
-        if ($archiv == "0" && $overeno == "1") {
+        if ($archiv == "0" && $overeno == "1" && $old_odmitnuto != "1") {
             echo "<p>&nbsp;</p>";
             echo "<a href=\"archivuj.php?id=$test_id\">Archivace testování</a>";
         }

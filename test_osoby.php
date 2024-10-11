@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sel_tel_cislo = $row87[2];
 
             echo "<tr style=\"";
-            echo ($i % 2 == 0) ? "background-color:#ddd;" : "background-color:#fff";
+            echo ($i % 2 == 0) ? "background-color:#ddd;" : "background-color:#fff;";
             echo "\"><td>&nbsp;</td><td>$sel_jmeno</td><td>$sel_tel_cislo</td>";
             echo "<td><a href=\"test_osoba_edit.php?id=$sel_id\">Edit</a></td></tr>";
             $i++;

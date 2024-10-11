@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $param_password = password_hash($password, PASSWORD_DEFAULT);
         $param_email = $email;
 
-        $query60 = "INSERT INTO users (username, password, email) VALUES ('$param_username', '$param_password', '$param_email')";
+        $query60 = "INSERT INTO users (username, `password`, email, provozovatel) VALUES ('$param_username', '$param_password', '$param_email', '')";
         if ($prikaz60 = mysqli_query($link, $query60)) {
             header("location: login.php");
         } else {
