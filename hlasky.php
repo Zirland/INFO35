@@ -387,7 +387,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-control" id="ssud" name="ssud">
                     <option value="">---</option>
                     <?php
-                    $query394 = "SELECT id, popis FROM enum_ssud ORDER BY popis;";
+                    $query394 = "SELECT id, popis FROM enum_ssud WHERE provozovatel = '$provozovatel' ORDER BY popis;";
                     if ($result394 = mysqli_query($link, $query394)) {
                         while ($row394 = mysqli_fetch_row($result394)) {
                             $ssud_id = $row394[0];
@@ -412,7 +412,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select class="form-control" id="typ" name="typ">
                     <option value="">---</option>
                     <?php
-                    $query419 = "SELECT id, popis FROM enum_typ ORDER BY popis;";
+                    $query419 = "SELECT id, popis FROM enum_typ WHERE provozovatel = '$provozovatel' ORDER BY popis;";
                     if ($result419 = mysqli_query($link, $query419)) {
                         while ($row419 = mysqli_fetch_row($result419)) {
                             $typ_id = $row419[0];
@@ -444,7 +444,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th>&nbsp;</th><th>Telefonní číslo</th><th>Silnice</th><th>Kilometr</th><th>Směr</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>SSÚD</th><th>Typ</th><th></th></tr>";
     $i = 0;
 
-    $query451 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud, typ, techno, hlavni FROM hlasky WHERE export = 0 ORDER BY tel_cislo;";
+    $query451 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, ssud, typ, techno, hlavni FROM hlasky WHERE export = 0 AND provozovatel = '$provozovatel' ORDER BY tel_cislo;";
     if ($result451 = mysqli_query($link, $query451)) {
         while ($row451 = mysqli_fetch_row($result451)) {
             $id = $row451[0];

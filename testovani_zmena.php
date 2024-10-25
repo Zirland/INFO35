@@ -266,7 +266,7 @@ $tomorrow = date("Y-m-d", strtotime("+ 1 day"));
         echo "<tr colspan=\"5\">";
         echo "<td style=\"background-color:$bg_col;\">$stav_schvaleni</td>";
         echo "<td>";
-        if ($id_user == "1" && $old_schvaleno == 0) {
+        if ((($id_user == "1") || ($id_user == '5')) && $old_schvaleno == 0) {
             echo "<input type=\"checkbox\" name=\"schvalit\" value=\"1\"> Schválit termín testu<br/>";
         }
         if ($old_odmitnuto == 0) {

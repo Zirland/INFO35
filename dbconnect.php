@@ -44,7 +44,7 @@ function SmerNazev($silnice, $smer, $kilometr)
             break;
 
         case 'D3':
-            $smer_nazev = ($smer == "+") ? "České Budějovice" : "Praha";
+            $smer_nazev = ($smer == "+") ? "Kaplice" : "Praha";
             break;
 
         case 'D4':

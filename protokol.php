@@ -28,7 +28,7 @@ switch ($provozovatel) {
         $img_logo = 'SPEL.png';
         $logo_sirka = 180;
         $logo_vyska = 43;
-        $investor = 'Ředitelství silnic a dálnic ČR';
+        $investor_L1 = 'Ředitelství silnic a dálnic ČR';
         $dodavatel_L1 = 'SPEL, a.s. Kolín';
         $dodavatel_L2 = 'Třídvorská 1402, 280 02 Kolín V';
         $dodavatel_nazev = 'SPEL, a.s.';
@@ -37,15 +37,17 @@ switch ($provozovatel) {
         break;
 
     case 'ViaSalis':
-        $img_logo = 'viasalis.png';
-        $logo_sirka = 107;
-        $logo_vyska = 45;
-        $investor = 'Ředitelství silnic a dálnic ČR';
-        $dodavatel_L1 = 'Via Salis Operations, s.r.o.';
-        $dodavatel_L2 = 'Rozkošného 762/5, 150 00 Praha 5 - Smíchov';
-        $dodavatel_nazev = 'Via Salis Operations';
+        $img_logo = 'vinci.png';
+        $logo_sirka = 170;
+        $logo_vyska = 44;
+        $investor_L1 = 'Ministerstvo dopravy ČR';
+        $investor_L2 = 'nábřeží Ludvíka Svobody 1222/12, 110 15 Praha 1';
+        $dodavatel_L1 = 'EUROVIA CZ, a.s., závod DIVia';
+        $dodavatel_L2 = 'U Michelského lesa 1581/2, Michle, 140 00 Praha 4';
+        $dodavatel_nazev = 'EUROVIA CZ, a.s., závod DIVia';
         $pozice_dodavatel = 'Pozice Via';
         $mesto = 'Praze';
+        $cislo_prokotolu = " č. $id";
         break;
 }
 
@@ -100,7 +102,7 @@ $pdf->SetFont('DejaVu', '', 20);
 $logo_x = floor((210 - $logo_sirka) / 2);
 $pdf->Image($img_logo, $logo_x, 10, $logo_sirka, $logo_vyska, 'PNG');
 $pdf->Ln(50);
-$pdf->Cell(0, 12, 'Protokol z funkční zkoušky', 0, 1, 'C');
+$pdf->Cell(0, 12, "Protokol z funkční zkoušky$cislo_prokotolu", 0, 1, 'C');
 $pdf->SetFontSize(15);
 $pdf->Cell(0, 9, 'Telefonické spojení SOS hlásek s linkou 112', 0, 1, 'C');
 $pdf->Ln(12);
@@ -112,7 +114,12 @@ $pdf->Cell(0, 6, $projekt, 0, 1, 'L');
 
 $pdf->Cell(10, 6, '', 0, 0, 'L');
 $pdf->Cell(25, 6, 'Investor:', 0, 0, 'L');
-$pdf->Cell(0, 6, $investor, 0, 1, 'L');
+$pdf->Cell(0, 6, $investor_L1, 0, 1, 'L');
+
+if ($investor_L2 != "") {
+    $pdf->Cell(35, 6, '', 0, 0, 'L');
+    $pdf->Cell(0, 6, $investor_L2, 0, 1, 'L');
+}
 
 $pdf->Cell(10, 6, '', 0, 0, 'L');
 $pdf->Cell(25, 6, 'Dodavatel:', 0, 0, 'L');
@@ -123,7 +130,7 @@ $pdf->Cell(0, 6, $dodavatel_L2, 0, 1, 'L');
 $pdf->Ln(12);
 
 $pdf->Cell(10, 6, '', 0, 0, 'L');
-$pdf->Cell(0, 6, "Dodavatel $dodavatel_nazev provedl dne $datum_format funkční zkoušku spojení.", 0, 1, 'L');
+$pdf->MultiCell(0, 6, "Dodavatel $dodavatel_nazev provedl dne $datum_format funkční zkoušku spojení SOS hlásek s\u{00A0}centrem tísňové komunikace linky 112.", 0, 'L');
 
 $pdf->Cell(10, 6, '', 0, 0, 'L');
 $pdf->Cell(0, 6, "Hlásky byly testovány na úsecích $textsilnice (km $km_min – $km_max).", 0, 1, 'L');

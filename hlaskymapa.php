@@ -108,7 +108,7 @@ require_once 'config.php';
 		new LogoControl().addTo(map);
 
 		<?php
-		$query111 = "SELECT tel_cislo, latitude, longitude FROM hlasky WHERE platnost = 1 ORDER BY tel_cislo;";
+		$query111 = "SELECT tel_cislo, latitude, longitude FROM hlasky WHERE provozovatel = '$provozovatel' AND platnost = 1 ORDER BY tel_cislo;";
 		if ($result111 = mysqli_query($link, $query111)) {
 			while ($row111 = mysqli_fetch_row($result111)) {
 				$tel_cislo = $row111[0];
