@@ -1,15 +1,15 @@
 <?php
 require_once 'config.php';
 
-$id = $_GET['id'];
+$OpID = @$_GET['id'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST['id'];
+    $OpID = $_POST['id'];
 }
 
-if ($id == "") {
+if ($OpID == "") {
     echo "<form action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\" method=\"post\">";
-    echo "Enter ID: <input type=\"text\" name=\"id\" />";
+    echo "Enter ID: <input type=\"text\" name=\"id\" /><br />";
     echo "001 Geis<br/>";
     echo "002 Kooperativa<br/>";
     echo "111 Komerční banka<br/>";
@@ -43,7 +43,7 @@ if ($result29 = mysqli_query($link, $query29)) {
         $kod_objektu = $row29[11];
         $kod_adresy = $row29[12];
         $kod_ulice = $row29[13];
-        $kod_obce = $row29[29];
+        $kod_obce = $row29[14];
         $kod_casti_obce = $row29[15];
 
         $lat_deg = floor($latitude);
@@ -70,7 +70,7 @@ if ($result29 = mysqli_query($link, $query29)) {
 
         $current .= "$prijmeni;$jmeno;;$tel_cislo;$OpID;$nazev_ulice;$cislo_popisne;$cislo_orientacni;$nazev_obce;$nazev_casti_obce;;$nazev_okresu;$longitude;$latitude;$kod_objektu;$kod_adresy;$kod_ulice;$kod_obce;$kod_casti_obce;\n";
     }
-    mysqli_free_result($result14);
+    mysqli_free_result($result29);
 }
 
 $file = "INFO35_FO1_{$OpID}_{$today}.csv";
