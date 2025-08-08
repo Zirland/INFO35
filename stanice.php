@@ -53,6 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
     }
+    $latitude = round($latitude, 7);
+    $longitude = round($longitude, 7);
 
     $query57 = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
     $prikaz57 = mysqli_query($link, $query57);
@@ -154,10 +156,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <br />
                     <div id="mistoUdal">
                     </div>
-                    <br />
-
-
-                    <input type="submit">
                 </form>
             </td>
             <td>
@@ -174,7 +172,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<table width=\"100%\">";
     echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
     $i = 0;
-    $query177 = "SELECT * FROM stanice ORDER BY tel_cislo;";
+
+    $query177 = "SELECT * FROM stanice WHERE OpID = 222 AND LENGTH(latitude) > 10 ORDER BY tel_cislo;"; 
     if ($result177 = mysqli_query($link, $query177)) {
         while ($row177 = mysqli_fetch_row($result177)) {
             $prijmeni = $row177[0];

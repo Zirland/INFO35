@@ -1,7 +1,8 @@
 <?php
+
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
 require_once 'dbconnect.php';
@@ -54,7 +55,7 @@ function getGroupedDataByOkres($link, $date)
         LEFT JOIN hlasky h ON tr.id_hlaska=h.id
         LEFT JOIN obce o ON o.kod = h.obecKod
         LEFT JOIN okresy k ON k.kod = o.okres
-        WHERE tr.id_test IN (SELECT t.id FROM testovani t WHERE t.datum = ?)
+        WHERE tr.id_test IN (SELECT t.id FROM testovani t WHERE t.datum = ? AND t.odmitnuto = '0')
         GROUP BY h.silnice, k.kraj
         ORDER BY k.kraj, h.silnice";
 
@@ -73,6 +74,23 @@ function getGroupedDataByOkres($link, $date)
     }
     mysqli_stmt_close($stmt);
     return $groupedData;
+}
+
+function getDelayed($link, $date)
+{
+    $mindate = date('Y-m-d', strtotime("$date -1 year"));
+    $query = "SELECT u.email FROM users u LEFT JOIN testovani t ON t.zadatel = u.id WHERE t.datum < ? AND t.overeno = 0 AND t.odmitnuto = 0";
+    $stmt = mysqli_prepare($link, $query);
+    mysqli_stmt_bind_param($stmt, 's', $mindate);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $emails = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $emails[] = $row['email'];
+    }
+    mysqli_stmt_close($stmt);
+    return $emails;
 }
 
 $date = date('Y-m-d');
@@ -128,13 +146,62 @@ try {
 
     if ($groupedData) {
         $mail->send();
-        echo 'Message has been sent';
+        echo 'Daily report has been sent';
     } else {
         echo 'No data to send';
     }
-
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }
 
+
+$subject = 'Nevyhodnocené testy SOS hlásek';
+$content = 'Dobrý den,<br/>informujeme vás, při kontrole dat v systému byla nalezena testování SOS hlásek naplánovaná před více než jedním rokem, která dosud nebyla vyhodnocena.<br/><br/>Prosím vás o vyhodnocení těchto testů.';
+
+$emails = (date('w') == 3) ? getDelayed($link, $date) : [];
+$recipients = array_unique($emails);
+
+$content .= "<br/><br/>Děkuji,<br/>
+<b>Jan Bessa Urbánek | O2 IT Services s.r.o.</b><br/>
+Specialista pro zákaznická řešení<br/>
+Provoz center tísňové komunikace<br/>
+Za Brumlovkou 2/266, 140 00  Praha 4 - Michle<br/>
+<b>M</b> +420 724 979 459 | <b>T</b> +420 2714 62414<br/>
+<a href='mailto:Jan.BessaUrbanek@o2its.cz'>Jan.BessaUrbanek@o2its.cz</a>";
+
+$mail = new PHPMailer(true);
+
+try {
+    //Server settings
+    $mail->SMTPDebug = SMTP::DEBUG_OFF;
+    $mail->isSMTP();
+    $mail->Host = $mail_host;
+    $mail->SMTPAuth = true;
+    $mail->Username = $mail_username;
+    $mail->Password = $mail_password;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    $mail->Port = 465;
+    $mail->CharSet = "UTF-8";
+
+    //Recipients
+    $mail->setFrom($mail_username, 'Testování hlásek');
+    foreach ($recipients as $recipient) {
+        $mail->addAddress($recipient);
+    }
+    $mail->addBCC('zirland@gmail.com');
+
+    //Content
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $content;
+
+    if ($emails) {
+        $mail->send();
+        echo 'Urgence message has been sent';
+    } else {
+        echo 'No data to send';
+    }
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
 mysqli_close($link);

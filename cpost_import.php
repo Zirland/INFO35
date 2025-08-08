@@ -354,6 +354,9 @@ if ($result25 = mysqli_query($link, $query25)) {
 
                 header("Refresh:0");
             }
+
         }
+        // Prepare the SQL query
+
     }
 }
