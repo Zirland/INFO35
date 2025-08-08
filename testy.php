@@ -1,5 +1,4 @@
 <?php
-
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -201,6 +200,61 @@ try {
     } else {
         echo 'No data to send';
     }
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
+
+
+$subject = 'Nevyhodnocené testy SOS hlásek';
+$content = 'Dobrý den,<br/>informujeme vás, při kontrole dat v systému byla nalezena testování SOS hlásek naplánovaná před více než jedním rokem, která dosud nebyla vyhodnocena.<br/><br/>Prosím vás o vyhodnocení těchto testů.';
+
+$emails = (date('w') == 3) ? getDelayed($link, $date) : [];
+$recipients = array_unique($emails);
+
+$content .= "<br/><br/>Děkuji,<br/>
+<b>Jan Bessa Urbánek | O2 IT Services s.r.o.</b><br/>
+Specialista pro zákaznická řešení<br/>
+Provoz center tísňové komunikace<br/>
+Za Brumlovkou 2/266, 140 00  Praha 4 - Michle<br/>
+<b>M</b> +420 724 979 459 | <b>T</b> +420 2714 62414<br/>
+<a href='mailto:Jan.BessaUrbanek@o2its.cz'>Jan.BessaUrbanek@o2its.cz</a>";
+
+$mail = new PHPMailer(true);
+
+try {
+    //Server settings
+    $mail->SMTPDebug = SMTP::DEBUG_OFF;
+    $mail->isSMTP();
+    $mail->Host = $mail_host;
+    $mail->SMTPAuth = true;
+    $mail->Username = $mail_username;
+    $mail->Password = $mail_password;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    $mail->Port = 465;
+    $mail->CharSet = "UTF-8";
+
+    //Recipients
+    $mail->setFrom($mail_username, 'Testování hlásek');
+    foreach ($recipients as $recipient) {
+        $mail->addAddress($recipient);
+    }
+    $mail->addBCC('zirland@gmail.com');
+
+    //Content
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $content;
+
+    var_dump($emails);
+    var_dump($content);
+
+    if ($emails) {
+        $mail->send();
+        echo 'Urgence message has been sent';
+    } else {
+        echo 'No data to send';
+    }
+
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }
