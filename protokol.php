@@ -28,7 +28,7 @@ switch ($provozovatel) {
         $img_logo = 'SPEL.png';
         $logo_sirka = 180;
         $logo_vyska = 43;
-        $investor_L1 = 'Ředitelství silnic a dálnic ČR';
+        $investor_L1 = 'ŘSD s.p.';
         $dodavatel_L1 = 'SPEL, a.s. Kolín';
         $dodavatel_L2 = 'Třídvorská 1402, 280 02 Kolín V';
         $dodavatel_nazev = 'SPEL, a.s.';

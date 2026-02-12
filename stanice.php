@@ -95,13 +95,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function najdi(str) {
             var xmlhttp;
 
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
             }
 
-            xmlhttp.onreadystatechange = function () {
+            xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     document.getElementById("data").innerHTML = xmlhttp.responseText;
                 }
@@ -114,13 +114,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function vyber(str) {
             var xmlhttp;
 
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
             }
 
-            xmlhttp.onreadystatechange = function () {
+            xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     document.getElementById("mistoUdal").innerHTML = xmlhttp.responseText;
                 }
@@ -173,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
     $i = 0;
 
-    $query177 = "SELECT * FROM stanice WHERE OpID = 222 AND LENGTH(latitude) > 10 ORDER BY tel_cislo;"; 
+    $query177 = "SELECT * FROM stanice WHERE OpID = '700' ORDER BY tel_cislo;"; //     $query177 = "SELECT * FROM stanice WHERE OpID = '555' AND LENGTH(CAST(latitude AS CHAR)) > 10 ORDER BY tel_cislo;";
     if ($result177 = mysqli_query($link, $query177)) {
         while ($row177 = mysqli_fetch_row($result177)) {
             $prijmeni = $row177[0];

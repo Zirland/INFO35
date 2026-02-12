@@ -13,7 +13,7 @@ require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$start = $_GET["start"];
+$start = isset($_GET["start"]) && is_numeric($_GET["start"]) ? (int)$_GET["start"] : 0;
 $end = $start + 30;
 
 $error = "";
@@ -47,11 +47,10 @@ function makeRequest($url)
 
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($httpCode !== 200) {
-        error_log('HTTP error: ' . $httpCode);
+        error_log("HTTP error: $httpCode");
         return false;
     }
 
-    curl_close($ch);
     return $response;
 }
 
