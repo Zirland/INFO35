@@ -34,6 +34,9 @@ $castObceKod = @$_POST["castObceKod"];
 $uliceKod = @$_POST["uliceKod"];
 $OpID = @$_POST["OpID"];
 
+$filter_opid = isset($_GET['opid']) ? trim((string) $_GET['opid']) : '';
+$filter_long_coords = isset($_GET['long_coords']);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
@@ -168,12 +171,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </tr>
     </table>
     <hr>
+    <form method="get" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="margin-bottom: 1em;">
+        <label>Filtrovat dle OpID:</label>
+        <input type="text" name="opid" value="<?php echo htmlspecialchars($filter_opid); ?>" placeholder="vše" size="6">
+        <label style="margin-left: 1em;">
+            <input type="checkbox" name="long_coords" value="1" <?php echo $filter_long_coords ? ' checked' : ''; ?>>
+            Pouze zem. šířka/délka delší než 10 znaků
+        </label>
+        <button type="submit">Filtrovat</button>
+        <?php if ($filter_opid !== '' || $filter_long_coords) { ?>
+            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">Zrušit filtr</a>
+        <?php } ?>
+    </form>
     <?php
     echo "<table width=\"100%\">";
     echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
     $i = 0;
 
-    $query177 = "SELECT * FROM stanice WHERE OpID = '700' ORDER BY tel_cislo;"; //     $query177 = "SELECT * FROM stanice WHERE OpID = '555' AND LENGTH(CAST(latitude AS CHAR)) > 10 ORDER BY tel_cislo;";
+    $opid_esc = mysqli_real_escape_string($link, $filter_opid);
+    $where = [];
+    if ($filter_opid !== '') {
+        $where[] = "OpID = '$opid_esc'";
+    }
+    if ($filter_long_coords) {
+        $where[] = "(LENGTH(CAST(latitude AS CHAR)) > 10 OR LENGTH(CAST(longitude AS CHAR)) > 10)";
+    }
+    $where_sql = count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
+    $query177 = "SELECT * FROM stanice$where_sql ORDER BY tel_cislo;";
     if ($result177 = mysqli_query($link, $query177)) {
         while ($row177 = mysqli_fetch_row($result177)) {
             $prijmeni = $row177[0];

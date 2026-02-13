@@ -51,7 +51,7 @@ function makeRequest($url)
         return false;
     }
 
-    return $response;
+    return $response;  // cURL handle is freed when $ch goes out of scope (PHP 8.0+)
 }
 
 $query19 = "SELECT id, latitude, longitude FROM hlasky WHERE id >= $start AND id < $end ORDER BY id;";
