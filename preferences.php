@@ -36,10 +36,10 @@ require_once 'config.php';
     PageHeader();
 
     $action = @$_POST["action"];
-    $app_id = $_POST["app_id"];
-    $app_name = $_POST["app_name"];
-    $app_url = $_POST["app_url"];
-    $app_up = $_POST["app_up"];
+    $app_id = @$_POST["app_id"];
+    $app_name = @$_POST["app_name"];
+    $app_url = @$_POST["app_url"];
+    $app_up = @$_POST["app_up"];
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (empty(trim($app_name))) {
@@ -63,14 +63,14 @@ require_once 'config.php';
             <label>Název aplikace</label>
             <input type="text" name="app_name" class="form-control" value="<?php echo $app_name; ?>">
             <span class="help-block">
-                <?php echo $app_name_err; ?>
+                <?php echo @$app_name_err; ?>
             </span>
         </div>
         <div class="form-group <?php echo (!empty($app_url_err)) ? 'has-error' : ''; ?>">
             <label>URL aplikace</label>
             <input type="text" name="app_url" class="form-control" value="<?php echo $app_url; ?>">
             <span class="help-block">
-                <?php echo $app_url_err; ?>
+                <?php echo @$app_url_err; ?>
             </span>
         </div>
         <div class="form-group <?php echo (!empty($app_up_err)) ? 'has-error' : ''; ?>">
@@ -91,7 +91,7 @@ require_once 'config.php';
                 ?>
             </select>
             <span class="help-block">
-                <?php echo $app_up_err; ?>
+                <?php echo @$app_up_err; ?>
             </span>
         </div>
         <div class="form-group">

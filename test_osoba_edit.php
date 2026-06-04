@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr><th>&nbsp;</th><th>Jméno</th><th>Telefonní číslo</th><th></th></tr>";
     $i = 0;
 
-    $query103 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+    $query103 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
     if ($result103 = mysqli_query($link, $query103)) {
         while ($row103 = mysqli_fetch_row($result103)) {
             $sel_id = $row103[0];

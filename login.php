@@ -28,12 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($username_err) && empty($password_err)) {
-        $query31 = "SELECT id, username, `password` FROM users WHERE username = '$username';";
+        $query31 = "SELECT id, username, `password`, provozovatel FROM users WHERE username = '$username';";
         if ($result31 = mysqli_query($link, $query31)) {
             while ($row31 = mysqli_fetch_row($result31)) {
                 $id = $row31[0];
                 $username = $row31[1];
                 $hashed_password = $row31[2];
+                $provozovatel = $row31[3];
 
                 switch (true) {
                     case (mysqli_num_rows($result31) == 1 && password_verify($password, $hashed_password)):
@@ -44,11 +45,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["loggedin"] = true;
                         $_SESSION["id"] = $id;
                         $_SESSION["username"] = $username;
+                        $_SESSION["provozovatel"] = $provozovatel;
 
                         header("location: index.php");
                         break;
 
-                    case mysqli_num_rows($result29) != 1:
+                    case mysqli_num_rows($result31) != 1:
                         $username_err = "Zadaný uživatel neexistuje.";
                         break;
 

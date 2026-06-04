@@ -141,7 +141,7 @@ if ($result134 = mysqli_query($link, $query134)) {
     }
 }
 PageHeader();
-$today = date("Y-m-d", strtotime("+ 1 day"));
+$tomorrow = date("Y-m-d", strtotime("+ 1 day"));
 ?>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -157,12 +157,12 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
         </tr>
         <tr>
             <td></td>
-            <td><input type="date" name="datum" min="<?php echo $today; ?>" class="form-control"
+            <td><input type="date" name="datum" min="<?php echo $tomorrow; ?>" class="form-control"
                     value="<?php echo $old_datum; ?>"></td>
             <td><select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
                     <?php
-                    $query165 = "SELECT id, nazev FROM enum_silnice ORDER BY nazev;";
+                    $query165 = "SELECT id, nazev FROM enum_silnice WHERE id IN (SELECT DISTINCT silnice FROM hlasky WHERE provozovatel = '$provozovatel') ORDER BY nazev;";
                     if ($result165 = mysqli_query($link, $query165)) {
                         while ($row165 = mysqli_fetch_row($result165)) {
                             $sil_id = $row165[0];
@@ -180,7 +180,7 @@ $today = date("Y-m-d", strtotime("+ 1 day"));
             <td><select class="form-control" id="osoba" name="osoba">
                     <option value="">---</option>
                     <?php
-                    $query183 = "SELECT id, jmeno, tel_cislo FROM test_osoby ORDER BY jmeno;";
+                    $query183 = "SELECT id, jmeno, tel_cislo FROM test_osoby WHERE provozovatel = '$provozovatel' ORDER BY jmeno;";
                     if ($result183 = mysqli_query($link, $query183)) {
                         while ($row183 = mysqli_fetch_row($result183)) {
                             $os_id = $row183[0];
@@ -218,7 +218,7 @@ $hlasky_array = explode("|", $old_hlasky);
 
 $strediska = [];
 
-$query221 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND archiv = '0' ORDER BY CAST(kilometr AS decimal), smer;";
+$query221 = "SELECT ssud FROM hlasky WHERE silnice = '$old_silnice' AND archiv = '0' AND platnost = '1' AND provozovatel = '$provozovatel' ORDER BY CAST(kilometr AS decimal), smer;";
 if ($result221 = mysqli_query($link, $query221)) {
     while ($row221 = mysqli_fetch_row($result221)) {
         $strediska[] = $row221[0];
@@ -240,7 +240,7 @@ if ($strediska) {
         }
         echo "<tr><th colspan=\"2\">$ssud_nazev</th></tr>";
         $i = 0;
-        $query243 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko'  AND archiv = '0' ORDER BY CAST(kilometr AS unsigned), smer";
+        $query243 = "SELECT id, tel_cislo, kilometr, smer, smoketest FROM hlasky WHERE silnice = '$old_silnice' AND ssud = '$stredisko' AND archiv = '0' AND platnost = '1' ORDER BY CAST(kilometr AS unsigned), smer";
         if ($result243 = mysqli_query($link, $query243)) {
             while ($row243 = mysqli_fetch_row($result243)) {
                 $hl_id = $row243[0];

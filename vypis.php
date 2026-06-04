@@ -91,27 +91,18 @@ require_once 'config.php';
 		}
 
 		function filtr() {
-			var qry = '';
+			var qry = 'provozovatel=' + '<?php echo $provozovatel; ?>';
 			if (tel_cislo != '') {
-				qry += 'tel_cislo=' + tel_cislo;
+				qry += '&tel_cislo=' + tel_cislo;
 			}
-			if (tel_cislo != '' && sil_nice != '') {
+			if (sil_nice != '') {
 				qry += '&silnice=' + sil_nice;
 			}
-			else if (sil_nice != '') {
-				qry += 'silnice=' + sil_nice;
-			}
-			if ((tel_cislo != '' && ss_ud != '') || (sil_nice != '' && ss_ud != '')) {
+			if (ss_ud != '') {
 				qry += '&ssud=' + ss_ud;
 			}
-			else if (ss_ud != '') {
-				qry += 'ssud=' + ss_ud;
-			}
-			if ((tel_cislo != '' && t_yp != '') || (sil_nice != '' && t_yp != '') || (ssud != '' && t_yp != '')) {
+			if (t_yp != '') {
 				qry += '&typ=' + t_yp;
-			}
-			else if (t_yp != '') {
-				qry += 'typ=' + t_yp;
 			}
 			search(qry);
 		}

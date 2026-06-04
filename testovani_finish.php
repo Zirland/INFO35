@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $query105 = "UPDATE test_result SET zkouska = '$newZkouska', hovorOUT = '$newHovorOut', hovorIN = '$newHovorIn', lokaceSPEL = '$newLokaceS', lokace112 = '$newLokace1', poznamka = '$newPoznamka', `status` = '$newStatus' WHERE id_test = '$test_id' AND id_hlaska = '$hl_id';";
         $prikaz105 = mysqli_query($link, $query105);
 
-        if ($newStatus == "0") {
+        if ($newStatus == "0" && $newHovorIn == "1") {
             $query109 = "UPDATE hlasky SET smoketest = '1' WHERE id = '$hl_id';";
             $prikaz109 = mysqli_query($link, $query109);
         }
@@ -208,9 +208,9 @@ PageHeader();
         $hlasky_array = explode("|", $old_hlasky);
         $hlasky_list = implode(",", $hlasky_array);
 
-        echo "<tr><th></th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha SPEL</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
+        echo "<tr><th></th><th>Tel. číslo</th><th style=\"padding:10px\">Typ hlásky</th><th style=\"padding:10px\">Označení</th><th style=\"padding:10px\">Směr</th><th style=\"padding:10px\">Zkouška</th><th style=\"padding:10px\">Hovor na 112</th><th style=\"padding:10px\">Zpětné volání</th><th style=\"padding:10px\">Poloha $provozovatel</th><th style=\"padding:10px\">Poloha 112</th><th style=\"padding:10px\">Poznámka</th></tr>";
         $i = 0;
-        $query213 = "SELECT id, silnice, kilometr, smer, smoketest, typ FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
+        $query213 = "SELECT id, silnice, kilometr, smer, smoketest, typ, tel_cislo FROM hlasky WHERE silnice = '$old_silnice' AND id IN ($hlasky_list) ORDER BY CAST(kilometr AS unsigned), smer";
         if ($result213 = mysqli_query($link, $query213)) {
             while ($row213 = mysqli_fetch_row($result213)) {
                 $hl_id = $row213[0];
@@ -219,6 +219,7 @@ PageHeader();
                 $hl_smer = $row213[3];
                 $hl_smoke = $row213[4];
                 $hl_typ = $row213[5];
+                $hl_telcislo = $row213[6];
 
                 $smer_nazev = SmerNazev($hl_silnice, $hl_smer, $hl_kilometr);
 
@@ -249,7 +250,8 @@ PageHeader();
                 }
                 echo ">Stav OK</option>";
                 echo "</select>";
-                echo "</td><td style=\"text-align:center;\">";
+                echo "</td><td>$hl_telcislo</td>";
+                echo "<td style=\"text-align:center;\">";
 
                 $query254 = "SELECT popis FROM enum_typ WHERE id = '$hl_typ';";
                 if ($result254 = mysqli_query($link, $query254)) {
@@ -303,16 +305,17 @@ PageHeader();
         $pom = $z - 1;
         echo "<tr><td colspan=\"2\"><input type=\"hidden\" name=\"pocet\" value=\"$pom\"></td></tr>";
 
-        if ($archiv == "0") {
+        if ($archiv == "0" && $old_odmitnuto != "1") {
             echo "<tr><td><input type=\"submit\" value=\"Uložit změny\"></form></td></tr>";
         }
 
         echo "</table>";
-        echo "<p>&nbsp;</p>";
+        if ($old_odmitnuto != "1") {
+            echo "<p>&nbsp;</p>";
+            echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
+        }
 
-        echo "<a href=\"protokol.php?id=$test_id\" target=\"_blank\">Tisk prokotolu z testování</a>";
-
-        if ($archiv == "0" && $overeno == "1") {
+        if ($archiv == "0" && $overeno == "1" && $old_odmitnuto != "1") {
             echo "<p>&nbsp;</p>";
             echo "<a href=\"archivuj.php?id=$test_id\">Archivace testování</a>";
         }

@@ -13,8 +13,46 @@ require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$start = $_GET["start"];
+$start = isset($_GET["start"]) && is_numeric($_GET["start"]) ? (int)$_GET["start"] : 0;
 $end = $start + 30;
+
+$error = "";
+
+// Function to make HTTP requests using cURL
+function makeRequest($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_CAPATH, "/usr/lib/ssl/certs");
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
+    // Try with default certificate first
+    $response = curl_exec($ch);
+
+    // If that fails, try without certificate verification
+    if (curl_errno($ch) && strpos(curl_error($ch), 'SSL certificate problem') !== false) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        $response = curl_exec($ch);
+    }
+
+    if (curl_errno($ch)) {
+        error_log('Curl error: ' . curl_error($ch));
+        return false;
+    }
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($httpCode !== 200) {
+        error_log("HTTP error: $httpCode");
+        return false;
+    }
+
+    return $response;  // cURL handle is freed when $ch goes out of scope (PHP 8.0+)
+}
 
 $query19 = "SELECT id, latitude, longitude FROM hlasky WHERE id >= $start AND id < $end ORDER BY id;";
 if ($result19 = mysqli_query($link, $query19)) {
@@ -29,7 +67,11 @@ if ($result19 = mysqli_query($link, $query19)) {
         $y = -1 * $coord["y"];
 
         $url = "https://gis.izscr.cz/arcgis/rest/services/terinos_sluzby/cast_obce/MapServer/0/query?where=&text=&objectIds=&time=&geometry=%7B%22spatialReference%22%3A%7B%22wkid%22%3A102067%7D%2C%22x%22%3A$y%2C%22y%22%3A$x%7D&geometryType=esriGeometryPoint&inSR=102067&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=naz_okres%2Cnaz_obec%2Ckod_obec%2Cnaz_cast%2Ckod_cast&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=json";
-        $response = file_get_contents($url);
+        $response = makeRequest($url);
+        if ($response === false) {
+            $error .= "Failed to fetch data for ID $id<br/>";
+            continue;
+        }
         $vysledek = json_decode($response, $assoc = true);
 
         $items = $vysledek['features'][0];
@@ -37,7 +79,11 @@ if ($result19 = mysqli_query($link, $query19)) {
         $castObceKod = $items['attributes']['kod_cast'];
 
         $url4 = "http://ags.cuzk.cz/arcgis/rest/services/RUIAN/Vyhledavaci_sluzba_nad_daty_RUIAN/MapServer/11/query?where=kod%3D$castObceKod&outFields=*&f=pjson";
-        $response4 = file_get_contents($url4);
+        $response4 = makeRequest($url4);
+        if ($response4 === false) {
+            $error .= "Failed to fetch data for castObceKod $castObceKod<br/>";
+            continue;
+        }
         $vysledek4 = json_decode($response4, $assoc = true);
         $items4 = $vysledek4['features'][0];
 
@@ -45,7 +91,11 @@ if ($result19 = mysqli_query($link, $query19)) {
         $obecKod = $items4['attributes']['obec'];
 
         $url5 = "http://ags.cuzk.cz/arcgis/rest/services/RUIAN/Vyhledavaci_sluzba_nad_daty_RUIAN/MapServer/12/query?where=kod%3D$obecKod&outFields=*&f=pjson";
-        $response5 = file_get_contents($url5);
+        $response5 = makeRequest($url5);
+        if ($response5 === false) {
+            $error .= "Failed to fetch data for obecKod $obecKod<br/>";
+            continue;
+        }
         $vysledek5 = json_decode($response5, $assoc = true);
         $items5 = $vysledek5['features'][0];
 
@@ -53,7 +103,11 @@ if ($result19 = mysqli_query($link, $query19)) {
         $okresKod = $items5['attributes']['okres'];
 
         $url6 = "http://ags.cuzk.cz/arcgis/rest/services/RUIAN/Vyhledavaci_sluzba_nad_daty_RUIAN/MapServer/15/query?where=kod%3D$okresKod&outFields=*&f=pjson";
-        $response6 = file_get_contents($url6);
+        $response6 = makeRequest($url6);
+        if ($response6 === false) {
+            $error .= "Failed to fetch data for okresKod $okresKod<br/>";
+            continue;
+        }
         $vysledek6 = json_decode($response6, $assoc = true);
         $items6 = $vysledek6['features'][0];
 
@@ -84,10 +138,10 @@ if ($result19 = mysqli_query($link, $query19)) {
             $param_sloupec = "okresNazev";
             $param_new_value = $okresNazev;
 
-            $query87 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query87 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $error .= "$query87<br/>";
             $prikaz87 = mysqli_query($link, $query87);
-            if (!$result87) {
+            if (!$prikaz87) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -96,10 +150,10 @@ if ($result19 = mysqli_query($link, $query19)) {
             $param_sloupec = "obecNazev";
             $param_new_value = $obecNazev;
 
-            $query99 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query99 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $error .= "$query99<br/>";
             $prikaz99 = mysqli_query($link, $query99);
-            if (!$result99) {
+            if (!$prikaz99) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -107,10 +161,10 @@ if ($result19 = mysqli_query($link, $query19)) {
             $param_sloupec = "obecKod";
             $param_new_value = $obecKod;
 
-            $query110 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query110 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $error .= "$query110<br/>";
             $prikaz110 = mysqli_query($link, $query110);
-            if (!$result110) {
+            if (!$prikaz110) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -118,10 +172,10 @@ if ($result19 = mysqli_query($link, $query19)) {
             $param_sloupec = "castObceNazev";
             $param_new_value = $castObceNazev;
 
-            $query121 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query121 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $error .= "$query121<br/>";
             $prikaz121 = mysqli_query($link, $query121);
-            if (!$result121) {
+            if (!$prikaz121) {
                 $error .= mysqli_error($link) . "<br/>";
             }
         }
@@ -129,7 +183,7 @@ if ($result19 = mysqli_query($link, $query19)) {
             $param_sloupec = "castObceKod";
             $param_new_value = $castObceKod;
 
-            $query132 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, $param_sloupec, $param_new_value, $param_user, $param_cas);";
+            $query132 = "INSERT INTO `log` (hlaska_id, sloupec, new_value, user, cas) VALUES ($param_hlaska_id, '$param_sloupec', '$param_new_value', '$param_user', '$param_cas');";
             $error .= "$query132<br/>";
             $prikaz132 = mysqli_query($link, $query132);
             if (!$result132) {

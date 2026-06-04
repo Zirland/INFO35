@@ -5,8 +5,9 @@ $tel_cislo = @$_GET['tel_cislo'];
 $silnice = @$_GET['silnice'];
 $ssud = @$_GET['ssud'];
 $typ = @$_GET['typ'];
+$provozovatel = @$_GET['provozovatel'];
 
-$dotaz = "WHERE archiv = '0'";
+$dotaz = "WHERE archiv = '0' AND provozovatel = '$provozovatel'";
 if ($tel_cislo != '') {
     $dotaz .= " AND tel_cislo LIKE '$tel_cislo%'";
 }
@@ -44,7 +45,7 @@ echo "<th width=\"10\">&nbsp;</th>";
 echo "</tr>";
 
 $i = 0;
-$query47 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ FROM hlasky $dotaz ORDER BY tel_cislo;";
+$query47 = "SELECT id, tel_cislo, silnice, kilometr, smer, longitude, latitude, platnost, export, edited, ssud, typ, techno, hlavni FROM hlasky $dotaz ORDER BY tel_cislo;";
 if ($result47 = mysqli_query($link, $query47)) {
     while ($row47 = mysqli_fetch_row($result47)) {
         $id = $row47[0];
@@ -61,6 +62,8 @@ if ($result47 = mysqli_query($link, $query47)) {
         $ssud_nazev = "";
         $typ = $row47[11];
         $typ_nazev = "";
+        $techno = $row47[12];
+        $hlavni = $row47[13];
 
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
 
@@ -69,34 +72,38 @@ if ($result47 = mysqli_query($link, $query47)) {
         }
         $kilometr = str_replace(".", ",", $kilometr);
 
-        $query72 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
-        if ($result72 = mysqli_query($link, $query72)) {
-            while ($row72 = mysqli_fetch_row($result72)) {
-                $ssud_nazev = $row72[0];
+        $query74 = "SELECT popis FROM enum_ssud WHERE id = '$ssud';";
+        if ($result74 = mysqli_query($link, $query74)) {
+            while ($row74 = mysqli_fetch_row($result74)) {
+                $ssud_nazev = $row74[0];
             }
         }
 
-        $query79 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
-        if ($result79 = mysqli_query($link, $query79)) {
-            while ($row79 = mysqli_fetch_row($result79)) {
-                $typ_nazev = $row79[0];
+        $query81 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
+        if ($result81 = mysqli_query($link, $query81)) {
+            while ($row81 = mysqli_fetch_row($result81)) {
+                $typ_nazev = $row81[0];
             }
         }
 
         echo "<tr class=\"";
         echo ($i % 2 == 0) ? "dark" : "light";
-
-        if ($platnost == 0 || $platnost == '') {
+        if ($platnost == 0) {
             echo "-strikeout";
         }
-        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>$typ_nazev</td>";
+        echo "\"><td>&nbsp;</td><td>$tel_cislo</td><td>$silnice</td><td>$kilometr</td><td>$smer_nazev</td><td>$latitude</td><td>$longitude</td><td>$ssud_nazev</td><td>";
+        echo $typ_nazev;
+        if ($techno == 1) {
+            echo " TECHNO";
+        }
+        echo ($hlavni == "1") ? " hl." : " vedl.";
 
         if ($export == "0") {
-            echo "<td>Připraveno k exportu</td>";
+            echo "</td><td>Připraveno k exportu</td>";
         } elseif ($edited == "1") {
-            echo "<td>Čeká na schválení O2 ITS</td>";
+            echo "</td><td>Čeká na schválení O2 ITS</td>";
         } else {
-            echo "<td></td>";
+            echo "</td><td></td>";
         }
 
         echo "<td><a href=\"edit.php?id=$id&up=$app_up\" target=\"_blank\">Edit</a></td></tr>";

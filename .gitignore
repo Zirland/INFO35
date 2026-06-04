@@ -1,2 +1,8 @@
 
-dbconnect.php
+phpqrcode/
+
+tfpdf/
+
+vendor/
+
+composer.lock

@@ -34,6 +34,28 @@ $castObceKod = @$_POST["castObceKod"];
 $uliceKod = @$_POST["uliceKod"];
 $OpID = @$_POST["OpID"];
 
+// Filtry – buď z aktuálního požadavku, nebo z cookies
+$reset_filters = isset($_GET['reset_filters']);
+
+if ($reset_filters) {
+    // Vymazání filtrů a cookies
+    setcookie('stanice_filter_opid', '', time() - 3600, "/");
+    setcookie('stanice_filter_long_coords', '', time() - 3600, "/");
+    $filter_opid = '';
+    $filter_long_coords = false;
+} elseif (isset($_GET['opid']) || isset($_GET['long_coords'])) {
+    // Nové nastavení filtrů z GET, uložit do cookies
+    $filter_opid = isset($_GET['opid']) ? trim((string) $_GET['opid']) : '';
+    $filter_long_coords = isset($_GET['long_coords']);
+
+    setcookie('stanice_filter_opid', $filter_opid, time() + (86400 * 365), "/"); // 1 rok
+    setcookie('stanice_filter_long_coords', $filter_long_coords ? '1' : '0', time() + (86400 * 365), "/");
+} else {
+    // Výchozí hodnoty z cookies, pokud existují
+    $filter_opid = isset($_COOKIE['stanice_filter_opid']) ? trim((string) $_COOKIE['stanice_filter_opid']) : '';
+    $filter_long_coords = isset($_COOKIE['stanice_filter_long_coords']) && $_COOKIE['stanice_filter_long_coords'] === '1';
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
         $tel_cislo_err = "Zadejte prosím telefonní číslo.";
@@ -53,6 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Něco se nepovedlo. Zkuste to prosím znovu.";
         }
     }
+    $latitude = round($latitude, 7);
+    $longitude = round($longitude, 7);
 
     $query57 = "INSERT INTO stanice (`prijmeni`,`jmeno`,`tel_cislo`,`ico`,`nazev_ulice`,`cislo_popisne`,`cislo_orientacni`,`cislo_podlazi`,`cislo_bytu`,`nazev_obce`,`nazev_casti_obce`,`nazev_okresu`,`longitude`,`latitude`,`kod_objektu`,`kod_adresy`,`kod_obce`,`kod_casti_obce`,`kod_ulice`,`OpID`) VALUES ('$prijmeni','$jmeno','$tel_cislo','$ico','$uliceNazev','$adresaCisloDomovni','$adresaCisloOrientacni','','','$obecNazev','$castObceNazev','$okresNazev','$longitude','$latitude','$objektKod','$adresaKod','$obecKod','$castObceKod','$uliceKod','$OpID');";
     $prikaz57 = mysqli_query($link, $query57);
@@ -93,13 +117,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function najdi(str) {
             var xmlhttp;
 
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
             }
 
-            xmlhttp.onreadystatechange = function () {
+            xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     document.getElementById("data").innerHTML = xmlhttp.responseText;
                 }
@@ -112,13 +136,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function vyber(str) {
             var xmlhttp;
 
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 xmlhttp = new XMLHttpRequest();
-            } else {// code for IE6, IE5
+            } else { // code for IE6, IE5
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
             }
 
-            xmlhttp.onreadystatechange = function () {
+            xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     document.getElementById("mistoUdal").innerHTML = xmlhttp.responseText;
                 }
@@ -154,10 +178,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <br />
                     <div id="mistoUdal">
                     </div>
-                    <br />
-
-
-                    <input type="submit">
                 </form>
             </td>
             <td>
@@ -170,11 +190,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </tr>
     </table>
     <hr>
+    <form method="get" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="margin-bottom: 1em;">
+        <label>Filtrovat dle OpID:</label>
+        <input type="text" name="opid" value="<?php echo htmlspecialchars($filter_opid); ?>" placeholder="vše" size="6">
+        <label style="margin-left: 1em;">
+            <input type="checkbox" name="long_coords" value="1" <?php echo $filter_long_coords ? ' checked' : ''; ?>>
+            Pouze zem. šířka/délka delší než 10 znaků
+        </label>
+        <button type="submit">Filtrovat</button>
+        <?php if ($filter_opid !== '' || $filter_long_coords) { ?>
+            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?reset_filters=1">Zrušit filtr</a>
+        <?php } ?>
+    </form>
     <?php
     echo "<table width=\"100%\">";
     echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
     $i = 0;
-    $query177 = "SELECT * FROM stanice ORDER BY tel_cislo;";
+
+    $opid_esc = mysqli_real_escape_string($link, $filter_opid);
+    $where = [];
+    if ($filter_opid !== '') {
+        $where[] = "OpID = '$opid_esc'";
+    }
+    if ($filter_long_coords) {
+        $where[] = "(LENGTH(CAST(latitude AS CHAR)) > 10 OR LENGTH(CAST(longitude AS CHAR)) > 10)";
+    }
+    $where_sql = count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
+    $query177 = "SELECT * FROM stanice$where_sql ORDER BY tel_cislo;";
     if ($result177 = mysqli_query($link, $query177)) {
         while ($row177 = mysqli_fetch_row($result177)) {
             $prijmeni = $row177[0];

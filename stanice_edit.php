@@ -14,6 +14,8 @@ include 'Converter.php';
 $converter = new JTSK\Converter();
 
 $id_cislo = @$_GET["cislo"];
+$delete_flag = @$_GET["delete"];
+
 $action = @$_POST["action"];
 $prijmeni = @$_POST["prijmeni"];
 $jmeno = @$_POST["jmeno"];
@@ -36,14 +38,22 @@ $uliceKod = @$_POST["uliceKod"];
 $OpID = @$_POST["OpID"];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $longitude = round($longitude, 7);
+    $latitude = round($latitude, 7);
     $query39 = "UPDATE stanice SET prijmeni='$prijmeni', jmeno='$jmeno', nazev_ulice='$uliceNazev', cislo_popisne='$adresaCisloDomovni', cislo_orientacni='$adresaCisloOrientacni', nazev_obce='$obecNazev', nazev_casti_obce='$castObceNazev', nazev_okresu='$okresNazev', longitude='$longitude', latitude='$latitude', kod_objektu='$objektKod', kod_adresy='$adresaKod', kod_obce='$obecKod', kod_casti_obce='$castObceKod', kod_ulice='$uliceKod' WHERE tel_cislo='$tel_cislo';";
     $prikaz39 = mysqli_query($link, $query39);
     if ($prikaz39 === false) {
         echo "CHYBA: " . mysqli_error($link);
     }
-
 }
 
+if ($delete_flag == "yes") {
+    $query40 = "DELETE FROM stanice WHERE tel_cislo='$id_cislo';";
+    $prikaz40 = mysqli_query($link, $query40);
+    if ($prikaz40 === false) {
+        echo "CHYBA: " . mysqli_error($link);
+    }
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -165,19 +175,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <br />
                     <div id="mistoUdal">
                     </div>
-                    <br />
-
-
-                    <input type="submit">
                 </form>
 
                 <hr />
 
                 <?php
                 echo "<table>";
-                echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th></tr>";
+                echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th><th>Vymazat</th></tr>";
                 echo "<tr";
-                echo "><td>$prijmeni</td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td></tr>";
+                echo "><td>$prijmeni</td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td><td><a href='stanice_edit.php?delete=yes&cislo=$id_cislo'>Vymazat</a></td></tr>";
                 echo "</table>";
 
                 mysqli_close($link);

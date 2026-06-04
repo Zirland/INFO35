@@ -170,3 +170,4 @@ echo "<br/>Kód adresy: <input type=\"text\" name=\"adresaKod\" value=\"$adresaK
 echo "Orientační: <input type=\"text\" name=\"adresaCisloOrientacni\" size=\"4\" value=\"$adresaCisloOrientacni\">";
 echo "<br/><input type=\"text\" name=\"latitude\" value=\"$latitude\">";
 echo "<input type=\"text\" name=\"longitude\" value=\"$longitude\">";
+echo "<br/><input type=\"submit\">";
