@@ -34,8 +34,27 @@ $castObceKod = @$_POST["castObceKod"];
 $uliceKod = @$_POST["uliceKod"];
 $OpID = @$_POST["OpID"];
 
-$filter_opid = isset($_GET['opid']) ? trim((string) $_GET['opid']) : '';
-$filter_long_coords = isset($_GET['long_coords']);
+// Filtry – buď z aktuálního požadavku, nebo z cookies
+$reset_filters = isset($_GET['reset_filters']);
+
+if ($reset_filters) {
+    // Vymazání filtrů a cookies
+    setcookie('stanice_filter_opid', '', time() - 3600, "/");
+    setcookie('stanice_filter_long_coords', '', time() - 3600, "/");
+    $filter_opid = '';
+    $filter_long_coords = false;
+} elseif (isset($_GET['opid']) || isset($_GET['long_coords'])) {
+    // Nové nastavení filtrů z GET, uložit do cookies
+    $filter_opid = isset($_GET['opid']) ? trim((string) $_GET['opid']) : '';
+    $filter_long_coords = isset($_GET['long_coords']);
+
+    setcookie('stanice_filter_opid', $filter_opid, time() + (86400 * 365), "/"); // 1 rok
+    setcookie('stanice_filter_long_coords', $filter_long_coords ? '1' : '0', time() + (86400 * 365), "/");
+} else {
+    // Výchozí hodnoty z cookies, pokud existují
+    $filter_opid = isset($_COOKIE['stanice_filter_opid']) ? trim((string) $_COOKIE['stanice_filter_opid']) : '';
+    $filter_long_coords = isset($_COOKIE['stanice_filter_long_coords']) && $_COOKIE['stanice_filter_long_coords'] === '1';
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($tel_cislo))) {
@@ -180,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </label>
         <button type="submit">Filtrovat</button>
         <?php if ($filter_opid !== '' || $filter_long_coords) { ?>
-            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">Zrušit filtr</a>
+            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?reset_filters=1">Zrušit filtr</a>
         <?php } ?>
     </form>
     <?php

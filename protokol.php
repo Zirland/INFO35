@@ -19,6 +19,58 @@ mysqli_set_charset($link, "utf8");
 require "tfpdf/tfpdf.php";
 //include "phpqrcode/phpqrcode.php";
 
+class ProtokolPDF extends tFPDF
+{
+    public function NbLines($w, $txt)
+    {
+        $s = str_replace("\r", '', (string) $txt);
+        $nb = mb_strlen($s, 'utf-8');
+        while ($nb > 0 && mb_substr($s, $nb - 1, 1, 'utf-8') === "\n") {
+            $nb--;
+        }
+        if ($nb === 0) {
+            return 1;
+        }
+        $wmax = $w - 2 * $this->cMargin;
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while ($i < $nb) {
+            $c = mb_substr($s, $i, 1, 'UTF-8');
+            if ($c === "\n") {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if ($c === ' ') {
+                $sep = $i;
+            }
+            $l += $this->GetStringWidth($c);
+            if ($l > $wmax) {
+                if ($sep === -1) {
+                    if ($i === $j) {
+                        $i++;
+                    }
+                } else {
+                    $i = $sep + 1;
+                }
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            } else {
+                $i++;
+            }
+        }
+        return $nl;
+    }
+}
+
 $id = $_GET["id"];
 $provozovatel = $_SESSION['provozovatel'];
 $qrcode = "";
@@ -37,14 +89,14 @@ switch ($provozovatel) {
         break;
 
     case 'ViaSalis':
-        $img_logo = 'vinci.png';
-        $logo_sirka = 170;
+        $img_logo = 'viaoperations.png';
+        $logo_sirka = 68;
         $logo_vyska = 44;
         $investor_L1 = 'Ministerstvo dopravy ČR';
         $investor_L2 = 'nábřeží Ludvíka Svobody 1222/12, 110 15 Praha 1';
-        $dodavatel_L1 = 'EUROVIA CZ, a.s., závod DIVia';
-        $dodavatel_L2 = 'U Michelského lesa 1581/2, Michle, 140 00 Praha 4';
-        $dodavatel_nazev = 'EUROVIA CZ, a.s., závod DIVia';
+        $dodavatel_L1 = 'Via Salis Operations, s.r.o.';
+        $dodavatel_L2 = 'Karla Engliše 3208/5, Smíchov, 150 00 Praha 5';
+        $dodavatel_nazev = 'Via Salis Operations, s.r.o.';
         $pozice_dodavatel = 'Pozice Via';
         $mesto = 'Praze';
         $cislo_prokotolu = " č. $id";
@@ -91,7 +143,7 @@ if ($result73 = mysqli_query($link, $query73)) {
 }
 
 
-$pdf = new tFPDF('P', 'mm', 'A4');
+$pdf = new ProtokolPDF('P', 'mm', 'A4');
 $pdf->AddPage();
 
 $pdf->AddFont('DejaVu', '', 'DejaVuSans.ttf', true);
@@ -227,12 +279,8 @@ if ($result160 = mysqli_query($link, $query160)) {
         $smer_nazev = SmerNazev($silnice, $smer, $kilometr);
         $kilometr = str_replace(".", ",", $kilometr);
 
-        $x = $w[0] + $w[1] + $w[2] + $w[3] + 10;
-        $y = floor($pdf->GetY());
-
-        if ($y > 265) {
+        if (floor($pdf->GetY()) > 265) {
             $pdf->AddPage();
-            $y = 15;
             $pdf->SetFont('DejaVu', 'B', 8);
             $pdf->Cell($w[0], 5, '', 0, 0, 'C');
             $pdf->Cell($w[1], 5, 'Typ', 1, 0, 'C');
@@ -247,16 +295,11 @@ if ($result160 = mysqli_query($link, $query160)) {
             $pdf->SetFont('DejaVu', '', 8);
         }
 
-        $smer_delka = $pdf->GetStringWidth($smer_nazev);
-        $pozn_delka = $pdf->GetStringWidth($poznamka);
-        $smer_vyska = floor($smer_delka / 20);
-        $pozn_vyska = floor($pozn_delka / 22);
-        $h = ($smer_vyska > 0 || $pozn_vyska > 0) ? (max($smer_vyska, $pozn_vyska) + 1) * 4 : 5;
-
-        $smer_radek = $h / ($smer_vyska + 1);
-        $pozn_radek = $h / ($pozn_vyska + 1);
-
-        $kilometr = str_replace(".", ",", $kilometr);
+        $y = floor($pdf->GetY());
+        $lineH = 4;
+        $smer_lines = $pdf->NbLines($w[3], $smer_nazev);
+        $pozn_lines = $pdf->NbLines($w[9], $poznamka);
+        $h = max($smer_lines, $pozn_lines) * $lineH;
 
         $query185 = "SELECT popis FROM enum_typ WHERE id = '$typ';";
         if ($result185 = mysqli_query($link, $query185)) {
@@ -265,17 +308,48 @@ if ($result160 = mysqli_query($link, $query160)) {
             }
         }
 
+        $x = 10;
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[0], $h, '', 0, 0, 'C');
+        $x += $w[0];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[1], $h, $nazev_typu, 1, 0, 'C');
+        $x += $w[1];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[2], $h, $kilometr, 1, 0, 'C');
-        $pdf->MultiCell($w[3], $smer_radek, $smer_nazev, 1, 'C');
+        $x += $w[2];
+
+        $pdf->SetXY($x, $y);
+        $pdf->Rect($x, $y, $w[3], $h);
+        $pdf->MultiCell($w[3], $lineH, $smer_nazev, 0, 'C');
+        $x += $w[3];
+
         $pdf->SetXY($x, $y);
         $pdf->Cell($w[4], $h, ($zkouska == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
+        $x += $w[4];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[5], $h, ($hovor_out == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
+        $x += $w[5];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[6], $h, ($hovor_in == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
+        $x += $w[6];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[7], $h, ($lokaceSPEL == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
+        $x += $w[7];
+
+        $pdf->SetXY($x, $y);
         $pdf->Cell($w[8], $h, ($lokace112 == "1") ? "\u{2611}" : "\u{2610}", 1, 0, 'C');
-        $pdf->MultiCell($w[9], $pozn_radek, $poznamka, 1, 'L');
+        $x += $w[8];
+
+        $pdf->SetXY($x, $y);
+        $pdf->Rect($x, $y, $w[9], $h);
+        $pdf->MultiCell($w[9], $lineH, $poznamka, 0, 'L');
+
         $pdf->SetXY(10, $y + $h);
     }
 }
