@@ -30,7 +30,7 @@ function SmerNazev($silnice, $smer, $kilometr)
                 $smer_nazev = "Přerov";
             } elseif ($smer == "+") {
                 $smer_nazev = "Bohumín";
-            } elseif ($smer == "-" && $kilometr > 273) {
+            } elseif ($smer == "-" && $kilometr > 283) {
                 $smer_nazev = "Přerov";
             } elseif ($smer == "-" && $kilometr > 203) {
                 $smer_nazev = "Brno";
@@ -76,7 +76,15 @@ function SmerNazev($silnice, $smer, $kilometr)
             break;
 
         case 'D11':
-            $smer_nazev = ($smer == "+") ? "Jaroměř" : "Praha";
+            if ($smer == "+" && $kilometr < 90) {
+                $smer_nazev = "Hradec Králové";
+            } elseif ($smer == "+") {
+                $smer_nazev = "Trutnov";
+            } elseif ($smer == "-" && $kilometr > 96) {
+                $smer_nazev = "Hradec Králové";
+            } else {
+                $smer_nazev = "Praha";
+            }
             break;
 
         case '20':
@@ -84,14 +92,26 @@ function SmerNazev($silnice, $smer, $kilometr)
             break;
 
         case 'D35':
-            if ($smer == "+" && $kilometr < 160) {
-                $smer_nazev = "Vysoké Mýto";
+            if ($smer == "+" && $kilometr < 125) {
+                $smer_nazev = "Hradec Králové";
+            } elseif ($smer == "+" && $kilometr < 160) {
+                $smer_nazev = "Zámrsk";
+            } elseif ($smer == "+" && $kilometr < 180) {
+                $smer_nazev = "Litomyšl";
+            } elseif ($smer == "+" && $kilometr < 220) {
+                $smer_nazev = "Moravská Třebová";
             } elseif ($smer == "+") {
                 $smer_nazev = "Lipník nad Bečvou";
             } elseif ($smer == "-" && $kilometr > 220) {
                 $smer_nazev = "Mohelnice";
-            } else {
+            } elseif ($smer == "-" && $kilometr > 180) {
+                $smer_nazev = "Litomyšl";
+            } elseif ($smer == "-" && $kilometr > 160) {
+                $smer_nazev = "Zámrsk";
+            } elseif ($smer == "-" && $kilometr > 125) {
                 $smer_nazev = "Praha";
+            } else {
+                $smer_nazev = "Liberec";
             }
             break;
 
@@ -120,7 +140,7 @@ function SmerNazev($silnice, $smer, $kilometr)
             break;
 
         case 'D49':
-            $smer_nazev = ($smer == "+") ? "Fryšták" : "Hulin";
+            $smer_nazev = ($smer == "+") ? "Fryšták" : "Hulín";
             break;
 
         case 'D52':
@@ -128,7 +148,15 @@ function SmerNazev($silnice, $smer, $kilometr)
             break;
 
         case 'D55':
-            $smer_nazev = ($smer == "+") ? "Uherské Hradiště" : "Kroměříž";
+            if ($smer == "+" && $kilometr < 14) {
+                $smer_nazev = "Přerov";
+            } elseif ($smer == "+") {
+                $smer_nazev = "Břeclav";
+            } elseif ($smer == "-" && $kilometr > 14) {
+                $smer_nazev = "Přerov";
+            } else {
+                $smer_nazev = "Olomouc";
+            }
             break;
 
         case 'D56':

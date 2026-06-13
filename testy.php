@@ -1,4 +1,5 @@
 <?php
+
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -54,7 +55,7 @@ function getGroupedDataByOkres($link, $date)
         LEFT JOIN hlasky h ON tr.id_hlaska=h.id
         LEFT JOIN obce o ON o.kod = h.obecKod
         LEFT JOIN okresy k ON k.kod = o.okres
-        WHERE tr.id_test IN (SELECT t.id FROM testovani t WHERE t.datum = ?)
+        WHERE tr.id_test IN (SELECT t.id FROM testovani t WHERE t.datum = ? AND t.odmitnuto = '0')
         GROUP BY h.silnice, k.kraj
         ORDER BY k.kraj, h.silnice";
 
@@ -149,7 +150,6 @@ try {
     } else {
         echo 'No data to send';
     }
-
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }
@@ -195,16 +195,12 @@ try {
     $mail->Subject = $subject;
     $mail->Body = $content;
 
-    var_dump($emails);
-    var_dump($content);
-
     if ($emails) {
         $mail->send();
         echo 'Urgence message has been sent';
     } else {
         echo 'No data to send';
     }
-
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }

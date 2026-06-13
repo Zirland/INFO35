@@ -13,6 +13,15 @@ require_once 'config.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
+$action = @$_GET['action'];
+if ($action == 'export') {
+    $query = "INSERT INTO check_st (tel_cislo) SELECT tel_cislo FROM stanice;";
+    $result = mysqli_query($link, $query);
+    echo "Záznamy exportovány<br/>";
+    echo "<a href='check_stanice.php'>Zpět</a>";
+    die();
+}
+
 $query16 = "SELECT tel_cislo FROM check_st;";
 if ($result16 = mysqli_query($link, $query16)) {
     $rows = mysqli_num_rows($result16);
@@ -25,7 +34,6 @@ echo "$check_id<br/>";
 $error = 0;
 
 $query27 = "SELECT nazev_ulice, cislo_popisne, cislo_orientacni, nazev_obce, nazev_casti_obce, nazev_okresu, longitude, latitude, kod_objektu, kod_adresy, kod_obce, kod_casti_obce, kod_ulice FROM stanice WHERE tel_cislo = '$check_id';";
-echo "$query27<br/>";
 if ($result27 = mysqli_query($link, $query27)) {
     while ($row27 = mysqli_fetch_row($result27)) {
         $nazev_ulice = $row27[0];
@@ -99,11 +107,13 @@ if ($result27 = mysqli_query($link, $query27)) {
 
             $latlon = $converter->JTSKtoWGS84($sour_Y, $sour_X); // returns array ['lat', 'lon']
 
-            $new_latitude = $latlon['lat'];
-            $new_longitude = $latlon['lon'];
+            $new_latitude = round($latlon['lat'], 7);
+            $new_longitude = round($latlon['lon'], 7);
 
             if ($new_kod_casti_obce == "") {
-                echo "Chyba v záznamu čísla $check_id<br/>";
+                echo "Chyba v záznamu čísla <a href=\"stanice_edit.php?cislo=$check_id\">$check_id</a><br/>";
+                $query_delete = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
+                $prikaz_delete = mysqli_query($link, $query_delete);
 
                 echo "Ulice: $nazev_ulice = $new_nazev_ulice<br/>";
                 echo "Popisne: $cislo_popisne = $new_cislo_popisne<br/>";
@@ -111,8 +121,8 @@ if ($result27 = mysqli_query($link, $query27)) {
                 echo "Obec: $nazev_obce = $new_nazev_obce<br/>";
                 echo "Cast: $nazev_casti_obce = $new_nazev_casti_obce<br/>";
                 echo "Okres: $nazev_okresu = $new_nazev_okresu<br/>";
-                echo "LON: $longitude = $new_longitude<br/>";
-                echo "LAT: $latitude = $new_latitude<br/>";
+                echo "LON: $longitude = $new_longitude = $y<br/>";
+                echo "LAT: $latitude = $new_latitude = $x<br/>";
                 echo "OBJ: $kod_objektu = $new_kod_objektu<br/>";
                 echo "Kod obce: $kod_obce = $new_kod_obce<br/>";
                 echo "Kod casti: $kod_casti_obce = $new_kod_casti_obce<br/>";
@@ -120,7 +130,7 @@ if ($result27 = mysqli_query($link, $query27)) {
 
                 $error = 1;
                 $url7 = "https://gis.izscr.cz/arcgis/rest/services/terinos_sluzby/cast_obce/MapServer/0/query?where=&text=&objectIds=&time=&geometry=%7B%22spatialReference%22%3A%7B%22wkid%22%3A102067%7D%2C%22x%22%3A$x%2C%22y%22%3A$y%7D&geometryType=esriGeometryPoint&inSR=102067&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=naz_okres%2Cnaz_obec%2Ckod_obec%2Cnaz_cast%2Ckod_cast&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=json";
-
+                echo "$url7<br/>";
                 $response7 = file_get_contents($url7);
                 $vysledek7 = json_decode($response7, $assoc = true);
 
@@ -138,8 +148,8 @@ if ($result27 = mysqli_query($link, $query27)) {
                 echo "Obec: $nazev_obce = $new_nazev_obce<br/>";
                 echo "Cast: $nazev_casti_obce = $new_nazev_casti_obce<br/>";
                 echo "Okres: $nazev_okresu = $new_nazev_okresu<br/>";
-                echo "LON: $longitude = $new_longitude<br/>";
-                echo "LAT: $latitude = $new_latitude<br/>";
+                echo "LON: $longitude = $new_longitude = $y<br/>";
+                echo "LAT: $latitude = $new_latitude = $x<br/>";
                 echo "OBJ: $kod_objektu = $new_kod_objektu<br/>";
                 echo "Kod obce: $kod_obce = $new_kod_obce<br/>";
                 echo "Kod casti: $kod_casti_obce = $new_kod_casti_obce<br/>";
@@ -147,7 +157,9 @@ if ($result27 = mysqli_query($link, $query27)) {
 
             }
         } else {
-            echo "Chybějící adresa u čísla $check_id<br/>";
+            echo "Chybějící adresa u čísla <a href=\"stanice_edit.php?cislo=$check_id\">$check_id</a><br/>";
+            $query_delete = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
+            $prikaz_delete = mysqli_query($link, $query_delete);
             $error = 1;
         }
 
@@ -214,7 +226,6 @@ if ($result27 = mysqli_query($link, $query27)) {
             }
 
             $check216 = "DELETE FROM check_st WHERE tel_cislo = '$check_id';";
-            echo "$check216<br/>";
             $prikaz216 = mysqli_query($link, $check216);
 
             echo "<meta http-equiv=\"refresh\" content=\"1\">";

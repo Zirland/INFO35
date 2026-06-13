@@ -16,6 +16,7 @@ if ($OpID == "") {
     echo "222 Fio<br/>";
     echo "444 Česká pošta<br/>";
     echo "555 HZS ČR<br/>";
+    echo "700 Kaufland<br/>";
     echo "<input type=\"submit\" value=\"Submit\" />";
     echo "</form>";
     exit();
