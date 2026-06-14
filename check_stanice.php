@@ -10,10 +10,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$action = @$_GET['action'];
+$action = $_GET['action'] ?? '';
 if ($action == 'export') {
     $query = "INSERT INTO check_st (tel_cislo) SELECT tel_cislo FROM stanice;";
     $result = mysqli_query($link, $query);

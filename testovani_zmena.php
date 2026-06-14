@@ -51,12 +51,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <?php
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
 $id_user = $_SESSION["id"];
 
-$id = @$_GET["id"];
+$id = $_GET["id"] ?? '';
 if ($id == "") {
-    $id = @$_POST["id"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
 }
 
 $query62 = "SELECT datum, osoba, silnice, hlasky, zadatel FROM testovani WHERE id = $id;";
@@ -71,14 +73,14 @@ if ($result62 = mysqli_query($link, $query62)) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = @$_POST["id"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
 
-    $datum = @$_POST["datum"];
+    $datum = $_POST["datum"] ?? '';
     $datum_err = "";
-    $osoba = @$_POST["osoba"];
-    $odvolat = @$_POST["odvolat"];
-    $schvalit = @$_POST["schvalit"];
-    $komentar = @$_POST["komentar"];
+    $osoba = $_POST["osoba"] ?? '';
+    $odvolat = $_POST["odvolat"] ?? '';
+    $schvalit = $_POST["schvalit"] ?? '';
+    $komentar = $_POST["komentar"] ?? '';
     $komentar_err = "";
 
     if (empty(trim($datum))) {

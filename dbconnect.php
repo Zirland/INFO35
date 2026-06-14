@@ -1,8 +1,27 @@
 <?php
-$DB_SERVER = '';
-$DB_USERNAME = '';
-$DB_PASSWORD = '';
-$DB_NAME = '';
+// Load configuration from .env.local (never committed to git)
+// SECURITY: .env.local is REQUIRED and should contain: DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME
+if (!file_exists(__DIR__ . '/.env.local')) {
+    die("FATAL ERROR: .env.local not found. Please create .env.local with database credentials.");
+}
+
+$env_lines = file(__DIR__ . '/.env.local', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+foreach ($env_lines as $line) {
+    if (strpos(trim($line), '#') === 0) continue;
+    if (strpos($line, '=') === false) continue;
+    list($key, $value) = explode('=', $line, 2);
+    $_ENV[trim($key)] = trim($value);
+}
+
+// Fail fast if required credentials are missing
+$DB_SERVER = $_ENV['DB_SERVER'] ?? null;
+$DB_USERNAME = $_ENV['DB_USERNAME'] ?? null;
+$DB_PASSWORD = $_ENV['DB_PASSWORD'] ?? null;
+$DB_NAME = $_ENV['DB_NAME'] ?? null;
+
+if (!$DB_SERVER || !$DB_USERNAME || !$DB_NAME) {
+    die("FATAL ERROR: Missing required credentials in .env.local. Required: DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME");
+}
 
 function SmerNazev($silnice, $smer, $kilometr)
 {
@@ -179,7 +198,12 @@ function SmerNazev($silnice, $smer, $kilometr)
     return $smer_nazev;
 }
 
-$mail_host = '';
-$mail_username = '';
-$mail_password = '';
-$mail_bcc = '';
+// Mail credentials (must be in .env.local)
+$mail_host = $_ENV['MAIL_HOST'] ?? null;
+$mail_username = $_ENV['MAIL_USERNAME'] ?? null;
+$mail_password = $_ENV['MAIL_PASSWORD'] ?? null;
+$mail_bcc = $_ENV['MAIL_BCC'] ?? null;
+
+if (!$mail_host || !$mail_username) {
+    die("FATAL ERROR: Missing mail credentials in .env.local. Required: MAIL_HOST, MAIL_USERNAME, MAIL_PASSWORD, MAIL_BCC");
+}

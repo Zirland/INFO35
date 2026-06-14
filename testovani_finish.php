@@ -61,17 +61,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <?php
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
 $id_user = $_SESSION["id"];
 $up = $_GET["up"];
 
-$test_id = @$_GET["id"];
+$test_id = isset($_GET["id"]) ? dbEscape($link, trim($_GET["id"])) : "";
 if ($test_id == "") {
-    $test_id = @$_POST["id"];
+    $test_id = $_POST["id"] ?? '';
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $test_id = @$_POST["id"];
+    $test_id = $_POST["id"] ?? '';
 
     $projekt = $_POST["projekt"];
     $query77 = "UPDATE testovani SET projekt = '$projekt' WHERE id = '$test_id';";

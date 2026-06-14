@@ -10,10 +10,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
-$jmeno = @$_POST["jmeno"];
+$jmeno = isset($_POST["jmeno"]) ? dbEscape($link, trim($_POST["jmeno"])) : "";
 $jmeno_err = "";
-$tel_cislo = @$_POST["tel_cislo"];
+$tel_cislo = isset($_POST["tel_cislo"]) ? dbEscape($link, trim($_POST["tel_cislo"])) : "";
 $tel_cislo_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

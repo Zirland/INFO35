@@ -10,32 +10,35 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$id_cislo = @$_GET["cislo"];
-$delete_flag = @$_GET["delete"];
+$id_cislo = isset($_GET["cislo"]) ? dbEscape($link, trim($_GET["cislo"])) : "";
+$delete_flag = isset($_GET["delete"]) ? dbEscape($link, trim($_GET["delete"])) : "";
 
-$action = @$_POST["action"];
-$prijmeni = @$_POST["prijmeni"];
-$jmeno = @$_POST["jmeno"];
-$tel_cislo = @$_POST["tel_cislo"];
-$ico = @$_POST["ico"];
-$uliceNazev = @$_POST["uliceNazev"];
-$adresaCisloDomovni = @$_POST["adresaCisloDomovni"];
-$adresaCisloOrientacni = @$_POST["adresaCisloOrientacni"];
+// Escapuj POST proměnné
+$action = isset($_POST["action"]) ? dbEscape($link, trim($_POST["action"])) : "";
+$prijmeni = isset($_POST["prijmeni"]) ? dbEscape($link, trim($_POST["prijmeni"])) : "";
+$jmeno = isset($_POST["jmeno"]) ? dbEscape($link, trim($_POST["jmeno"])) : "";
+$tel_cislo = isset($_POST["tel_cislo"]) ? dbEscape($link, trim($_POST["tel_cislo"])) : "";
+$ico = isset($_POST["ico"]) ? dbEscape($link, trim($_POST["ico"])) : "";
+$uliceNazev = isset($_POST["uliceNazev"]) ? dbEscape($link, trim($_POST["uliceNazev"])) : "";
+$adresaCisloDomovni = isset($_POST["adresaCisloDomovni"]) ? dbEscape($link, trim($_POST["adresaCisloDomovni"])) : "";
+$adresaCisloOrientacni = isset($_POST["adresaCisloOrientacni"]) ? dbEscape($link, trim($_POST["adresaCisloOrientacni"])) : "";
 
-$obecNazev = @$_POST["obecNazev"];
-$castObceNazev = @$_POST["castObceNazev"];
-$okresNazev = @$_POST["okresNazev"];
-$longitude = @$_POST["longitude"];
-$latitude = @$_POST["latitude"];
-$objektKod = @$_POST["objektKod"];
-$adresaKod = @$_POST["adresaKod"];
-$obecKod = @$_POST["obecKod"];
-$castObceKod = @$_POST["castObceKod"];
-$uliceKod = @$_POST["uliceKod"];
-$OpID = @$_POST["OpID"];
+$obecNazev = isset($_POST["obecNazev"]) ? dbEscape($link, trim($_POST["obecNazev"])) : "";
+$castObceNazev = isset($_POST["castObceNazev"]) ? dbEscape($link, trim($_POST["castObceNazev"])) : "";
+$okresNazev = isset($_POST["okresNazev"]) ? dbEscape($link, trim($_POST["okresNazev"])) : "";
+$longitude = $_POST["longitude"] ?? '';
+$latitude = $_POST["latitude"] ?? '';
+$objektKod = $_POST["objektKod"] ?? '';
+$adresaKod = $_POST["adresaKod"] ?? '';
+$obecKod = $_POST["obecKod"] ?? '';
+$castObceKod = $_POST["castObceKod"] ?? '';
+$uliceKod = $_POST["uliceKod"] ?? '';
+$OpID = $_POST["OpID"] ?? '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $longitude = round($longitude, 7);
@@ -161,12 +164,12 @@ if ($delete_flag == "yes") {
             <td>
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
-                    Telefonní číslo: <input type="text" name="tel_cislo" value="<?php echo $tel_cislo ?>"
+                    Telefonní číslo: <input type="text" name="tel_cislo" value="<?php echo xss($tel_cislo); ?>"
                         readonly><br />
-                    Příjmení/Název: *<input type="text" name="prijmeni" value="<?php echo $prijmeni ?>">
-                    Jméno: <input name="jmeno" value="<?php echo $jmeno ?>"><br />
-                    IČO: <input name="ico" value="<?php echo $ico ?>"> OpID: <input name="OpID" size="3"
-                        value="<?php echo $OpID ?>"><br />
+                    Příjmení/Název: *<input type="text" name="prijmeni" value="<?php echo xss($prijmeni); ?>">
+                    Jméno: <input name="jmeno" value="<?php echo xss($jmeno); ?>"><br />
+                    IČO: <input name="ico" value="<?php echo xss($ico); ?>"> OpID: <input name="OpID" size="3"
+                        value="<?php echo xss($OpID); ?>"><br />
 
                     Adresa: <input onChange="najdi(this.value)">
                     <select id="data" onChange="vyber(this.value)" multiple>
@@ -182,8 +185,7 @@ if ($delete_flag == "yes") {
                 <?php
                 echo "<table>";
                 echo "<tr><th>Příjmení</th><th>Jméno</th><th>Telefonní číslo</th><th>IČO</th><th>Název ulice</th><th>Číslo domovní</th><th>Číslo orientační</th><th>Číslo podlaží</th><th>Číslo bytu</th><th>Název obce</th><th>Název části obce</th><th>Název okresu</th><th>Zeměpisná šířka</th><th>Zeměpisná délka</th><th>Kód objektu</th><th>Kód adresy</th><th>Kód obce</th><th>Kód části obce</th><th>Kód ulice</th><th>OpID</th><th>Vymazat</th></tr>";
-                echo "<tr";
-                echo "><td>$prijmeni</td><td>$jmeno</td><td>$tel_cislo</td><td>$ico</td><td>$uliceNazev</td><td>$adresaCisloDomovni</td><td>$adresaCisloOrientacni</td><td></td><td></td><td>$obecNazev</td><td>$castObceNazev</td><td>$okresNazev</td><td>$latitude</td><td>$longitude</td><td>$objektKod</td><td>$adresaKod</td><td>$obecKod</td><td>$castObceKod</td><td>$uliceKod</td><td>$OpID</td><td><a href='stanice_edit.php?delete=yes&cislo=$id_cislo'>Vymazat</a></td></tr>";
+                echo "<tr><td>" . xss($prijmeni) . "</td><td>" . xss($jmeno) . "</td><td>" . xss($tel_cislo) . "</td><td>" . xss($ico) . "</td><td>" . xss($uliceNazev) . "</td><td>" . xss($adresaCisloDomovni) . "</td><td>" . xss($adresaCisloOrientacni) . "</td><td></td><td></td><td>" . xss($obecNazev) . "</td><td>" . xss($castObceNazev) . "</td><td>" . xss($okresNazev) . "</td><td>" . xss($latitude) . "</td><td>" . xss($longitude) . "</td><td>" . xss($objektKod) . "</td><td>" . xss($adresaKod) . "</td><td>" . xss($obecKod) . "</td><td>" . xss($castObceKod) . "</td><td>" . xss($uliceKod) . "</td><td>" . xss($OpID) . "</td><td><a href='stanice_edit.php?delete=yes&cislo=" . xss($id_cislo) . "'>Vymazat</a></td></tr>";
                 echo "</table>";
 
                 mysqli_close($link);

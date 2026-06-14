@@ -10,10 +10,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
-$test_id = @$_GET["id"];
+$test_id = $_GET["id"] ?? '';
 if ($test_id == "") {
-    $test_id = @$_POST["id"];
+    $test_id = $_POST["id"] ?? '';
 }
 
 $query19 = "UPDATE testovani SET archiv='1' WHERE id ='$test_id';";

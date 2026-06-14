@@ -1,6 +1,8 @@
 <?php
 set_time_limit(0); // Turn off script timeout.
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 

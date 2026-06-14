@@ -23,7 +23,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         }
     </style>
 
-    <script type="text/javascript" src="apikey.js"></script>
+    <script type="text/javascript" src="get-api-key.php"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -38,6 +38,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <?php
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
@@ -66,26 +68,27 @@ if ($result50 = mysqli_query($link, $query50)) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = @$_POST["id"];
+    // Escapuj všechny POST proměnné
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
 
-    $silnice = @$_POST["silnice"];
+    $silnice = isset($_POST["silnice"]) ? dbEscape($link, trim($_POST["silnice"])) : "";
     $silnice_err = "";
-    $kilometr = @$_POST["kilometr"];
+    $kilometr = isset($_POST["kilometr"]) ? dbEscape($link, trim($_POST["kilometr"])) : "";
     $kilometr_err = "";
-    $smer = @$_POST["smer"];
-    $x = @substr($_POST["latitude"], 0, 14);
+    $smer = isset($_POST["smer"]) ? dbEscape($link, trim($_POST["smer"])) : "";
+    $x = isset($_POST["latitude"]) ? dbEscape($link, substr(trim($_POST["latitude"]), 0, 14)) : "";
     $x_err = "";
-    $y = @substr($_POST["longitude"], 0, 14);
+    $y = isset($_POST["longitude"]) ? dbEscape($link, substr(trim($_POST["longitude"]), 0, 14)) : "";
     $y_err = "";
-    $platnost = @$_POST["platnost"];
-    $ssud = @$_POST["ssud"];
+    $platnost = isset($_POST["platnost"]) ? dbEscape($link, trim($_POST["platnost"])) : "";
+    $ssud = isset($_POST["ssud"]) ? dbEscape($link, trim($_POST["ssud"])) : "";
     $ssud_err = "";
-    $typ = @$_POST["typ"];
+    $typ = isset($_POST["typ"]) ? dbEscape($link, trim($_POST["typ"])) : "";
     $typ_err = "";
-    $tech = @$_POST["tech"];
-    $arch = @$_POST["arch"];
-    $hlav = @$_POST["hlav"];
-    $up = @$_POST["up"];
+    $tech = isset($_POST["tech"]) ? dbEscape($link, trim($_POST["tech"])) : "";
+    $arch = isset($_POST["arch"]) ? dbEscape($link, trim($_POST["arch"])) : "";
+    $hlav = isset($_POST["hlav"]) ? dbEscape($link, trim($_POST["hlav"])) : "";
+    $up = isset($_POST["up"]) ? dbEscape($link, trim($_POST["up"])) : "";
 
     if ($tech != 1) {
         $tech = 0;
@@ -290,8 +293,8 @@ $up_app = PageHeader();
 ?>
 
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-    <input type="hidden" name="id" value="<?php echo $id; ?>">
-    <input type="hidden" name="up" value="<?php echo $up; ?>">
+    <input type="hidden" name="id" value="<?php echo xss($id); ?>">
+    <input type="hidden" name="up" value="<?php echo xss($up); ?>">
     <table width="100%" style="text-align:center;">
         <tr>
             <td colspan="8">Editace hlásky</td>
@@ -318,7 +321,7 @@ $up_app = PageHeader();
         <tr>
             <td></td>
             <td>
-                <?php echo $old_tel_cislo; ?>
+                <?php echo xss($old_tel_cislo); ?>
             </td>
             <td><select class="form-control" id="silnice" name="silnice">
                     <option value="">---</option>
@@ -338,7 +341,7 @@ $up_app = PageHeader();
                     }
                     ?>
                 </select></td>
-            <td><input type="text" name="kilometr" value="<?php echo $old_kilometr; ?>"></td>
+            <td><input type="text" name="kilometr" value="<?php echo xss($old_kilometr); ?>"></td>
             <td><select id="smer" name="smer">
                     <option value="+" <?php
                     if ($old_smer == "+") {
@@ -355,8 +358,8 @@ $up_app = PageHeader();
             <td><input type="checkbox" name="hlav" value="1" <?php if ($old_hlavni == 1) {
                 echo " CHECKED";
             } ?>></td>
-            <td><input type="text" name="latitude" id="latitude" value="<?php echo $old_latitude; ?>"></td>
-            <td><input type="text" name="longitude" id="longitude" value="<?php echo $old_longitude; ?>"></td>
+            <td><input type="text" name="latitude" id="latitude" value="<?php echo xss($old_latitude); ?>"></td>
+            <td><input type="text" name="longitude" id="longitude" value="<?php echo xss($old_longitude); ?>"></td>
             <td><select class="form-control" id="ssud" name="ssud">
                     <option value="">---</option>
                     <?php
@@ -475,7 +478,7 @@ echo "</table>";
 
     <?php
     if (isset($old_latitude) && isset($old_longitude)) {
-        echo "const init_pos = [$old_latitude, $old_longitude];";
+        echo "const init_pos = [" . $old_latitude . ", " . $old_longitude . "];";
     } else {
         echo "const init_pos = [50.08, 14.41];";
     }

@@ -10,6 +10,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 ?>
 
 <!DOCTYPE html>
@@ -35,11 +37,11 @@ require_once 'config.php';
     <?php
     PageHeader();
 
-    $action = @$_POST["action"];
-    $app_id = @$_POST["app_id"];
-    $app_name = @$_POST["app_name"];
-    $app_url = @$_POST["app_url"];
-    $app_up = @$_POST["app_up"];
+    $action = $_POST["action"] ?? '';
+    $app_id = $_POST["app_id"] ?? '';
+    $app_name = $_POST["app_name"] ?? '';
+    $app_url = $_POST["app_url"] ?? '';
+    $app_up = $_POST["app_up"] ?? '';
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (empty(trim($app_name))) {

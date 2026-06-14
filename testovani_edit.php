@@ -58,12 +58,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <?php
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$id = @$_GET["id"];
+$id = $_GET["id"] ?? '';
 if ($id == "") {
-    $id = @$_POST["id"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
 }
 
 $query69 = "SELECT datum, silnice, osoba FROM testovani WHERE id = $id;";
@@ -76,16 +78,16 @@ if ($result69 = mysqli_query($link, $query69)) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = @$_POST["id"];
-    $action = @$_POST["action"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
+    $action = $_POST["action"] ?? '';
 
     switch ($action) {
         case "hlavicka":
-            $datum = @$_POST["datum"];
+            $datum = $_POST["datum"] ?? '';
             $datum_err = "";
-            $silnice = @$_POST["silnice"];
+            $silnice = $_POST["silnice"] ?? '';
             $silnice_err = "";
-            $osoba = @$_POST["osoba"];
+            $osoba = $_POST["osoba"] ?? '';
             $osoba_err = "";
 
             if (empty(trim($datum))) {

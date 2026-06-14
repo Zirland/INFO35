@@ -1,7 +1,9 @@
 <?php
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
-$OpID = @$_GET['id'];
+$OpID = $_GET['id'] ?? '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $OpID = $_POST['id'];

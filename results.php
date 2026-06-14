@@ -10,10 +10,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
 $id_user = $_SESSION["id"];
 
-$id = @$_GET["id"];
+$id = $_GET["id"] ?? '';
 
 $query18 = "SELECT datum, osoba, silnice, hlasky, zadatel FROM testovani WHERE id = $id;";
 if ($result18 = mysqli_query($link, $query18)) {

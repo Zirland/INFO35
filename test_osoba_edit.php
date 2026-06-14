@@ -10,10 +10,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
-$id = @$_GET["id"];
+$id = $_GET["id"] ?? '';
 if ($id == "") {
-    $id = @$_POST["id"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
 }
 
 $query19 = "SELECT jmeno, tel_cislo FROM test_osoby WHERE id = '$id';";
@@ -25,10 +27,10 @@ if ($result19 = mysqli_query($link, $query19)) {
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $id = @$_POST["id"];
-    $jmeno = @$_POST["jmeno"];
+    $id = isset($_POST["id"]) ? dbEscape($link, trim($_POST["id"])) : "";
+    $jmeno = $_POST["jmeno"] ?? '';
     $jmeno_err = "";
-    $tel_cislo = @$_POST["tel_cislo"];
+    $tel_cislo = $_POST["tel_cislo"] ?? '';
     $tel_cislo_err = "";
 
     if (empty(trim($jmeno))) {

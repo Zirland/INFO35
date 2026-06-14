@@ -10,12 +10,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 
-$datum = @$_POST["datum"];
+// Escapuj POST proměnné
+$datum = isset($_POST["datum"]) ? dbEscape($link, trim($_POST["datum"])) : "";
 $datum_err = "";
-$silnice = @$_POST["silnice"];
+$silnice = isset($_POST["silnice"]) ? dbEscape($link, trim($_POST["silnice"])) : "";
 $silnice_err = "";
-$osoba = @$_POST["osoba"];
+$osoba = isset($_POST["osoba"]) ? dbEscape($link, trim($_POST["osoba"])) : "";
 $osoba_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -67,9 +70,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group <?php echo (!empty($datum_err)) ? 'has-error' : ''; ?>">
                 <label>Datum testování</label>
                 <input type="date" name="datum" min="<?php echo $tomorrow; ?>" class="form-control"
-                    value="<?php echo $datum; ?>">
+                    value="<?php echo xss($datum); ?>">
                 <span class="help-block">
-                    <?php echo $datum_err; ?>
+                    <?php echo xss($datum_err); ?>
                 </span>
             </div>
 
@@ -94,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </select>
                 <span class="help-block">
-                    <?php echo $silnice_err; ?>
+                    <?php echo xss($silnice_err); ?>
                 </span>
             </div>
 
@@ -120,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </select>
                 <span class="help-block">
-                    <?php echo $osoba_err; ?>
+                    <?php echo xss($osoba_err); ?>
                 </span>
             </div>
 
@@ -166,7 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $back_line_col = ($i % 2 == 0) ? "#ddd" : "#fff";
 
             echo "<tr style=\"background-color:$back_line_col;\">";
-            echo "<td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+            echo "<td>&nbsp;</td><td>$datum_format</td><td>" . xss($sel_silnice) . "</td><td>" . xss($koordinator) . "</td><td>$pocet_hlasek</td>";
             $stav_schvaleni = "Nevyhodnoceno";
             $bg_col = $back_line_col;
             if ($overeno == 1) {
@@ -174,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $bg_col = "#0f0";
             }
             echo "<td style=\"background-color:$bg_col;\">";
-            echo $stav_schvaleni;
+            echo xss($stav_schvaleni);
             echo "</td>";
             echo "<td><a href=\"testovani_finish.php?id=$sel_id\">Edit</a></td></tr>";
             $i++;
@@ -222,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $back_line_col = ($i % 2 == 0) ? "#ddd" : "#fff";
 
             echo "<tr style=\"background-color:$back_line_col;\">";
-            echo "<td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+            echo "<td>&nbsp;</td><td>$datum_format</td><td>" . xss($sel_silnice) . "</td><td>" . xss($koordinator) . "</td><td>$pocet_hlasek</td>";
             $stav_schvaleni = "Čeká na schválení";
             $bg_col = $back_line_col;
             if ($schvaleno == 1) {
@@ -237,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($komentar != "") {
                 echo "<span title=\"$komentar\" style=\"border-bottom: 1px dotted black;\">";
             }
-            echo $stav_schvaleni;
+            echo xss($stav_schvaleni);
             if ($komentar != "") {
                 echo "</span>";
             }
@@ -284,7 +287,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             echo "<tr style=\"";
             echo ($i % 2 == 0) ? "background-color:#ddd;" : "background-color:#fff;";
-            echo "\"><td>&nbsp;</td><td>$datum_format</td><td>$sel_silnice</td><td>$koordinator</td><td>$pocet_hlasek</td>";
+            echo "\"><td>&nbsp;</td><td>$datum_format</td><td>" . xss($sel_silnice) . "</td><td>" . xss($koordinator) . "</td><td>$pocet_hlasek</td>";
             echo "<td><a href=\"submit_test.php?id=$sel_id\">Požádat o schválení</a></td>";
             echo "<td><a href=\"testovani_edit.php?id=$sel_id\">Edit</a></td></tr>";
             $i++;

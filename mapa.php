@@ -19,7 +19,7 @@ require_once 'config.php';
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
 	<title>Mapa hlásek</title>
 
-	<script type="text/javascript" src="apikey.js"></script>
+	<script type="text/javascript" src="get-api-key.php"></script>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

@@ -10,25 +10,28 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 include 'Converter.php';
 $converter = new JTSK\Converter();
 
-$tel_cislo = @$_POST["tel_cislo"];
+// Escapuj všechny POST proměnné proti SQL injection
+$tel_cislo = isset($_POST["tel_cislo"]) ? dbEscape($link, trim($_POST["tel_cislo"])) : "";
 $tel_cislo_err = "";
-$silnice = @$_POST["silnice"];
+$silnice = isset($_POST["silnice"]) ? dbEscape($link, trim($_POST["silnice"])) : "";
 $silnice_err = "";
-$kilometr = @$_POST["kilometr"];
+$kilometr = isset($_POST["kilometr"]) ? dbEscape($link, trim($_POST["kilometr"])) : "";
 $kilometr_err = "";
-$smer = @$_POST["smer"];
-$format = @$_POST["format"];
-$x = @$_POST["x"];
+$smer = isset($_POST["smer"]) ? dbEscape($link, trim($_POST["smer"])) : "";
+$format = isset($_POST["format"]) ? dbEscape($link, trim($_POST["format"])) : "";
+$x = isset($_POST["x"]) ? dbEscape($link, trim($_POST["x"])) : "";
 $x_err = "";
-$y = @$_POST["y"];
+$y = isset($_POST["y"]) ? dbEscape($link, trim($_POST["y"])) : "";
 $y_err = "";
-$override = @$_POST["override"];
-$ssud = @$_POST["ssud"];
+$override = isset($_POST["override"]) ? dbEscape($link, trim($_POST["override"])) : "";
+$ssud = isset($_POST["ssud"]) ? dbEscape($link, trim($_POST["ssud"])) : "";
 $ssud_err = "";
-$typ = @$_POST["typ"];
+$typ = isset($_POST["typ"]) ? dbEscape($link, trim($_POST["typ"])) : "";
 $typ_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -290,9 +293,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($tel_cislo_err)) ? 'has-error' : ''; ?>">
                 <label>Telefonní číslo</label>
-                <input type="text" name="tel_cislo" class="form-control" value="<?php echo $tel_cislo; ?>" autofocus>
+                <input type="text" name="tel_cislo" class="form-control" value="<?php echo xss($tel_cislo); ?>" autofocus>
                 <span class="help-block">
-                    <?php echo $tel_cislo_err; ?>
+                    <?php echo xss($tel_cislo_err); ?>
                 </span>
             </div>
 
@@ -311,21 +314,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if ($sil_id == $silnice) {
                                 echo " SELECTED";
                             }
-                            echo ">$sil_name</option>\n";
+                            echo ">" . xss($sil_name) . "</option>\n";
                         }
                     }
                     ?>
                 </select>
                 <span class="help-block">
-                    <?php echo $silnice_err; ?>
+                    <?php echo xss($silnice_err); ?>
                 </span>
             </div>
 
             <div class="form-group <?php echo (!empty($kilometr_err)) ? 'has-error' : ''; ?>">
                 <label>Kilometr</label>
-                <input type="text" name="kilometr" class="form-control" value="<?php echo $kilometr; ?>">
+                <input type="text" name="kilometr" class="form-control" value="<?php echo xss($kilometr); ?>">
                 <span class="help-block">
-                    <?php echo $kilometr_err; ?>
+                    <?php echo xss($kilometr_err); ?>
                 </span>
             </div>
 
@@ -359,7 +362,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if ($srid_id == $format) {
                                 echo " SELECTED";
                             }
-                            echo ">$srid_name</option>\n";
+                            echo ">" . xss($srid_name) . "</option>\n";
                         }
                     }
                     ?>
@@ -368,17 +371,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="form-group <?php echo (!empty($x_err)) ? 'has-error' : ''; ?>">
                 <label>Souřadnice X (JTSK cca 1 000 000 | WGS cca 49):</label>
-                <input type="text" name="x" class="form-control" value="<?php echo $x; ?>">
+                <input type="text" name="x" class="form-control" value="<?php echo xss($x); ?>">
                 <span class="help-block">
-                    <?php echo $x_err; ?>
+                    <?php echo xss($x_err); ?>
                 </span>
             </div>
 
             <div class="form-group <?php echo (!empty($y_err)) ? 'has-error' : ''; ?>">
                 <label>Souřadnice Y (JTSK cca 700 000 | WGS cca 15):</label>
-                <input type="text" name="y" class="form-control" value="<?php echo $y; ?>">
+                <input type="text" name="y" class="form-control" value="<?php echo xss($y); ?>">
                 <span class="help-block">
-                    <?php echo $y_err; ?>
+                    <?php echo xss($y_err); ?>
                 </span>
             </div>
 
@@ -403,7 +406,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </select>
                 <span class="help-block">
-                    <?php echo $ssud_err; ?>
+                    <?php echo xss($ssud_err); ?>
                 </span>
             </div>
 
@@ -428,7 +431,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </select>
                 <span class="help-block">
-                    <?php echo $typ_err; ?>
+                    <?php echo xss($typ_err); ?>
                 </span>
             </div>
 

@@ -4,14 +4,7 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
-require 'vendor/autoload.php';
-require_once 'dbconnect.php';
-
-$link = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
-if ($link === false) {
-    die("CHYBA: Nepovedlo se připojit. " . mysqli_connect_error());
-}
-mysqli_set_charset($link, "utf8");
+require_once 'config.php';
 
 $krajNames = [
     '19' => 'Hlavní město Praha',

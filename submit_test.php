@@ -10,6 +10,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 }
 
 require_once 'config.php';
+require_once 'db_safe.php';
+require_once 'xss_safe.php';
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -32,9 +34,9 @@ require_once 'config.php';
 </head>
 
 <?php
-$id = @$_GET["id"];
+$id = $_GET["id"] ?? '';
 if ($id == "") {
-    $id = @$_POST["id"];
+    $id = $_POST["id"] ?? '';
 }
 
 $query40 = "SELECT datum, silnice, osoba, hlasky FROM testovani WHERE id = $id;";

@@ -1,5 +1,6 @@
 <?php
 require_once 'dbconnect.php';
+require_once 'db_safe.php';
 
 $link = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 if ($link === false) {
@@ -85,12 +86,22 @@ function PageHeader()
             echo "</td>";
             break;
         default:
-            foreach ($opravneni as $aplikace) {
-                $query73 = "SELECT nazev, url FROM aplikace WHERE app_id = $aplikace;";
+            // Optimization: Load all apps in single query instead of N+1 SQL
+            if (!empty($opravneni)) {
+                $app_ids = array_map(function($id) use ($link) { return dbEscape($link, $id); }, $opravneni);
+                $query73 = "SELECT app_id, nazev, url FROM aplikace WHERE app_id IN (" . implode(",", $app_ids) . ");";
+                $apps_map = array();
+
                 if ($result73 = mysqli_query($link, $query73)) {
                     while ($row73 = mysqli_fetch_row($result73)) {
-                        $nazev_aplikace = $row73[0];
-                        $url_aplikace = $row73[1];
+                        $apps_map[$row73[0]] = array('nazev' => $row73[1], 'url' => $row73[2]);
+                    }
+                }
+
+                foreach ($opravneni as $aplikace) {
+                    if (isset($apps_map[$aplikace])) {
+                        $nazev_aplikace = $apps_map[$aplikace]['nazev'];
+                        $url_aplikace = $apps_map[$aplikace]['url'];
                         $newTarget = 0;
 
                         if ($tlacitka == "1" && $id_prev == "1") {

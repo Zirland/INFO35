@@ -8,13 +8,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
-require_once 'dbconnect.php';
-
-$link = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
-if ($link === false) {
-    die("CHYBA: Nepovedlo se připojit. " . mysqli_connect_error());
-}
-mysqli_set_charset($link, "utf8");
+require_once 'config.php';
 
 require "tfpdf/tfpdf.php";
 //include "phpqrcode/phpqrcode.php";
